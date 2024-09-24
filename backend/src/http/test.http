@@ -1,0 +1,38 @@
+GET http://localhost:3000/
+
+###
+
+GET http://localhost:3000/ads
+
+###
+
+POST http://localhost:3000/ads
+Content-Type: application/json
+
+{
+    "title": "New item",
+    "description": "New description",
+    "owner": "New owner",
+    "price": 99,
+    "picture": "https://www.automobile-magazine.fr/asset/cms/34973/config/28294/apres-plusieurs-prototypes-la-bollore-bluecar-a-fini-par-devoiler-sa-version-definitive.jpg",
+    "location": "New location"
+}
+
+###
+
+DELETE http://localhost:3000/ads/3
+
+### 
+PATCH http://localhost:3000/ads/3
+Content-Type: application/json
+
+{
+    "title": "Updated item",
+    "description": "Updated description",
+    "owner": "Updated owner",
+    "price": 99,
+    "picture": "https://www.automobile-magazine.fr/asset/cms/34973/config/28294/apres-plusieurs-prototypes-la-bollore-bluecar-a-fini-par-devoiler-sa-version-definitive.jpg",
+    "location": "Updated location"
+}
+
+###
