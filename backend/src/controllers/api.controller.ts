@@ -1,5 +1,6 @@
 import { RequestHandler } from 'express';
-import { Ad, AdContent, IdParam } from '@/types/types.ts';
+import { Ad, AdContent } from '@tgc/common';
+import { IdParam } from '@/types/controller.type.ts';
 import ADS from '../data/ads.json';
 
 const ads: Ad[] = structuredClone(ADS);

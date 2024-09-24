@@ -1,7 +1,3 @@
-export type IdParam = {
-  id: string;
-};
-
 export type Ad = {
   id: number;
   title: string;
@@ -14,5 +10,3 @@ export type Ad = {
 };
 
 export type AdContent = Omit<Ad, 'id' | 'createdAt'>;
-
-// symbolic link

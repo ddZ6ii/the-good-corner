@@ -1,0 +1,19 @@
+{
+  "name": "the-good-corner",
+  "private": true,
+  "version": "1.0.0",
+  "author": "Denis Dezest <denis.dezest@gmail.com>",
+  "license": "MIT",
+  "workspaces": [
+    "backend",
+    "common"
+  ],
+  "scripts": {
+    "dev": "concurrently \"yarn dev:back\"",
+    "dev:back": "yarn workspace backend dev",
+    "build:common": "yarn workspace @tgc/common build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}
