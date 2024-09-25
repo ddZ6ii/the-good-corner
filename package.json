@@ -11,7 +11,8 @@
   "scripts": {
     "dev": "concurrently \"yarn dev:back\"",
     "dev:back": "yarn workspace backend dev",
-    "build:common": "yarn workspace @tgc/common build"
+    "build:common": "yarn workspace @tgc/common build",
+    "migrate": "yarn workspace backend migrate"
   },
   "devDependencies": {
     "concurrently": "^9.0.1"
