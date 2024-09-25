@@ -20,27 +20,29 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3000/ads/3
+DELETE http://localhost:3000/ads/61
 
 ### 
-PATCH http://localhost:3000/ads/3
+PATCH http://localhost:3000/ads/61
 Content-Type: application/json
 
 {
-    "title": "Updated title",
-    "description": "Updated description",
-    "location": "Updated location"
+    "title": "Partially updated title",
+    "description": "Partially updated description",
+    "location": "Partially updated  location"
 }
 
 ###
 
-PUT http://localhost:3000/ads/3
+PUT http://localhost:3000/ads/61
 Content-Type: application/json
 
 {
-    "title": "Updated WITH PUT item",
-    "owner": "Updated WITH PUT owner",
-    "price": 99,
-    "picture": "https://www.automobile-magazine.fr/asset/cms/34973/config/28294/apres-plusieurs-prototypes-la-bollore-bluecar-a-fini-par-devoiler-sa-version-definitive.jpg",
-    "location": "Updated WITH PUT location"
+    "title": "Updated item",
+    "description": "Updated description",
+    "owner": "Updated owner",
+    "price": 1,
+    "picture": "Updated picture",
+    "location": "Updated location"
 }
+
