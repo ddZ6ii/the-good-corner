@@ -13,6 +13,8 @@
       "@/*": ["src/*"],
       "@controllers/*": ["src/controllers/*"],
       "@data/*": ["src/data/*"],
+      "@database/*": ["src/database/*"],
+      "@models/*": ["src/models/*"],
       "@routers/*": ["src/routers/*"],
       "@types/*": ["src/types/*"]
     } /* Specify a set of entries that re-map imports to additional lookup locations. */,
