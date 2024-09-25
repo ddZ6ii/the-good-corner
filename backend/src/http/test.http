@@ -27,12 +27,20 @@ PATCH http://localhost:3000/ads/3
 Content-Type: application/json
 
 {
-    "title": "Updated item",
+    "title": "Updated title",
     "description": "Updated description",
-    "owner": "Updated owner",
-    "price": 99,
-    "picture": "https://www.automobile-magazine.fr/asset/cms/34973/config/28294/apres-plusieurs-prototypes-la-bollore-bluecar-a-fini-par-devoiler-sa-version-definitive.jpg",
     "location": "Updated location"
 }
 
 ###
+
+PUT http://localhost:3000/ads/3
+Content-Type: application/json
+
+{
+    "title": "Updated WITH PUT item",
+    "owner": "Updated WITH PUT owner",
+    "price": 99,
+    "picture": "https://www.automobile-magazine.fr/asset/cms/34973/config/28294/apres-plusieurs-prototypes-la-bollore-bluecar-a-fini-par-devoiler-sa-version-definitive.jpg",
+    "location": "Updated WITH PUT location"
+}

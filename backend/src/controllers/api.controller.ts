@@ -48,7 +48,7 @@ export const deleteAdById: RequestHandler<
   return res.sendStatus(200);
 };
 
-export const updateAdById: RequestHandler<
+export const partialUpdateAdById: RequestHandler<
   IdParam,
   Ad | string,
   Partial<AdContent>,
@@ -63,6 +63,26 @@ export const updateAdById: RequestHandler<
     ...ads[match],
     ...adContent,
     id: ads[match].id,
+  };
+  ads[match] = updatedAd;
+  return res.json(updatedAd);
+};
+
+export const updateAdById: RequestHandler<
+  IdParam,
+  Ad | string,
+  AdContent,
+  unknown
+> = (req, res) => {
+  const adId = parseInt(req.params.id, 10);
+  const adContent = req.body;
+  const match = ads.findIndex((ad) => ad.id === adId);
+  const notFound = match === -1;
+  if (notFound) return res.status(404).send('Ad not found.');
+  const updatedAd: Ad = {
+    ...adContent,
+    id: ads[match].id,
+    createdAt: ads[match].createdAt,
   };
   ads[match] = updatedAd;
   return res.json(updatedAd);
