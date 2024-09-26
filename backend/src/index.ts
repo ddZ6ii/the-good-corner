@@ -1,13 +1,13 @@
 import express from 'express';
 import 'dotenv/config';
-import { adsRouter } from '@routers/ads.router.ts';
+import router from '@routers/router.ts';
 
 const API_PORT = parseInt(process.env.API_PORT ?? '3000', 10);
 const app = express();
 
 // Application-level middlewares.
 app.use(express.json());
-app.use('/', adsRouter);
+app.use('/', router);
 
 // Server.
 app.listen(API_PORT, () => {

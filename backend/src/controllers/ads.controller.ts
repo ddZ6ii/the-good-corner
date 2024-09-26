@@ -12,13 +12,6 @@ import {
 import { IdParam, AffectedRow, CustomError } from '@/types/controller.type.ts';
 import { IdSchema } from '@/types/controller.schemas.ts';
 
-export const welcome: RequestHandler<unknown, unknown, unknown, unknown> = (
-  _req,
-  res,
-) => {
-  res.send('Hello World!');
-};
-
 export const get: RequestHandler<
   unknown,
   Ad[] | CustomError,
