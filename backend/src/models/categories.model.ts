@@ -4,13 +4,34 @@ import { AffectedRow } from '@/types/controller.type.ts';
 
 const TABLE = 'category';
 
-export function find(): Promise<Category[]> {
+export function findAll(): Promise<Category[]> {
   const sql = `
-    SELECT * FROM 
-    ${TABLE}
+    SELECT 
+      id,
+      name
+    FROM ${TABLE}
   `;
   return new Promise((resolve, reject) => {
     db.all(sql, (err, categories: Category[]) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(categories);
+    });
+  });
+}
+
+export function findOne(adId: number): Promise<Category[]> {
+  const sql = `
+    SELECT 
+      id,
+      name
+      FROM ${TABLE}
+    WHERE id = ?
+  `;
+  const sqlParams = [adId];
+  return new Promise((resolve, reject) => {
+    db.all(sql, sqlParams, (err, categories: Category[]) => {
       if (err) {
         reject(err);
       }

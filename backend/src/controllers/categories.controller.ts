@@ -11,20 +11,51 @@ import {
 import { IdParam, AffectedRow, CustomError } from '@/types/controller.type.ts';
 import { IdSchema } from '@/types/controller.schemas.ts';
 
-export const get: RequestHandler<
+export const getAll: RequestHandler<
   unknown,
   Category[] | CustomError,
   unknown,
   unknown
 > = async (_req, res) => {
   try {
-    const categories = await categoriesModel.find();
+    const categories = await categoriesModel.findAll();
     return res.json(categories);
   } catch (err: unknown) {
     console.error(err);
     return res.status(500).json({
       code: 500,
       message: 'Oops something went wrong... Failed to fetch categories.',
+    });
+  }
+};
+
+export const getOne: RequestHandler<
+  IdParam,
+  Category[] | CustomError,
+  unknown,
+  unknown
+> = async (req, res) => {
+  try {
+    const { success, data, error } = IdSchema.safeParse(req.params);
+    if (!success) {
+      throw new ZodError(error.issues);
+    }
+    const parsedAdId = data.id;
+    const categories = await categoriesModel.findOne(parsedAdId);
+    if (isEmpty(categories)) {
+      return res
+        .status(404)
+        .json({ code: 404, message: 'Category not found.' });
+    }
+    return res.json(categories);
+  } catch (err: unknown) {
+    if (err instanceof ZodError) {
+      const errorMessage = formatZodErrorMessage(err.issues[0]);
+      return res.status(400).json({ code: 400, message: errorMessage });
+    }
+    return res.status(500).json({
+      code: 500,
+      message: 'Oops something went wrong... Failed to fetch category.',
     });
   }
 };
