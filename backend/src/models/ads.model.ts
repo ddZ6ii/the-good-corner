@@ -25,8 +25,8 @@ export function insert(adContent: AdContent): Promise<AffectedRow[]> {
   const createdAt = new Date().toISOString();
   const sql = `
     INSERT INTO ${TABLE} 
-    (title, description, owner, price, picture, location, createdAt) 
-    VALUES (?, ?, ?, ?, ?, ?, ?) 
+    (title, description, owner, price, picture, location, categoryId, createdAt) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?) 
     RETURNING id
   `;
   const sqlParams = [...Object.values(adContent), createdAt];
@@ -84,7 +84,7 @@ export function partialUpdate(
 export function update(adId: number, adContent: AdContent): Promise<Ad[]> {
   const sql = `
     UPDATE ${TABLE} 
-    SET title = ?, description = ?, owner = ?, price = ?, picture = ?, location = ? 
+    SET title = ?, description = ?, owner = ?, price = ?, picture = ?, location = ?, categoryId = ? 
     WHERE id = ? 
     RETURNING *
   `;
