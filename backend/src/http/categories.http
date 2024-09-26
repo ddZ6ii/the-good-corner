@@ -1,0 +1,32 @@
+GET http://localhost:3000/categories
+
+###
+
+POST http://localhost:3000/categories
+Content-Type: application/json
+
+{ 
+    "name": "New category"
+}
+
+###
+
+DELETE http://localhost:3000/categories/16
+
+### 
+PATCH http://localhost:3000/categories/16
+Content-Type: application/json
+
+{
+    "name": "Partially updated name"
+}
+
+###
+
+PUT http://localhost:3000/categories/16
+Content-Type: application/json
+
+{
+    "name": "Updated name"
+}
+
