@@ -9,11 +9,11 @@ GET http://localhost:3000/ads
 POST http://localhost:3000/ads
 Content-Type: application/json
 
-{
-    "title": "New item",
+{ 
+    "title": "New title",
     "description": "New description",
-    "owner": "New owner",
-    "price": 99,
+    "owner": "toto@email.com",
+    "price": 0,
     "picture": "https://www.automobile-magazine.fr/asset/cms/34973/config/28294/apres-plusieurs-prototypes-la-bollore-bluecar-a-fini-par-devoiler-sa-version-definitive.jpg",
     "location": "New location"
 }
@@ -40,9 +40,9 @@ Content-Type: application/json
 {
     "title": "Updated item",
     "description": "Updated description",
-    "owner": "Updated owner",
+    "owner": "mynewupdatedemail@mail.com",
     "price": 1,
-    "picture": "Updated picture",
+    "picture": "https://www.updated-url.com",
     "location": "Updated location"
 }
 

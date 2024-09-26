@@ -1,16 +1,37 @@
-export type Ad = {
-  id: number;
-  title: string;
-  description: string;
-  owner: string;
-  price: number;
-  picture: string;
-  location: string;
-  createdAt: string;
+import z from 'zod';
+
+const AD_CONSTRAINTS = {
+  minLength: 5,
 };
 
-export type AdContent = Omit<Ad, 'id' | 'createdAt'>;
+/* -------------------------------------------------------------------------- */
+/*                                Schemas                                     */
+/* -------------------------------------------------------------------------- */
+export const AdContentSchema = z.object({
+  title: z.string().trim().min(AD_CONSTRAINTS.minLength),
+  description: z.string().trim().min(AD_CONSTRAINTS.minLength),
+  owner: z.string().trim().email(),
+  price: z.number().nonnegative(),
+  picture: z.string().trim().url(),
+  location: z.string().trim().min(AD_CONSTRAINTS.minLength),
+});
 
+export const AdSchema = AdContentSchema.extend({
+  id: z.number().positive(),
+  createdAt: z.string().datetime(),
+});
+
+export const PartialAdContentSchema = AdContentSchema.partial();
+
+/* -------------------------------------------------------------------------- */
+/*                               Types                                        */
+/* -------------------------------------------------------------------------- */
+export type Ad = z.infer<typeof AdSchema>;
+export type AdContent = z.infer<typeof AdContentSchema>;
+
+/* -------------------------------------------------------------------------- */
+/*                        Utilitary functions                                 */
+/* -------------------------------------------------------------------------- */
 export function isEmpty(obj: unknown) {
   // Check for both 'null' and 'undefined' with loose comparison operator.
   if (obj == null) return true;
