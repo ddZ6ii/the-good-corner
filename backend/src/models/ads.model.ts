@@ -5,7 +5,10 @@ import { AffectedRow } from '@/types/controller.type.ts';
 const TABLE = 'ad';
 
 export function find(): Promise<Ad[]> {
-  const sql = `SELECT * FROM ${TABLE}`;
+  const sql = `
+    SELECT * FROM 
+    ${TABLE}
+  `;
   return new Promise((resolve, reject) => {
     db.all(sql, (err, ads: Ad[]) => {
       if (err) {
@@ -20,7 +23,12 @@ export function find(): Promise<Ad[]> {
 // ? Should we return only the inserted row id (using the RETURNING id clause) or the entire inserted row (using the RETURNING * clause)?
 export function insert(adContent: AdContent): Promise<AffectedRow[]> {
   const createdAt = new Date().toISOString();
-  const sql = `INSERT INTO ${TABLE} (title, description, owner, price, picture, location, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id`;
+  const sql = `
+    INSERT INTO ${TABLE} 
+    (title, description, owner, price, picture, location, createdAt) 
+    VALUES (?, ?, ?, ?, ?, ?, ?) 
+    RETURNING id
+  `;
   const sqlParams = [...Object.values(adContent), createdAt];
   return new Promise((resolve, reject) => {
     db.all(sql, sqlParams, (err, insertedRow: AffectedRow[]) => {
@@ -34,7 +42,11 @@ export function insert(adContent: AdContent): Promise<AffectedRow[]> {
 
 // ? Should we return the deletedRow row id within an array (using db.all) or within an object (using dg.get)?
 export function remove(adId: number): Promise<AffectedRow[]> {
-  const sql = `DELETE FROM ${TABLE} WHERE id = ? RETURNING id`;
+  const sql = `
+    DELETE FROM ${TABLE}
+    WHERE id = ? 
+    RETURNING id
+  `;
   const sqlParams = [adId];
   return new Promise((resolve, reject) => {
     db.all(sql, sqlParams, (err, deletedRow: AffectedRow[]) => {
@@ -70,7 +82,12 @@ export function partialUpdate(
 }
 
 export function update(adId: number, adContent: AdContent): Promise<Ad[]> {
-  const sql = `UPDATE ${TABLE} SET title = ?, description = ?, owner = ?, price = ?, picture = ?, location = ? WHERE id = ? RETURNING *`;
+  const sql = `
+    UPDATE ${TABLE} 
+    SET title = ?, description = ?, owner = ?, price = ?, picture = ?, location = ? 
+    WHERE id = ? 
+    RETURNING *
+  `;
   const sqlParams = [...Object.values(adContent), adId];
   return new Promise((resolve, reject) => {
     db.all(sql, sqlParams, (err, updatedRows: Ad[]) => {

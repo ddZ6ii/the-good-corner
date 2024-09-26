@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import { ZodError } from 'zod';
-import * as adModel from '@models/ad.model.ts';
+import * as adsModel from '@models/ads.model.ts';
 import { formatZodErrorMessage } from '@/utils/formatZodError.ts';
 import {
   Ad,
@@ -26,7 +26,7 @@ export const get: RequestHandler<
   unknown
 > = async (_req, res) => {
   try {
-    const ads = await adModel.find();
+    const ads = await adsModel.find();
     return res.json(ads);
   } catch (err: unknown) {
     console.error(err);
@@ -50,7 +50,7 @@ export const create: RequestHandler<
       throw new ZodError(error.issues);
     }
     const parsedAdContent = data;
-    const insertedRows = await adModel.insert(parsedAdContent);
+    const insertedRows = await adsModel.insert(parsedAdContent);
     return res.json(insertedRows);
   } catch (err: unknown) {
     console.error(err);
@@ -77,7 +77,7 @@ export const remove: RequestHandler<
       throw new ZodError(error.issues);
     }
     const parsedAdId = data.id;
-    const deletedRows = await adModel.remove(parsedAdId);
+    const deletedRows = await adsModel.remove(parsedAdId);
     if (isEmpty(deletedRows)) {
       return res.status(404).json({ code: 404, message: 'Ad not found.' });
     }
@@ -115,7 +115,10 @@ export const partialEdit: RequestHandler<
     if (isEmpty(parsedAdContent)) {
       return res.status(400).json({ code: 400, message: 'No data to update.' });
     }
-    const updatedAds = await adModel.partialUpdate(parsedAdId, parsedAdContent);
+    const updatedAds = await adsModel.partialUpdate(
+      parsedAdId,
+      parsedAdContent,
+    );
     if (isEmpty(updatedAds)) {
       return res.status(404).json({ code: 404, message: 'Ad not found.' });
     }
@@ -150,7 +153,7 @@ export const edit: RequestHandler<
     }
     const parsedAdId = parsedParams.data.id;
     const parsedAdContent = parsedBody.data;
-    const updatedAds = await adModel.update(parsedAdId, parsedAdContent);
+    const updatedAds = await adsModel.update(parsedAdId, parsedAdContent);
     if (isEmpty(updatedAds)) {
       return res.status(404).json({ code: 404, message: 'Ad not found.' });
     }
