@@ -5,3 +5,6 @@ const DB_FILENAME = 'the_good_corner.sqlite';
 const dbFileUrl = resolve(import.meta.dirname, DB_FILENAME);
 
 export const db = new sqlite3.Database(dbFileUrl);
+
+// Prevent deleting a parent row if there are dependent rows in the child table.
+db.run('PRAGMA foreign_keys = ON');
