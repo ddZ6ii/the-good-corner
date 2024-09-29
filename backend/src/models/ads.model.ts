@@ -1,6 +1,7 @@
 import { DeleteResult, Like } from 'typeorm';
 import { Ad } from '@database/entities/Ad.ts';
 import { AdContent } from '@/types/ads.types.ts';
+import { isEmpty } from '@tgc/common';
 
 export function findAll(categoryFilter: string | undefined): Promise<Ad[]> {
   if (!categoryFilter) return Ad.find();
@@ -12,7 +13,7 @@ export function findAll(categoryFilter: string | undefined): Promise<Ad[]> {
 }
 
 export function findOneBy(adId: number): Promise<Ad[]> {
-  return Ad.findBy({ id: adId });
+  return Ad.find({ relations: ['tags'], where: { id: adId } });
 }
 
 export function create(content: AdContent): Promise<Ad> {
@@ -43,6 +44,8 @@ export async function put(
 ): Promise<Ad | undefined> {
   const ad = await Ad.findOneBy({ id: adId });
   if (ad === null) return;
-  Object.assign(ad, nextContent);
+  Object.assign(ad, nextContent, {
+    tags: isEmpty(nextContent.tags) ? [] : nextContent.tags,
+  });
   return ad.save();
 }

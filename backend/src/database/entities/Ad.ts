@@ -3,10 +3,13 @@ import {
   BaseEntity,
   Column,
   PrimaryGeneratedColumn,
-  CreateDateColumn,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
+  BeforeInsert,
 } from 'typeorm';
 import { Category } from './Category.ts';
+import { Tag } from './Tag.ts';
 
 /** Active record pattern
  * ----------------------
@@ -34,11 +37,17 @@ export class Ad extends BaseEntity {
   @Column({ type: 'text' })
   picture!: string;
 
-  @Column({ type: 'text', length: 100 })
+  @Column({ type: 'text', length: 50 })
   location!: string;
 
-  @CreateDateColumn({ type: 'date' })
-  createdAt!: Date;
+  @Column({ type: 'text' })
+  createdAt!: string;
+
+  // The updateDates() method is called before creating a new ad.
+  @BeforeInsert()
+  updateDates() {
+    this.createdAt = new Date().toISOString();
+  }
 
   /** Relation options
    * ----------------------
@@ -51,4 +60,13 @@ export class Ad extends BaseEntity {
     nullable: false,
   })
   category!: Category;
+
+  /** Join table
+   * ----------------------
+   * JoinTable() is required for ManyToMany relations.
+   * JoinTable must be placed on one (owning) side only of the relation.
+   */
+  @ManyToMany(() => Tag, (tag) => tag.ads)
+  @JoinTable()
+  tags!: Tag[];
 }

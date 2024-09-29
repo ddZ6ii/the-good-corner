@@ -25,6 +25,13 @@ const CATEGORY_CONSTRAINTS = {
   },
 };
 
+const TAG_CONSTRAINTS = {
+  name: {
+    minLength: 5,
+    maxLength: 50,
+  },
+};
+
 /* -------------------------------------------------------------------------- */
 /*                                Schemas                                     */
 /* -------------------------------------------------------------------------- */
@@ -53,9 +60,22 @@ export const AdContentSchema = z.object({
     },
     {
       invalid_type_error: "Expected an object with an 'id' property.",
-      message: "Expected an object with an 'id' property.",
+      // message: "Expected an object with an 'id' property.",
     }
   ),
+  tags: z
+    .object(
+      {
+        id: z.number().int().positive(),
+      },
+      {
+        invalid_type_error:
+          "Expected an array of objects with an 'id' property.",
+        // message: "Expected an object with an 'id' property.",
+      }
+    )
+    .array()
+    .optional(),
 });
 
 export const AdPartialContentSchema = AdContentSchema.partial();
@@ -69,6 +89,16 @@ export const CategoryContentSchema = z.object({
 });
 
 export const CategoryPartialContentSchema = CategoryContentSchema.partial();
+
+export const TagContentSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(TAG_CONSTRAINTS.name.minLength)
+    .max(TAG_CONSTRAINTS.name.maxLength),
+});
+
+export const TagPartialContentSchema = TagContentSchema.partial();
 
 /* -------------------------------------------------------------------------- */
 /*                        Utilitary functions                                 */

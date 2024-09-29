@@ -3,11 +3,17 @@
 PRAGMA foreign_keys = ON;
 
 -- ____________________ CREATE TABLES ____________________
+DROP      TABLE IF EXISTS `ad_tags_tag`;
+
 DROP      TABLE IF EXISTS `ad`;
 
 DROP      TABLE IF EXISTS `category`;
 
+DROP      TABLE IF EXISTS `tag`;
+
 CREATE    TABLE `category` (`id` INTEGER NOT NULL PRIMARY KEY, `name` TEXT NOT NULL);
+
+CREATE    TABLE `tag` (`id` INTEGER NOT NULL PRIMARY KEY, `name` TEXT NOT NULL);
 
 CREATE    TABLE `ad` (
           `id` INTEGER NOT NULL PRIMARY KEY,
@@ -20,6 +26,13 @@ CREATE    TABLE `ad` (
           `createdAt` TEXT NOT NULL,
           `categoryId` INTEGER NOT NULL,
           FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`)
+          );
+
+CREATE    TABLE `ad_tags_tag` (
+          `adId` INTEGER NOT NULL,
+          `tagId` INTEGER NOT NULL,
+          FOREIGN KEY (`adId`) REFERENCES `ad` (`id`),
+          FOREIGN KEY (`tagId`) REFERENCES `tag` (`id`)
           );
 
 -- ____________________ POPULATE TABLES ____________________
@@ -39,6 +52,23 @@ VALUES    ("bikes"),
           ("pets"),
           ("interior"),
           ("outdoor");
+
+INSERT    INTO `tag` (`name`)
+VALUES    ("new"),
+          ("second-hand"),
+          ("vintage"),
+          ("rare"),
+          ("collectible"),
+          ("limited edition"),
+          ("antique"),
+          ("modern"),
+          ("classic"),
+          ("retro"),
+          ("contemporary"),
+          ("handmade"),
+          ("custom"),
+          ("unique"),
+          ("original");
 
 INSERT    INTO `ad` (
           `title`,
@@ -650,3 +680,6 @@ VALUES    (
           "2023-09-27T10:28:30.421Z",
           13
           );
+
+INSERT    INTO `ad_tags_tag` (`adId`, `tagId`)
+VALUES    (1, 2)

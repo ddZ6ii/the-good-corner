@@ -14,6 +14,12 @@ export const CategoryFilterSchema = z.optional(
   }),
 );
 
+export const TagFilterSchema = z.optional(
+  z.object({
+    name: z.string().optional(),
+  }),
+);
+
 export const FilterAdByCategorySchema = z.optional(
   z.object({
     category: z.string().optional(),
