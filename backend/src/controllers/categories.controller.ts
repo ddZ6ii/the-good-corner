@@ -1,131 +1,163 @@
-import { RequestHandler } from 'express';
+import { Request, Response } from 'express';
 import { ZodError } from 'zod';
-import * as categoriesModel from '@models/categories.model.ts';
-import { formatZodErrorMessage } from '@/utils/formatZodError.ts';
 import {
-  Category,
-  CategoryContent,
   CategoryContentSchema,
+  CategoryPartialContentSchema,
   isEmpty,
 } from '@tgc/common';
-import { IdParam, AffectedRow, CustomError } from '@/types/controller.type.ts';
+import * as categoriesModel from '@models/categories.model.ts';
+import { formatZodErrorMessage } from '@/utils/formatZodError.ts';
+import { Category } from '@database/entities/Category.ts';
 import { IdSchema } from '@/types/controller.schemas.ts';
+import { IdParam, AffectedRow, CustomError } from '@/types/controller.type.ts';
+import { CategoryContent } from '@/types/categories.types.ts';
 
-export const getAll: RequestHandler<
-  unknown,
-  Category[] | CustomError,
-  unknown,
-  unknown
-> = async (_req, res) => {
+export async function getAll(
+  _req: Request,
+  res: Response<Category[] | CustomError>,
+): Promise<void> {
   try {
     const categories = await categoriesModel.findAll();
-    return res.json(categories);
+    res.json(categories);
   } catch (err: unknown) {
     console.error(err);
-    return res.status(500).json({
+    res.status(500).json({
       code: 500,
       message: 'Oops something went wrong... Failed to fetch categories.',
     });
   }
-};
+}
 
-export const getOne: RequestHandler<
-  IdParam,
-  Category[] | CustomError,
-  unknown,
-  unknown
-> = async (req, res) => {
-  try {
-    const { success, data, error } = IdSchema.safeParse(req.params);
-    if (!success) {
-      throw new ZodError(error.issues);
-    }
-    const parsedAdId = data.id;
-    const categories = await categoriesModel.findOne(parsedAdId);
-    if (isEmpty(categories)) {
-      return res
-        .status(404)
-        .json({ code: 404, message: 'Category not found.' });
-    }
-    return res.json(categories);
-  } catch (err: unknown) {
-    if (err instanceof ZodError) {
-      const errorMessage = formatZodErrorMessage(err.issues[0]);
-      return res.status(400).json({ code: 400, message: errorMessage });
-    }
-    return res.status(500).json({
-      code: 500,
-      message: 'Oops something went wrong... Failed to fetch category.',
-    });
-  }
-};
-
-// ? Why using Zod parse does NOT generate a ZodError?
-export const create: RequestHandler<
-  unknown,
-  AffectedRow[] | CustomError,
-  CategoryContent,
-  unknown
-> = async (req, res) => {
-  try {
-    const { success, data, error } = CategoryContentSchema.safeParse(req.body);
-    if (!success) {
-      throw new ZodError(error.issues);
-    }
-    const parsedCategoryContent = data;
-    const insertedRows = await categoriesModel.insert(parsedCategoryContent);
-    return res.json(insertedRows);
-  } catch (err: unknown) {
-    console.error(err);
-    if (err instanceof ZodError) {
-      const errorMessage = formatZodErrorMessage(err.issues[0]);
-      return res.status(400).json({ code: 400, message: errorMessage });
-    }
-    return res.status(500).json({
-      code: 500,
-      message: 'Oops something went wrong... Failed to create category.',
-    });
-  }
-};
-
-export const remove: RequestHandler<
-  IdParam,
-  AffectedRow[] | CustomError,
-  unknown,
-  unknown
-> = async (req, res) => {
+export async function getOne(
+  req: Request<IdParam>,
+  res: Response<Category[] | CustomError>,
+): Promise<void> {
   try {
     const { success, data, error } = IdSchema.safeParse(req.params);
     if (!success) {
       throw new ZodError(error.issues);
     }
     const parsedCategoryId = data.id;
-    const deletedRows = await categoriesModel.remove(parsedCategoryId);
-    if (isEmpty(deletedRows)) {
-      return res
-        .status(404)
-        .json({ code: 404, message: 'Category not found.' });
+    const categories = await categoriesModel.findOneBy(parsedCategoryId);
+    if (isEmpty(categories)) {
+      res.status(404).json({ code: 404, message: 'Category not found.' });
+    } else {
+      res.json(categories);
     }
-    return res.json(deletedRows);
+  } catch (err: unknown) {
+    if (err instanceof ZodError) {
+      const errorMessage = formatZodErrorMessage(err.issues[0]);
+      res.status(400).json({ code: 400, message: errorMessage });
+    } else {
+      res.status(500).json({
+        code: 500,
+        message: 'Oops something went wrong... Failed to fetch category.',
+      });
+    }
+  }
+}
+
+export async function create(
+  req: Request<unknown, unknown, CategoryContent>,
+  res: Response<Category | CustomError>,
+): Promise<void> {
+  try {
+    const {
+      success,
+      data: parsedCategoryContent,
+      error,
+    } = CategoryContentSchema.safeParse(req.body);
+    if (!success) {
+      throw new ZodError(error.issues);
+    }
+    const createdCategory = await categoriesModel.create(parsedCategoryContent);
+    res.json(createdCategory);
+  } catch (err: unknown) {
+    console.error(err);
+    if (err instanceof ZodError) {
+      const errorMessage = formatZodErrorMessage(err.issues[0]);
+      res.status(400).json({ code: 400, message: errorMessage });
+    } else {
+      res.status(500).json({
+        code: 500,
+        message: 'Oops something went wrong... Failed to create category.',
+      });
+    }
+  }
+}
+
+export async function remove(
+  req: Request<IdParam>,
+  res: Response<AffectedRow | CustomError>,
+): Promise<void> {
+  try {
+    const { success, data, error } = IdSchema.safeParse(req.params);
+    if (!success) {
+      throw new ZodError(error.issues);
+    }
+    const parsedCategoryId = data.id;
+    const result = await categoriesModel.remove(parsedCategoryId);
+    if (result.affected === 0) {
+      res.status(404).json({ code: 404, message: 'Category not found.' });
+    } else {
+      res.json({ id: parsedCategoryId });
+    }
   } catch (err) {
     console.error(err);
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
-      return res.status(400).json({ code: 400, message: errorMessage });
+      res.status(400).json({ code: 400, message: errorMessage });
+    } else {
+      res.status(500).json({
+        code: 500,
+        message: 'Oops something went wrong... Failed to delete category.',
+      });
     }
-    return res.status(500).json({
-      code: 500,
-      message: 'Oops something went wrong... Failed to delete category.',
-    });
   }
-};
+}
 
-export const partialEdit: RequestHandler<
-  IdParam,
-  Category[] | CustomError,
-  Partial<CategoryContent>,
-  unknown
-> = async (req, res) => {
+export async function patch(
+  req: Request<IdParam, unknown, Partial<CategoryContent>>,
+  res: Response<Category | CustomError>,
+): Promise<void> {
+  try {
+    const parsedParams = IdSchema.safeParse(req.params);
+    if (!parsedParams.success) {
+      throw new ZodError(parsedParams.error.issues);
+    }
+    const parsedBody = CategoryPartialContentSchema.safeParse(req.body);
+    if (!parsedBody.success) {
+      throw new ZodError(parsedBody.error.issues);
+    }
+    const parsedCategoryId = parsedParams.data.id;
+    const parsedCategoryContent = parsedBody.data;
+    const updatedCategory = await categoriesModel.patch(
+      parsedCategoryId,
+      parsedCategoryContent,
+    );
+    if (isEmpty(updatedCategory)) {
+      res.status(404).json({ code: 404, message: 'Category not found.' });
+    } else {
+      res.json(updatedCategory);
+    }
+  } catch (err) {
+    console.error(err);
+    if (err instanceof ZodError) {
+      const errorMessage = formatZodErrorMessage(err.issues[0]);
+      res.status(400).json({ code: 400, message: errorMessage });
+    } else {
+      res.status(500).json({
+        code: 500,
+        message: 'Oops something went wrong... Failed to update category.',
+      });
+    }
+  }
+}
+
+export async function edit(
+  req: Request<IdParam, unknown, CategoryContent>,
+  res: Response<Category | CustomError>,
+): Promise<void> {
   try {
     const parsedParams = IdSchema.safeParse(req.params);
     if (!parsedParams.success) {
@@ -137,68 +169,25 @@ export const partialEdit: RequestHandler<
     }
     const parsedCategoryId = parsedParams.data.id;
     const parsedCategoryContent = parsedBody.data;
-    if (isEmpty(parsedCategoryContent)) {
-      return res.status(400).json({ code: 400, message: 'No data to update.' });
-    }
-    const updatedCategories = await categoriesModel.partialUpdate(
+    const updatedCategory = await categoriesModel.put(
       parsedCategoryId,
       parsedCategoryContent,
     );
-    if (isEmpty(updatedCategories)) {
-      return res
-        .status(404)
-        .json({ code: 404, message: 'Category not found.' });
+    if (isEmpty(updatedCategory)) {
+      res.status(404).json({ code: 404, message: 'Category not found.' });
+    } else {
+      res.json(updatedCategory);
     }
-    return res.json(updatedCategories);
   } catch (err) {
     console.error(err);
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
-      return res.status(400).json({ code: 400, message: errorMessage });
+      res.status(400).json({ code: 400, message: errorMessage });
+    } else {
+      res.status(500).json({
+        code: 500,
+        message: 'Oops something went wrong... Failed to update category.',
+      });
     }
-    return res.status(500).json({
-      code: 500,
-      message: 'Oops something went wrong... Failed to update category.',
-    });
   }
-};
-
-export const edit: RequestHandler<
-  IdParam,
-  Category[] | CustomError,
-  CategoryContent,
-  unknown
-> = async (req, res) => {
-  try {
-    const parsedParams = IdSchema.safeParse(req.params);
-    if (!parsedParams.success) {
-      throw new ZodError(parsedParams.error.issues);
-    }
-    const parsedBody = CategoryContentSchema.safeParse(req.body);
-    if (!parsedBody.success) {
-      throw new ZodError(parsedBody.error.issues);
-    }
-    const parsedCategoryId = parsedParams.data.id;
-    const parsedCategoryContent = parsedBody.data;
-    const updatedCategories = await categoriesModel.update(
-      parsedCategoryId,
-      parsedCategoryContent,
-    );
-    if (isEmpty(updatedCategories)) {
-      return res
-        .status(404)
-        .json({ code: 404, message: 'Category not found.' });
-    }
-    return res.json(updatedCategories);
-  } catch (err) {
-    console.error(err);
-    if (err instanceof ZodError) {
-      const errorMessage = formatZodErrorMessage(err.issues[0]);
-      return res.status(400).json({ code: 400, message: errorMessage });
-    }
-    return res.status(500).json({
-      code: 500,
-      message: 'Oops something went wrong... Failed to update category.',
-    });
-  }
-};
+}

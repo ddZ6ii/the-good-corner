@@ -7,5 +7,5 @@ categoriesRouter.get('/', categoriesController.getAll);
 categoriesRouter.get('/:id', categoriesController.getOne);
 categoriesRouter.post('/', categoriesController.create);
 categoriesRouter.delete('/:id', categoriesController.remove);
-categoriesRouter.patch('/:id', categoriesController.partialEdit);
+categoriesRouter.patch('/:id', categoriesController.patch);
 categoriesRouter.put('/:id', categoriesController.edit);

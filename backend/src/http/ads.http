@@ -2,7 +2,7 @@ GET http://localhost:3000/ads
 
 ###
 
-GET http://localhost:3000/ads/1
+GET http://localhost:3000/ads/61
 
 ###
 
@@ -13,10 +13,12 @@ Content-Type: application/json
     "title": "New title",
     "description": "New description",
     "owner": "toto@email.com",
-    "price": 0,
+    "price": 20.3,
     "picture": "https://www.automobile-magazine.fr/asset/cms/34973/config/28294/apres-plusieurs-prototypes-la-bollore-bluecar-a-fini-par-devoiler-sa-version-definitive.jpg",
     "location": "New location",
-    "categoryId": 15
+    "category": {
+      "id": 15
+    }
 }
 
 ###
@@ -31,7 +33,10 @@ Content-Type: application/json
 {
     "title": "Partially updated title",
     "description": "Partially updated description",
-    "location": "Partially updated location"
+    "location": "Partially updated location",
+    "category": {
+      "id": 1
+    }
 }
 
 ###
@@ -46,6 +51,7 @@ Content-Type: application/json
     "price": 1,
     "picture": "https://www.updated-url.com",
     "location": "Updated location",
-    "categoryId": 6
+     "category": {
+      "id": 15
+    }
 }
-

@@ -1,123 +1,43 @@
-import { Category, CategoryContent } from '@tgc/common';
-import { db } from '../database/db.config.ts';
-import { AffectedRow } from '@/types/controller.type.ts';
-
-const TABLE = 'category';
+import { DeleteResult } from 'typeorm';
+import { Category } from '@database/entities/Category.ts';
+import { CategoryContent } from '@/types/categories.types.ts';
 
 export function findAll(): Promise<Category[]> {
-  const sql = `
-    SELECT 
-      id,
-      name
-    FROM ${TABLE}
-  `;
-  return new Promise((resolve, reject) => {
-    db.all(sql, (err, categories: Category[]) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(categories);
-    });
-  });
+  return Category.find();
 }
 
-export function findOne(adId: number): Promise<Category[]> {
-  const sql = `
-    SELECT 
-      id,
-      name
-      FROM ${TABLE}
-    WHERE id = ?
-  `;
-  const sqlParams = [adId];
-  return new Promise((resolve, reject) => {
-    db.all(sql, sqlParams, (err, categories: Category[]) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(categories);
-    });
-  });
+export function findOneBy(categoryId: number): Promise<Category[]> {
+  return Category.findBy({ id: categoryId });
 }
 
-export function insert(
-  categoryContent: CategoryContent,
-): Promise<AffectedRow[]> {
-  const sql = `
-    INSERT INTO ${TABLE}
-    (name)
-    VALUES (?)
-    RETURNING id
-  `;
-  const sqlParams = [...Object.values(categoryContent)];
-  return new Promise((resolve, reject) => {
-    db.all(sql, sqlParams, (err, insertedRow: AffectedRow[]) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(insertedRow);
-    });
-  });
+export function create(content: CategoryContent): Promise<Category> {
+  const newCategory = new Category();
+  Object.assign(newCategory, content);
+  return newCategory.save();
 }
 
-// ? Should we return the deletedRow row id within an array (using db.all) or within an object (using dg.get)?
-export function remove(categoryId: number): Promise<AffectedRow[]> {
-  const sql = `
-    DELETE FROM ${TABLE}
-    WHERE id = ?
-    RETURNING id
-  `;
-  const sqlParams = [categoryId];
-  return new Promise((resolve, reject) => {
-    db.all(sql, sqlParams, (err, deletedRow: AffectedRow[]) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(deletedRow);
-    });
-  });
+export async function remove(categoryId: number): Promise<DeleteResult> {
+  return Category.delete({ id: categoryId });
 }
 
-export function partialUpdate(
+// !TODO: should throw a NotFound custom error instead of returning undefined...
+export async function patch(
   categoryId: number,
-  categoryContent: CategoryContent,
-): Promise<Category[]> {
-  const keys = Object.keys(categoryContent);
-  const values = Object.values(categoryContent);
-  let sql = `UPDATE ${TABLE} SET`;
-  sql = keys.reduce((acc, key, index) => {
-    const isLastKey = index === keys.length - 1;
-    return (acc += ` ${key} = ?${isLastKey ? ' WHERE id = ? RETURNING *' : ','}`);
-  }, sql);
-  const sqlParams = [...values, categoryId];
-
-  return new Promise((resolve, reject) => {
-    db.all(sql, sqlParams, (err, updatedRows: Category[]) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(updatedRows);
-    });
-  });
+  newContent: Partial<CategoryContent>,
+): Promise<Category | undefined> {
+  const category = await Category.findOneBy({ id: categoryId });
+  if (category === null) return;
+  Object.assign(category, newContent);
+  return category.save();
 }
 
-export function update(
+// !TODO: should throw a NotFound custom error instead of returning undefined...
+export async function put(
   categoryId: number,
-  adContent: CategoryContent,
-): Promise<Category[]> {
-  const sql = `
-    UPDATE ${TABLE}
-    SET name = ? 
-    WHERE id = ?
-    RETURNING *
-  `;
-  const sqlParams = [...Object.values(adContent), categoryId];
-  return new Promise((resolve, reject) => {
-    db.all(sql, sqlParams, (err, updatedRows: Category[]) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(updatedRows);
-    });
-  });
+  nextContent: CategoryContent,
+): Promise<Category | undefined> {
+  const category = await Category.findOneBy({ id: categoryId });
+  if (category === null) return;
+  Object.assign(category, nextContent);
+  return category.save();
 }

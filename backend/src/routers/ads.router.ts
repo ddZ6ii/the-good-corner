@@ -7,5 +7,5 @@ adsRouter.get('/', adsController.getAll);
 adsRouter.get('/:id', adsController.getOne);
 adsRouter.post('/', adsController.create);
 adsRouter.delete('/:id', adsController.remove);
-adsRouter.patch('/:id', adsController.partialEdit);
+adsRouter.patch('/:id', adsController.patch);
 adsRouter.put('/:id', adsController.edit);

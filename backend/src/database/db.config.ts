@@ -1,10 +1,16 @@
-import sqlite3 from 'sqlite3';
+import { DataSource } from 'typeorm';
 import { resolve } from 'node:path';
 
+const entitiesUrl = resolve(import.meta.dirname, 'entities/*.ts');
 const DB_FILENAME = 'the_good_corner.sqlite';
-const dbFileUrl = resolve(import.meta.dirname, DB_FILENAME);
 
-export const db = new sqlite3.Database(dbFileUrl);
+export const dbFileUrl = resolve(import.meta.dirname, DB_FILENAME);
 
-// Prevent deleting a parent row if there are dependent rows in the child table.
-db.run('PRAGMA foreign_keys = ON');
+export const dataSource = new DataSource({
+  type: 'sqlite',
+  database: dbFileUrl,
+  entities: [entitiesUrl],
+  // Dev mode only: do not use in production.
+  synchronize: true,
+  logging: true,
+});

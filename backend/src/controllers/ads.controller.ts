@@ -1,170 +1,158 @@
-import { RequestHandler } from 'express';
+import { Request, Response } from 'express';
 import { ZodError } from 'zod';
 import * as adsModel from '@models/ads.model.ts';
 import { formatZodErrorMessage } from '@/utils/formatZodError.ts';
-import {
-  Ad,
-  AdContent,
-  AdContentSchema,
-  isEmpty,
-  PartialAdContentSchema,
-} from '@tgc/common';
+import { AdContentSchema, AdPartialContentSchema, isEmpty } from '@tgc/common';
 import { IdParam, AffectedRow, CustomError } from '@/types/controller.type.ts';
 import { IdSchema } from '@/types/controller.schemas.ts';
+import { Ad } from '@/database/entities/Ad.ts';
+import { AdContent } from '@/types/ads.types.ts';
 
-export const getAll: RequestHandler<
-  unknown,
-  Ad[] | CustomError,
-  unknown,
-  unknown
-> = async (_req, res) => {
+export async function getAll(
+  _req: Request,
+  res: Response<Ad[] | CustomError>,
+): Promise<void> {
   try {
     const ads = await adsModel.findAll();
-    return res.json(ads);
+    res.json(ads);
   } catch (err: unknown) {
     console.error(err);
-    return res.status(500).json({
+    res.status(500).json({
       code: 500,
       message: 'Oops something went wrong... Failed to fetch ads.',
     });
   }
-};
+}
 
-export const getOne: RequestHandler<
-  IdParam,
-  Ad[] | CustomError,
-  unknown,
-  unknown
-> = async (req, res) => {
+export async function getOne(
+  req: Request<IdParam>,
+  res: Response<Ad[] | CustomError>,
+): Promise<void> {
   try {
     const { success, data, error } = IdSchema.safeParse(req.params);
     if (!success) {
       throw new ZodError(error.issues);
     }
     const parsedAdId = data.id;
-    const ads = await adsModel.findOne(parsedAdId);
+    const ads = await adsModel.findOneBy(parsedAdId);
     if (isEmpty(ads)) {
-      return res.status(404).json({ code: 404, message: 'Ad not found.' });
+      res.status(404).json({ code: 404, message: 'Ad not found.' });
+    } else {
+      res.json(ads);
     }
-    return res.json(ads);
   } catch (err: unknown) {
-    console.error(err);
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
-      return res.status(400).json({ code: 400, message: errorMessage });
+      res.status(400).json({ code: 400, message: errorMessage });
+    } else {
+      res.status(500).json({
+        code: 500,
+        message: 'Oops something went wrong... Failed to fetch ad.',
+      });
     }
-    return res.status(500).json({
-      code: 500,
-      message: 'Oops something went wrong... Failed to fetch ad.',
-    });
   }
-};
+}
 
-// ? Why using Zod parse does NOT generate a ZodError?
-export const create: RequestHandler<
-  unknown,
-  AffectedRow[] | CustomError,
-  AdContent,
-  unknown
-> = async (req, res) => {
+export async function create(
+  req: Request<unknown, unknown, AdContent>,
+  res: Response<Ad | CustomError>,
+): Promise<void> {
   try {
-    const { success, data, error } = AdContentSchema.safeParse(req.body);
+    const {
+      success,
+      data: parsedAdContent,
+      error,
+    } = AdContentSchema.safeParse(req.body);
     if (!success) {
       throw new ZodError(error.issues);
     }
-    const parsedAdContent = data;
-    const insertedRows = await adsModel.insert(parsedAdContent);
-    return res.json(insertedRows);
+    const createdAd = await adsModel.create(parsedAdContent);
+    res.json(createdAd);
   } catch (err: unknown) {
     console.error(err);
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
-      return res.status(400).json({ code: 400, message: errorMessage });
+      res.status(400).json({ code: 400, message: errorMessage });
+    } else {
+      res.status(500).json({
+        code: 500,
+        message: 'Oops something went wrong... Failed to create ad.',
+      });
     }
-    return res.status(500).json({
-      code: 500,
-      message: 'Oops something went wrong... Failed to create ad.',
-    });
   }
-};
+}
 
-export const remove: RequestHandler<
-  IdParam,
-  AffectedRow[] | CustomError,
-  unknown,
-  unknown
-> = async (req, res) => {
+export async function remove(
+  req: Request<IdParam>,
+  res: Response<AffectedRow | CustomError>,
+): Promise<void> {
   try {
     const { success, data, error } = IdSchema.safeParse(req.params);
     if (!success) {
       throw new ZodError(error.issues);
     }
     const parsedAdId = data.id;
-    const deletedRows = await adsModel.remove(parsedAdId);
-    if (isEmpty(deletedRows)) {
-      return res.status(404).json({ code: 404, message: 'Ad not found.' });
+    const result = await adsModel.remove(parsedAdId);
+    if (result.affected === 0) {
+      res.status(404).json({ code: 404, message: 'Ad not found.' });
+    } else {
+      res.json({ id: parsedAdId });
     }
-    return res.json(deletedRows);
   } catch (err) {
     console.error(err);
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
-      return res.status(400).json({ code: 400, message: errorMessage });
+      res.status(400).json({ code: 400, message: errorMessage });
+    } else {
+      res.status(500).json({
+        code: 500,
+        message: 'Oops something went wrong... Failed to delete ad.',
+      });
     }
-    return res.status(500).json({
-      code: 500,
-      message: 'Oops something went wrong... Failed to delete ad.',
-    });
   }
-};
+}
 
-export const partialEdit: RequestHandler<
-  IdParam,
-  Ad[] | CustomError,
-  Partial<AdContent>,
-  unknown
-> = async (req, res) => {
+export async function patch(
+  req: Request<IdParam, unknown, Partial<AdContent>>,
+  res: Response<Ad | CustomError>,
+): Promise<void> {
   try {
     const parsedParams = IdSchema.safeParse(req.params);
     if (!parsedParams.success) {
       throw new ZodError(parsedParams.error.issues);
     }
-    const parsedBody = PartialAdContentSchema.safeParse(req.body);
+    const parsedBody = AdPartialContentSchema.safeParse(req.body);
     if (!parsedBody.success) {
       throw new ZodError(parsedBody.error.issues);
     }
     const parsedAdId = parsedParams.data.id;
     const parsedAdContent = parsedBody.data;
-    if (isEmpty(parsedAdContent)) {
-      return res.status(400).json({ code: 400, message: 'No data to update.' });
+    console.log('parsedAdContent', parsedAdContent);
+
+    const updatedAd = await adsModel.patch(parsedAdId, parsedAdContent);
+    if (isEmpty(updatedAd)) {
+      res.status(404).json({ code: 404, message: 'Ad not found.' });
+    } else {
+      res.json(updatedAd);
     }
-    const updatedAds = await adsModel.partialUpdate(
-      parsedAdId,
-      parsedAdContent,
-    );
-    if (isEmpty(updatedAds)) {
-      return res.status(404).json({ code: 404, message: 'Ad not found.' });
-    }
-    return res.json(updatedAds);
   } catch (err) {
     console.error(err);
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
-      return res.status(400).json({ code: 400, message: errorMessage });
+      res.status(400).json({ code: 400, message: errorMessage });
+    } else {
+      res.status(500).json({
+        code: 500,
+        message: 'Oops something went wrong... Failed to update ad.',
+      });
     }
-    return res.status(500).json({
-      code: 500,
-      message: 'Oops something went wrong... Failed to update ad.',
-    });
   }
-};
+}
 
-export const edit: RequestHandler<
-  IdParam,
-  Ad[] | CustomError,
-  AdContent,
-  unknown
-> = async (req, res) => {
+export async function edit(
+  req: Request<IdParam, unknown, AdContent>,
+  res: Response<Ad | CustomError>,
+): Promise<void> {
   try {
     const parsedParams = IdSchema.safeParse(req.params);
     if (!parsedParams.success) {
@@ -176,20 +164,22 @@ export const edit: RequestHandler<
     }
     const parsedAdId = parsedParams.data.id;
     const parsedAdContent = parsedBody.data;
-    const updatedAds = await adsModel.update(parsedAdId, parsedAdContent);
-    if (isEmpty(updatedAds)) {
-      return res.status(404).json({ code: 404, message: 'Ad not found.' });
+    const updatedAd = await adsModel.put(parsedAdId, parsedAdContent);
+    if (isEmpty(updatedAd)) {
+      res.status(404).json({ code: 404, message: 'Ad not found.' });
+    } else {
+      res.json(updatedAd);
     }
-    return res.json(updatedAds);
   } catch (err) {
     console.error(err);
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
-      return res.status(400).json({ code: 400, message: errorMessage });
+      res.status(400).json({ code: 400, message: errorMessage });
+    } else {
+      res.status(500).json({
+        code: 500,
+        message: 'Oops something went wrong... Failed to update ad.',
+      });
     }
-    return res.status(500).json({
-      code: 500,
-      message: 'Oops something went wrong... Failed to update ad.',
-    });
   }
-};
+}

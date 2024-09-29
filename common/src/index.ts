@@ -1,51 +1,74 @@
 import z from 'zod';
 
+/* -------------------------------------------------------------------------- */
+/*                               Constants                                    */
+/* -------------------------------------------------------------------------- */
 const AD_CONSTRAINTS = {
-  minLength: 5,
+  title: {
+    minLength: 5,
+    maxLength: 50,
+  },
+  description: {
+    minLength: 5,
+    maxLength: 500,
+  },
+  location: {
+    minLength: 5,
+    maxLength: 50,
+  },
 };
 
 const CATEGORY_CONSTRAINTS = {
-  minLength: 5,
+  name: {
+    minLength: 5,
+    maxLength: 50,
+  },
 };
 
 /* -------------------------------------------------------------------------- */
 /*                                Schemas                                     */
 /* -------------------------------------------------------------------------- */
 export const AdContentSchema = z.object({
-  title: z.string().trim().min(AD_CONSTRAINTS.minLength),
-  description: z.string().trim().min(AD_CONSTRAINTS.minLength),
+  title: z
+    .string()
+    .trim()
+    .min(AD_CONSTRAINTS.title.minLength)
+    .max(AD_CONSTRAINTS.title.maxLength),
+  description: z
+    .string()
+    .trim()
+    .min(AD_CONSTRAINTS.description.minLength)
+    .max(AD_CONSTRAINTS.description.maxLength),
   owner: z.string().trim().email(),
   price: z.number().nonnegative(),
   picture: z.string().trim().url(),
-  location: z.string().trim().min(AD_CONSTRAINTS.minLength),
-  categoryId: z.number().positive(),
+  location: z
+    .string()
+    .trim()
+    .min(AD_CONSTRAINTS.location.minLength)
+    .max(AD_CONSTRAINTS.location.maxLength),
+  category: z.object(
+    {
+      id: z.number().int().positive(),
+    },
+    {
+      invalid_type_error: "Expected an object with an 'id' property.",
+      message: "Expected an object with an 'id' property.",
+    }
+  ),
 });
 
-export const AdSchema = AdContentSchema.extend({
-  id: z.number().positive(),
-  createdAt: z.string().datetime(),
-});
-
-export const PartialAdContentSchema = AdContentSchema.partial();
-
-/* -------------------------------------------------------------------------- */
+export const AdPartialContentSchema = AdContentSchema.partial();
 
 export const CategoryContentSchema = z.object({
-  name: z.string().trim().min(CATEGORY_CONSTRAINTS.minLength),
+  name: z
+    .string()
+    .trim()
+    .min(CATEGORY_CONSTRAINTS.name.minLength)
+    .max(CATEGORY_CONSTRAINTS.name.maxLength),
 });
 
-export const CategorySchema = AdContentSchema.extend({
-  id: z.number().positive(),
-});
-
-/* -------------------------------------------------------------------------- */
-/*                               Types                                        */
-/* -------------------------------------------------------------------------- */
-export type Ad = z.infer<typeof AdSchema>;
-export type AdContent = z.infer<typeof AdContentSchema>;
-/* -------------------------------------------------------------------------- */
-export type Category = z.infer<typeof CategorySchema>;
-export type CategoryContent = z.infer<typeof CategoryContentSchema>;
+export const CategoryPartialContentSchema = CategoryContentSchema.partial();
 
 /* -------------------------------------------------------------------------- */
 /*                        Utilitary functions                                 */
@@ -59,3 +82,4 @@ export function isEmpty(obj: unknown) {
   if (typeof obj === 'object' && !Object.keys(obj).length) return true;
   return false;
 }
+/* -------------------------------------------------------------------------- */
