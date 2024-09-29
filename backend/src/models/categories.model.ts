@@ -1,9 +1,12 @@
-import { DeleteResult } from 'typeorm';
+import { DeleteResult, Like } from 'typeorm';
 import { Category } from '@database/entities/Category.ts';
 import { CategoryContent } from '@/types/categories.types.ts';
 
-export function findAll(): Promise<Category[]> {
-  return Category.find();
+export function findAll(categoryName: string | undefined): Promise<Category[]> {
+  if (!categoryName) return Category.find();
+  return Category.findBy({
+    name: Like(`%${categoryName.toLowerCase()}%`),
+  });
 }
 
 export function findOneBy(categoryId: number): Promise<Category[]> {

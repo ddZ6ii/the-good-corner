@@ -7,3 +7,9 @@ export const IdParamSchema = z.object({
 export const IdSchema = IdParamSchema.extend({
   id: z.coerce.number().int().safe().positive(),
 });
+
+export const CategoryFilterSchema = z.optional(
+  z.object({
+    name: z.string().optional(),
+  }),
+);

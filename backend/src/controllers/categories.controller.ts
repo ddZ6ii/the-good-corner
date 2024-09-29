@@ -1,30 +1,44 @@
 import { Request, Response } from 'express';
 import { ZodError } from 'zod';
+import * as categoriesModel from '@models/categories.model.ts';
 import {
   CategoryContentSchema,
   CategoryPartialContentSchema,
   isEmpty,
 } from '@tgc/common';
-import * as categoriesModel from '@models/categories.model.ts';
 import { formatZodErrorMessage } from '@/utils/formatZodError.ts';
 import { Category } from '@database/entities/Category.ts';
-import { IdSchema } from '@/types/controller.schemas.ts';
-import { IdParam, AffectedRow, CustomError } from '@/types/controller.type.ts';
+import { IdSchema, CategoryFilterSchema } from '@/types/controller.schemas.ts';
 import { CategoryContent } from '@/types/categories.types.ts';
+import {
+  IdParam,
+  AffectedRow,
+  CustomError,
+  CategoryFilter,
+} from '@/types/controller.type.ts';
 
 export async function getAll(
-  _req: Request,
+  req: Request<unknown, unknown, unknown, CategoryFilter>,
   res: Response<Category[] | CustomError>,
 ): Promise<void> {
   try {
-    const categories = await categoriesModel.findAll();
+    const { success, data, error } = CategoryFilterSchema.safeParse(req.query);
+    if (!success) {
+      throw new ZodError(error.issues);
+    }
+    const parsedCategoryFilter = data?.name;
+    const categories = await categoriesModel.findAll(parsedCategoryFilter);
     res.json(categories);
   } catch (err: unknown) {
-    console.error(err);
-    res.status(500).json({
-      code: 500,
-      message: 'Oops something went wrong... Failed to fetch categories.',
-    });
+    if (err instanceof ZodError) {
+      const errorMessage = formatZodErrorMessage(err.issues[0]);
+      res.status(400).json({ code: 400, message: errorMessage });
+    } else {
+      res.status(500).json({
+        code: 500,
+        message: 'Oops something went wrong... Failed to fetch categories.',
+      });
+    }
   }
 }
 
