@@ -3,24 +3,43 @@ import { ZodError } from 'zod';
 import * as adsModel from '@models/ads.model.ts';
 import { formatZodErrorMessage } from '@/utils/formatZodError.ts';
 import { AdContentSchema, AdPartialContentSchema, isEmpty } from '@tgc/common';
-import { IdParam, AffectedRow, CustomError } from '@/types/controller.type.ts';
-import { IdSchema } from '@/types/controller.schemas.ts';
+import {
+  IdParam,
+  AffectedRow,
+  CustomError,
+  FilterAdByCategory,
+} from '@/types/controller.type.ts';
+import {
+  FilterAdByCategorySchema,
+  IdSchema,
+} from '@/types/controller.schemas.ts';
 import { Ad } from '@/database/entities/Ad.ts';
 import { AdContent } from '@/types/ads.types.ts';
 
 export async function getAll(
-  _req: Request,
+  req: Request<unknown, unknown, unknown, FilterAdByCategory>,
   res: Response<Ad[] | CustomError>,
 ): Promise<void> {
   try {
-    const ads = await adsModel.findAll();
+    const { success, data, error } = FilterAdByCategorySchema.safeParse(
+      req.query,
+    );
+    if (!success) {
+      throw new ZodError(error.issues);
+    }
+    const parsedCategoryFilter = data?.category;
+    const ads = await adsModel.findAll(parsedCategoryFilter);
     res.json(ads);
   } catch (err: unknown) {
-    console.error(err);
-    res.status(500).json({
-      code: 500,
-      message: 'Oops something went wrong... Failed to fetch ads.',
-    });
+    if (err instanceof ZodError) {
+      const errorMessage = formatZodErrorMessage(err.issues[0]);
+      res.status(400).json({ code: 400, message: errorMessage });
+    } else {
+      res.status(500).json({
+        code: 500,
+        message: 'Oops something went wrong... Failed to fetch ads.',
+      });
+    }
   }
 }
 
@@ -127,8 +146,6 @@ export async function patch(
     }
     const parsedAdId = parsedParams.data.id;
     const parsedAdContent = parsedBody.data;
-    console.log('parsedAdContent', parsedAdContent);
-
     const updatedAd = await adsModel.patch(parsedAdId, parsedAdContent);
     if (isEmpty(updatedAd)) {
       res.status(404).json({ code: 404, message: 'Ad not found.' });

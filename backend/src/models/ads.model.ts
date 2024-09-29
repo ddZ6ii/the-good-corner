@@ -1,9 +1,14 @@
-import { DeleteResult } from 'typeorm';
+import { DeleteResult, Like } from 'typeorm';
 import { Ad } from '@database/entities/Ad.ts';
 import { AdContent } from '@/types/ads.types.ts';
 
-export function findAll(): Promise<Ad[]> {
-  return Ad.find();
+export function findAll(categoryFilter: string | undefined): Promise<Ad[]> {
+  if (!categoryFilter) return Ad.find();
+  return Ad.findBy({
+    category: {
+      name: Like(`%${categoryFilter.toLowerCase()}%`),
+    },
+  });
 }
 
 export function findOneBy(adId: number): Promise<Ad[]> {

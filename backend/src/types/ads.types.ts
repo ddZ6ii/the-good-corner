@@ -4,7 +4,7 @@ import { CategoryId } from './categories.types.ts';
 
 type AdContentNoCategory = Omit<
   ExcludeMethods<Ad>,
-  'id' | 'createdAt' | 'category'
+  'id' | 'createdAt' | 'category' | 'tags'
 >;
 
 export type AdContent = AdContentNoCategory & {

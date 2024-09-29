@@ -13,3 +13,9 @@ export const CategoryFilterSchema = z.optional(
     name: z.string().optional(),
   }),
 );
+
+export const FilterAdByCategorySchema = z.optional(
+  z.object({
+    category: z.string().optional(),
+  }),
+);

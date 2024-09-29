@@ -18,7 +18,7 @@ export class Category extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: 'text', length: 50, nullable: false })
+  @Column({ type: 'text', length: 50 })
   name!: string;
 
   @OneToMany(() => Ad, (ad) => ad.category)
