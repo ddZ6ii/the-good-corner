@@ -26,7 +26,6 @@ export async function remove(adId: number): Promise<DeleteResult> {
   return Ad.delete({ id: adId });
 }
 
-// !TODO: should throw a NotFound custom error instead of returning undefined...
 export async function patch(
   adId: number,
   newContent: Partial<AdContent>,
@@ -37,7 +36,6 @@ export async function patch(
   return ad.save();
 }
 
-// !TODO: should throw a NotFound custom error instead of returning undefined...
 export async function put(
   adId: number,
   nextContent: AdContent,

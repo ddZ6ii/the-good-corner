@@ -13,7 +13,3 @@ export type FilterAdByCategory = z.infer<typeof FilterAdByCategorySchema>;
 export type AffectedRow = {
   id: number;
 };
-export type CustomError = {
-  code: number;
-  message: string;
-};

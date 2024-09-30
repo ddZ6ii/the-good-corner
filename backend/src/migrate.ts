@@ -14,10 +14,12 @@ const sql = fs.readFileSync(dumpFileUrl, {
 
 // Reset database content from sql dump file.
 db.exec(sql, (err) => {
-  console.error(
-    chalk.red('Failed to migrate database from dump.sql file!'),
-    err,
-  );
+  if (err) {
+    console.error(
+      chalk.red('Failed to migrate database from dump.sql file!'),
+      err,
+    );
+  }
 });
 
 // Prevent deleting a parent row if there are dependent rows in the child table.
