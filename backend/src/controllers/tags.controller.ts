@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { ZodError } from 'zod';
+import chalk from 'chalk';
 import * as tagsModel from '@models/tags.model.ts';
 import {
   isEmpty,
@@ -87,7 +88,7 @@ export async function create(
     const createdTag = await tagsModel.create(parsedTagContent);
     res.json(createdTag);
   } catch (err: unknown) {
-    console.error(err);
+    console.error(chalk.red(err));
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
       res.status(400).json({ code: 400, message: errorMessage });
@@ -117,7 +118,7 @@ export async function remove(
       res.json({ id: parsedTagId });
     }
   } catch (err) {
-    console.error(err);
+    console.error(chalk.red(err));
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
       res.status(400).json({ code: 400, message: errorMessage });
@@ -152,7 +153,7 @@ export async function patch(
       res.json(updatedTag);
     }
   } catch (err) {
-    console.error(err);
+    console.error(chalk.red(err));
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
       res.status(400).json({ code: 400, message: errorMessage });
@@ -187,7 +188,7 @@ export async function edit(
       res.json(updatedTag);
     }
   } catch (err) {
-    console.error(err);
+    console.error(chalk.red(err));
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
       res.status(400).json({ code: 400, message: errorMessage });

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { ZodError } from 'zod';
+import chalk from 'chalk';
 import * as adsModel from '@models/ads.model.ts';
 import { formatZodErrorMessage } from '@/utils/formatZodError.ts';
 import { AdContentSchema, AdPartialContentSchema, isEmpty } from '@tgc/common';
@@ -88,7 +89,7 @@ export async function create(
     const createdAd = await adsModel.create(parsedAdContent);
     res.json(createdAd);
   } catch (err: unknown) {
-    console.error(err);
+    console.error(chalk.red(err));
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
       res.status(400).json({ code: 400, message: errorMessage });
@@ -118,7 +119,7 @@ export async function remove(
       res.json({ id: parsedAdId });
     }
   } catch (err) {
-    console.error(err);
+    console.error(chalk.red(err));
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
       res.status(400).json({ code: 400, message: errorMessage });
@@ -153,7 +154,7 @@ export async function patch(
       res.json(updatedAd);
     }
   } catch (err) {
-    console.error(err);
+    console.error(chalk.red(err));
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
       res.status(400).json({ code: 400, message: errorMessage });
@@ -188,7 +189,7 @@ export async function edit(
       res.json(updatedAd);
     }
   } catch (err) {
-    console.error(err);
+    console.error(chalk.red(err));
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
       res.status(400).json({ code: 400, message: errorMessage });

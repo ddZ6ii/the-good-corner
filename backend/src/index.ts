@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import express from 'express';
 import 'dotenv/config';
+import chalk from 'chalk';
 import { dataSource } from './database/db.config.ts';
 import router from '@routers/router.ts';
 
@@ -18,10 +19,12 @@ async function initialize(): Promise<void> {
 
   // Server.
   app.listen(API_PORT, () => {
-    console.warn(`Server is running on port ${API_PORT.toString()}`);
+    console.info(
+      chalk.yellow(`Server is running on port ${API_PORT.toString()}`),
+    );
   });
 }
 
 initialize().catch((err: unknown) => {
-  console.error('Failed to initialize the application!', err);
+  console.error(chalk.red('Failed to initialize the application!'), err);
 });

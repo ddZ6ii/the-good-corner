@@ -2,6 +2,7 @@ import fs from 'fs';
 import sqlite3 from 'sqlite3';
 import { resolve } from 'node:path';
 import { dbFileUrl } from './database/db.config.ts';
+import chalk from 'chalk';
 
 const dumpFileUrl = resolve(import.meta.dirname, 'database/dump.sql');
 
@@ -13,7 +14,10 @@ const sql = fs.readFileSync(dumpFileUrl, {
 
 // Reset database content from sql dump file.
 db.exec(sql, (err) => {
-  console.error(err);
+  console.error(
+    chalk.red('Failed to migrate database from dump.sql file!'),
+    err,
+  );
 });
 
 // Prevent deleting a parent row if there are dependent rows in the child table.

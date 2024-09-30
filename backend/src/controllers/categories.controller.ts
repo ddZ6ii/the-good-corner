@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { ZodError } from 'zod';
+import chalk from 'chalk';
 import * as categoriesModel from '@models/categories.model.ts';
 import {
   CategoryContentSchema,
@@ -87,7 +88,7 @@ export async function create(
     const createdCategory = await categoriesModel.create(parsedCategoryContent);
     res.json(createdCategory);
   } catch (err: unknown) {
-    console.error(err);
+    console.error(chalk.red(err));
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
       res.status(400).json({ code: 400, message: errorMessage });
@@ -117,7 +118,7 @@ export async function remove(
       res.json({ id: parsedCategoryId });
     }
   } catch (err) {
-    console.error(err);
+    console.error(chalk.red(err));
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
       res.status(400).json({ code: 400, message: errorMessage });
@@ -155,7 +156,7 @@ export async function patch(
       res.json(updatedCategory);
     }
   } catch (err) {
-    console.error(err);
+    console.error(chalk.red(err));
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
       res.status(400).json({ code: 400, message: errorMessage });
@@ -193,7 +194,7 @@ export async function edit(
       res.json(updatedCategory);
     }
   } catch (err) {
-    console.error(err);
+    console.error(chalk.red(err));
     if (err instanceof ZodError) {
       const errorMessage = formatZodErrorMessage(err.issues[0]);
       res.status(400).json({ code: 400, message: errorMessage });
