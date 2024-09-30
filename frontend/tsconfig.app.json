@@ -19,7 +19,6 @@
     "rootDir": "src",
     "baseUrl": "src",
     "paths": {
-      "@/*": ["*"],
       "@assets/*": ["assets/*"],
       "@components/*": ["components/*"],
       "@contexts/*": ["contexts/*"],
@@ -27,8 +26,6 @@
       "@pages/*": ["pages/*"],
       "@reducers/*": ["reducers/*"],
       "@stores/*": ["stores/*"],
-      "@tests/*": ["tests/*"],
-      "@themes/*": ["themes/*"],
       "@types/*": ["types/*"],
       "@utils/*": ["utils/*"]
     }
