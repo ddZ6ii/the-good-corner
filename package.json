@@ -6,11 +6,13 @@
   "license": "MIT",
   "workspaces": [
     "backend",
-    "common"
+    "common",
+    "frontend"
   ],
   "scripts": {
-    "dev": "concurrently \"yarn dev:back\"",
+    "dev": "concurrently \"yarn dev:back\" \"yarn dev:front\"",
     "dev:back": "yarn workspace backend dev",
+    "dev:front": "yarn workspace frontend dev",
     "build:common": "yarn workspace @tgc/common build",
     "migrate": "yarn workspace backend migrate"
   },
