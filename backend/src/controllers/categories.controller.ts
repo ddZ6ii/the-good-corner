@@ -1,34 +1,21 @@
 import { NextFunction, Request, Response } from 'express';
 import * as categoriesModel from '@models/categories.model.ts';
-import { formatZodErrorMessage } from '@/utils/formatZodError.ts';
-import {
-  CategoryContentSchema,
-  CategoryPartialContentSchema,
-  isEmpty,
-} from '@tgc/common';
+import { isEmpty } from '@tgc/common';
 import { Category } from '@database/entities/Category.ts';
-import { IdSchema, CategoryFilterSchema } from '@/types/controller.schemas.ts';
 import { CategoryContent } from '@/types/categories.types.ts';
 import {
   IdParam,
   AffectedRow,
   CategoryFilter,
 } from '@/types/controller.type.ts';
-import { BadRequestError, NotFoundError } from '@/types/CustomError.types.ts';
+import { NotFoundError } from '@/types/CustomError.types.ts';
 
 export async function getAll(
   req: Request<unknown, unknown, unknown, CategoryFilter>,
   res: Response<Category[]>,
-  next: NextFunction,
 ): Promise<void> {
-  const { success, data, error } = CategoryFilterSchema.safeParse(req.query);
-  if (!success) {
-    const errorMessage = formatZodErrorMessage(error.issues[0]);
-    next(new BadRequestError(errorMessage));
-    return;
-  }
-  const parsedCategoryFilter = data?.name;
-  const categories = await categoriesModel.findAll(parsedCategoryFilter);
+  const { name: searchFilter } = req.query ?? {};
+  const categories = await categoriesModel.findAll(searchFilter);
   res.json(categories);
 }
 
@@ -37,20 +24,10 @@ export async function getOne(
   res: Response<Category[]>,
   next: NextFunction,
 ): Promise<void> {
-  const { success, data, error } = IdSchema.safeParse(req.params);
-  if (!success) {
-    const errorMessage = formatZodErrorMessage(error.issues[0]);
-    next(new BadRequestError(errorMessage));
-    return;
-  }
-  const parsedCategoryId = data.id;
-  const categories = await categoriesModel.findOneBy(parsedCategoryId);
+  const id = parseInt(req.params.id, 10);
+  const categories = await categoriesModel.findOneBy(id);
   if (isEmpty(categories)) {
-    next(
-      new NotFoundError(
-        `No existing category with "id" ${parsedCategoryId.toString()}.`,
-      ),
-    );
+    next(new NotFoundError(`No existing category with "id" ${id.toString()}.`));
     return;
   }
   res.json(categories);
@@ -59,19 +36,9 @@ export async function getOne(
 export async function create(
   req: Request<unknown, unknown, CategoryContent>,
   res: Response<Category>,
-  next: NextFunction,
 ): Promise<void> {
-  const {
-    success,
-    data: parsedCategoryContent,
-    error,
-  } = CategoryContentSchema.safeParse(req.body);
-  if (!success) {
-    const errorMessage = formatZodErrorMessage(error.issues[0]);
-    next(new BadRequestError(errorMessage));
-    return;
-  }
-  const createdCategory = await categoriesModel.create(parsedCategoryContent);
+  const content = req.body;
+  const createdCategory = await categoriesModel.create(content);
   res.json(createdCategory);
 }
 
@@ -80,23 +47,13 @@ export async function remove(
   res: Response<AffectedRow>,
   next: NextFunction,
 ): Promise<void> {
-  const { success, data, error } = IdSchema.safeParse(req.params);
-  if (!success) {
-    const errorMessage = formatZodErrorMessage(error.issues[0]);
-    next(new BadRequestError(errorMessage));
-    return;
-  }
-  const parsedCategoryId = data.id;
-  const result = await categoriesModel.remove(parsedCategoryId);
+  const id = parseInt(req.params.id, 10);
+  const result = await categoriesModel.remove(id);
   if (result.affected === 0) {
-    next(
-      new NotFoundError(
-        `No existing category with "id" ${parsedCategoryId.toString()}.`,
-      ),
-    );
+    next(new NotFoundError(`No existing category with "id" ${id.toString()}.`));
     return;
   }
-  res.json({ id: parsedCategoryId });
+  res.json({ id });
 }
 
 export async function patch(
@@ -104,30 +61,11 @@ export async function patch(
   res: Response<Category>,
   next: NextFunction,
 ): Promise<void> {
-  const parsedParams = IdSchema.safeParse(req.params);
-  if (!parsedParams.success) {
-    const errorMessage = formatZodErrorMessage(parsedParams.error.issues[0]);
-    next(new BadRequestError(errorMessage));
-    return;
-  }
-  const parsedBody = CategoryPartialContentSchema.safeParse(req.body);
-  if (!parsedBody.success) {
-    const errorMessage = formatZodErrorMessage(parsedBody.error.issues[0]);
-    next(new BadRequestError(errorMessage));
-    return;
-  }
-  const parsedCategoryId = parsedParams.data.id;
-  const parsedCategoryContent = parsedBody.data;
-  const updatedCategory = await categoriesModel.patch(
-    parsedCategoryId,
-    parsedCategoryContent,
-  );
+  const id = parseInt(req.params.id, 10);
+  const content = req.body;
+  const updatedCategory = await categoriesModel.patch(id, content);
   if (isEmpty(updatedCategory)) {
-    next(
-      new NotFoundError(
-        `No existing category with "id" ${parsedCategoryId.toString()}.`,
-      ),
-    );
+    next(new NotFoundError(`No existing category with "id" ${id.toString()}.`));
     return;
   }
   res.json(updatedCategory);
@@ -138,30 +76,11 @@ export async function edit(
   res: Response<Category>,
   next: NextFunction,
 ): Promise<void> {
-  const parsedParams = IdSchema.safeParse(req.params);
-  if (!parsedParams.success) {
-    const errorMessage = formatZodErrorMessage(parsedParams.error.issues[0]);
-    next(new BadRequestError(errorMessage));
-    return;
-  }
-  const parsedBody = CategoryContentSchema.safeParse(req.body);
-  if (!parsedBody.success) {
-    const errorMessage = formatZodErrorMessage(parsedBody.error.issues[0]);
-    next(new BadRequestError(errorMessage));
-    return;
-  }
-  const parsedCategoryId = parsedParams.data.id;
-  const parsedCategoryContent = parsedBody.data;
-  const updatedCategory = await categoriesModel.put(
-    parsedCategoryId,
-    parsedCategoryContent,
-  );
+  const id = parseInt(req.params.id, 10);
+  const content = req.body;
+  const updatedCategory = await categoriesModel.put(id, content);
   if (isEmpty(updatedCategory)) {
-    next(
-      new NotFoundError(
-        `No existing category with "id" ${parsedCategoryId.toString()}.`,
-      ),
-    );
+    next(new NotFoundError(`No existing category with "id" ${id.toString()}.`));
     return;
   }
   res.json(updatedCategory);

@@ -1,11 +1,23 @@
 import express from 'express';
 import * as tagsController from '@controllers/tags.controller.ts';
+import { validate } from '@/middlewares/validate.middleware.ts';
+import {
+  FindAllTagsWithFilterSchema,
+  FindByIdSchema,
+  CreateTagSchema,
+  PatchTagSchema,
+  EditTagSchema,
+} from '@/types/controller.schemas.ts';
 
 export const tagsRouter = express.Router();
 
-tagsRouter.get('/', tagsController.getAll);
-tagsRouter.get('/:id', tagsController.getOne);
-tagsRouter.post('/', tagsController.create);
-tagsRouter.delete('/:id', tagsController.remove);
-tagsRouter.patch('/:id', tagsController.patch);
-tagsRouter.put('/:id', tagsController.edit);
+tagsRouter.get(
+  '/',
+  validate(FindAllTagsWithFilterSchema),
+  tagsController.getAll,
+);
+tagsRouter.get('/:id', validate(FindByIdSchema), tagsController.getOne);
+tagsRouter.post('/', validate(CreateTagSchema), tagsController.create);
+tagsRouter.delete('/:id', validate(FindByIdSchema), tagsController.remove);
+tagsRouter.patch('/:id', validate(PatchTagSchema), tagsController.patch);
+tagsRouter.put('/:id', validate(EditTagSchema), tagsController.edit);

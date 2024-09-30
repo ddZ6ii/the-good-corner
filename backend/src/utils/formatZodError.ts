@@ -1,13 +1,18 @@
-import { ZodIssue } from 'zod';
-import { isEmpty } from '@tgc/common';
+import { ZodError } from 'zod';
 
-export function formatZodErrorMessage(issue: ZodIssue): string {
+export function formatZodErrorMessage(error: ZodError): string {
   let errorMessage = '';
-  const fieldName = issue.path[0];
-  if (typeof fieldName === 'string') {
-    errorMessage += `"${fieldName}":`;
+  const issues = error.issues;
+  if (issues.length === 1 && issues[0].path.length < 1) {
+    errorMessage = error.errors[0].message;
+  } else {
+    issues.forEach((issue) => {
+      const formattedPath = issue.path
+        .map((p) => `"${p.toString()}"`)
+        .join(': ');
+      const formattedMessage = issue.message.toLowerCase();
+      errorMessage += `${formattedPath} ${formattedMessage}.`;
+    });
   }
-  const message = issue.message.toLowerCase();
-  errorMessage += `${isEmpty(fieldName) ? message : ` ${message}`}.`;
   return errorMessage;
 }

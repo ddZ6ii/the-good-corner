@@ -19,10 +19,10 @@ Content-Type: application/json
 
 ###
 
-DELETE http://localhost:3000/tags/1
+DELETE http://localhost:3000/tags/16
 
 ### 
-PATCH http://localhost:3000/tags/1
+PATCH http://localhost:3000/tags/16
 Content-Type: application/json
 
 {
@@ -31,7 +31,7 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:3000/tags/1
+PUT http://localhost:3000/tags/16
 Content-Type: application/json
 
 {

@@ -1,30 +1,17 @@
 import { NextFunction, Request, Response } from 'express';
 import * as tagsModel from '@models/tags.model.ts';
-import { formatZodErrorMessage } from '@/utils/formatZodError.ts';
-import {
-  isEmpty,
-  TagContentSchema,
-  TagPartialContentSchema,
-} from '@tgc/common';
+import { isEmpty } from '@tgc/common';
 import { Tag } from '@/database/entities/Tag.ts';
-import { IdSchema, TagFilterSchema } from '@/types/controller.schemas.ts';
 import { IdParam, AffectedRow, TagFilter } from '@/types/controller.type.ts';
 import { TagContent } from '@/types/tags.types.ts';
-import { BadRequestError, NotFoundError } from '@/types/CustomError.types.ts';
+import { NotFoundError } from '@/types/CustomError.types.ts';
 
 export async function getAll(
   req: Request<unknown, unknown, unknown, TagFilter>,
   res: Response<Tag[]>,
-  next: NextFunction,
 ): Promise<void> {
-  const { success, data, error } = TagFilterSchema.safeParse(req.query);
-  if (!success) {
-    const errorMessage = formatZodErrorMessage(error.issues[0]);
-    next(new BadRequestError(errorMessage));
-    return;
-  }
-  const parsedTagFilter = data?.name;
-  const tags = await tagsModel.findAll(parsedTagFilter);
+  const { name: searchFilter } = req.query ?? {};
+  const tags = await tagsModel.findAll(searchFilter);
   res.json(tags);
 }
 
@@ -33,18 +20,10 @@ export async function getOne(
   res: Response<Tag[]>,
   next: NextFunction,
 ): Promise<void> {
-  const { success, data, error } = IdSchema.safeParse(req.params);
-  if (!success) {
-    const errorMessage = formatZodErrorMessage(error.issues[0]);
-    next(new BadRequestError(errorMessage));
-    return;
-  }
-  const parsedTagId = data.id;
-  const tags = await tagsModel.findOneBy(parsedTagId);
+  const id = parseInt(req.params.id, 10);
+  const tags = await tagsModel.findOneBy(id);
   if (isEmpty(tags)) {
-    next(
-      new NotFoundError(`No existing tag with "id" ${parsedTagId.toString()}.`),
-    );
+    next(new NotFoundError(`No existing tag with "id" ${id.toString()}.`));
     return;
   }
   res.json(tags);
@@ -53,19 +32,9 @@ export async function getOne(
 export async function create(
   req: Request<unknown, unknown, TagContent>,
   res: Response<Tag>,
-  next: NextFunction,
 ): Promise<void> {
-  const {
-    success,
-    data: parsedTagContent,
-    error,
-  } = TagContentSchema.safeParse(req.body);
-  if (!success) {
-    const errorMessage = formatZodErrorMessage(error.issues[0]);
-    next(new BadRequestError(errorMessage));
-    return;
-  }
-  const createdTag = await tagsModel.create(parsedTagContent);
+  const content = req.body;
+  const createdTag = await tagsModel.create(content);
   res.json(createdTag);
 }
 
@@ -74,21 +43,13 @@ export async function remove(
   res: Response<AffectedRow>,
   next: NextFunction,
 ): Promise<void> {
-  const { success, data, error } = IdSchema.safeParse(req.params);
-  if (!success) {
-    const errorMessage = formatZodErrorMessage(error.issues[0]);
-    next(new BadRequestError(errorMessage));
-    return;
-  }
-  const parsedTagId = data.id;
-  const result = await tagsModel.remove(parsedTagId);
+  const id = parseInt(req.params.id, 10);
+  const result = await tagsModel.remove(id);
   if (result.affected === 0) {
-    next(
-      new NotFoundError(`No existing tag with "id" ${parsedTagId.toString()}.`),
-    );
+    next(new NotFoundError(`No existing tag with "id" ${id.toString()}.`));
     return;
   }
-  res.json({ id: parsedTagId });
+  res.json({ id });
 }
 
 export async function patch(
@@ -96,25 +57,11 @@ export async function patch(
   res: Response<Tag>,
   next: NextFunction,
 ): Promise<void> {
-  const parsedParams = IdSchema.safeParse(req.params);
-  if (!parsedParams.success) {
-    const errorMessage = formatZodErrorMessage(parsedParams.error.issues[0]);
-    next(new BadRequestError(errorMessage));
-    return;
-  }
-  const parsedBody = TagPartialContentSchema.safeParse(req.body);
-  if (!parsedBody.success) {
-    const errorMessage = formatZodErrorMessage(parsedBody.error.issues[0]);
-    next(new BadRequestError(errorMessage));
-    return;
-  }
-  const parsedTagId = parsedParams.data.id;
-  const parsedTagContent = parsedBody.data;
-  const updatedTag = await tagsModel.patch(parsedTagId, parsedTagContent);
+  const id = parseInt(req.params.id, 10);
+  const content = req.body;
+  const updatedTag = await tagsModel.patch(id, content);
   if (isEmpty(updatedTag)) {
-    next(
-      new NotFoundError(`No existing tag with "id" ${parsedTagId.toString()}.`),
-    );
+    next(new NotFoundError(`No existing tag with "id" ${id.toString()}.`));
     return;
   }
   res.json(updatedTag);
@@ -125,25 +72,11 @@ export async function edit(
   res: Response<Tag>,
   next: NextFunction,
 ): Promise<void> {
-  const parsedParams = IdSchema.safeParse(req.params);
-  if (!parsedParams.success) {
-    const errorMessage = formatZodErrorMessage(parsedParams.error.issues[0]);
-    next(new BadRequestError(errorMessage));
-    return;
-  }
-  const parsedBody = TagContentSchema.safeParse(req.body);
-  if (!parsedBody.success) {
-    const errorMessage = formatZodErrorMessage(parsedBody.error.issues[0]);
-    next(new BadRequestError(errorMessage));
-    return;
-  }
-  const parsedTagId = parsedParams.data.id;
-  const parsedTagContent = parsedBody.data;
-  const updatedTag = await tagsModel.put(parsedTagId, parsedTagContent);
+  const id = parseInt(req.params.id, 10);
+  const content = req.body;
+  const updatedTag = await tagsModel.put(id, content);
   if (isEmpty(updatedTag)) {
-    next(
-      new NotFoundError(`No existing tag with "id" ${parsedTagId.toString()}.`),
-    );
+    next(new NotFoundError(`No existing tag with "id" ${id.toString()}.`));
     return;
   }
   res.json(updatedTag);
