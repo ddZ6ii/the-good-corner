@@ -47,7 +47,7 @@ export const AdContentSchema = z.object({
     .min(AD_CONSTRAINTS.description.minLength)
     .max(AD_CONSTRAINTS.description.maxLength),
   owner: z.string().trim().email(),
-  price: z.number().nonnegative(),
+  price: z.number().int().nonnegative(),
   picture: z.string().trim().url(),
   location: z
     .string()

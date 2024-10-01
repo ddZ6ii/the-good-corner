@@ -31,7 +31,7 @@ export class Ad extends BaseEntity {
   @Column({ type: 'text' })
   owner!: string;
 
-  @Column({ type: 'float', unsigned: true })
+  @Column({ type: 'integer', unsigned: true })
   price!: number;
 
   @Column({ type: 'text' })
