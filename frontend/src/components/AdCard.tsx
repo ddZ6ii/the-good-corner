@@ -10,7 +10,7 @@ type AdCardProps = {
 };
 
 export default function AdCard({
-  ad: { id, alt, src, title, price },
+  ad: { id, title, picture, price },
   onAddPrice,
 }: AdCardProps) {
   const formattedPrice = formatPrice(price);
@@ -22,7 +22,7 @@ export default function AdCard({
   return (
     <Card>
       <NavLink to={formattedUrl} className="card__link">
-        <img className="card__thumbnail" alt={alt} src={src} />
+        <img className="card__thumbnail" alt={title} src={picture} />
         <div className="card__details">
           <h3 className="card__title">{title}</h3>
           <p className="card__price">{formattedPrice}</p>

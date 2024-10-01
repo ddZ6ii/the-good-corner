@@ -1,7 +1,16 @@
+type Category = {
+  id: number;
+  name: string;
+};
+
 export type Ad = {
   id: number;
   title: string;
-  src: string;
-  alt: string;
+  description: string;
+  owner: string;
+  location: string;
+  picture: string;
   price: number;
+  createdAt: string;
+  category: Category;
 };

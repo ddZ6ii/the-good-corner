@@ -1,83 +1,50 @@
-import { useState } from "react";
 import styled from "styled-components";
+import { useAxios } from "@/hooks/useAxios";
 import AdCard from "@components/AdCard";
 import { Ad } from "@/types/types";
-import { formatPrice } from "@/utils/format";
+import { Loader } from "@/common/Loader";
+import { AxiosRequestConfig } from "axios";
 
-export default function RecentAds() {
-  const [totalPrice, setTotalPrice] = useState(0);
-  const formattedPrice = formatPrice(totalPrice);
+type RecentAdsProps = {
+  handleAddPrice: (price: number) => void;
+};
 
-  const handleAddPrice = (price: number): void => {
-    setTotalPrice(totalPrice + price);
-  };
+const FETCH_OPTIONS: AxiosRequestConfig = {
+  method: "GET",
+};
+
+export default function RecentAds({ handleAddPrice }: RecentAdsProps) {
+  const { data: ads, error, isLoading } = useAxios<Ad[]>("ads", FETCH_OPTIONS);
+
+  if (isLoading) {
+    return (
+      <Loader>
+        <p>Loading ads...</p>
+      </Loader>
+    );
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
+  if (!ads) {
+    return <p>Data was null</p>;
+  }
 
   return (
-    <section>
-      <Heading>Recent ads</Heading>
-      <p>Total price: {formattedPrice}</p>
-      <AdList>
-        {ADS.map((ad) => (
-          <li key={ad.id}>
-            <AdCard ad={ad} onAddPrice={handleAddPrice} />
-          </li>
-        ))}
-      </AdList>
-    </section>
+    <AdList>
+      {ads.map((ad) => (
+        <li key={ad.id}>
+          <AdCard ad={ad} onAddPrice={handleAddPrice} />
+        </li>
+      ))}
+    </AdList>
   );
 }
-
-const Heading = styled.h2`
-  margin-bottom: 40px;
-`;
 
 const AdList = styled.ul`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
 `;
-
-const ADS: Ad[] = [
-  {
-    id: 1,
-    title: "Table",
-    src: "/assets/images/table.webp",
-    alt: "Table",
-    price: 12000,
-  },
-  {
-    id: 2,
-    title: "Carboy",
-    src: "/assets/images/carboy.webp",
-    alt: "Carboy",
-    price: 7500,
-  },
-  {
-    id: 3,
-    title: "Trinket tray",
-    src: "/assets/images/trinket-tray.webp",
-    alt: "Trinket tray",
-    price: 400,
-  },
-  {
-    id: 4,
-    title: "Dresser",
-    src: "/assets/images/dresser.webp",
-    alt: "Dresser",
-    price: 90000,
-  },
-  {
-    id: 5,
-    title: "Candle",
-    src: "/assets/images/candle.webp",
-    alt: "Candle",
-    price: 800,
-  },
-  {
-    id: 6,
-    title: "Magazine rack",
-    src: "/assets/images/magazine-rack.webp",
-    alt: "Magazine rack",
-    price: 4500,
-  },
-];
