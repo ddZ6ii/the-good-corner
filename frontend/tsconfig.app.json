@@ -19,14 +19,18 @@
     "rootDir": "src",
     "baseUrl": "src",
     "paths": {
+      "@/*": ["*"],
       "@assets/*": ["assets/*"],
+      "@common/*": ["common/*"],
       "@components/*": ["components/*"],
       "@contexts/*": ["contexts/*"],
       "@hooks/*": ["hooks/*"],
+      "@layouts/*": ["layouts/*"],
       "@pages/*": ["pages/*"],
       "@reducers/*": ["reducers/*"],
       "@stores/*": ["stores/*"],
-      "@types/*": ["types/*"],
+      "@themes/*": ["themes/*"],
+      // "@types/*": ["types/*"],
       "@utils/*": ["utils/*"]
     }
   },
