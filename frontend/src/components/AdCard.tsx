@@ -1,25 +1,24 @@
-import Card from "@components/layout/Card";
-import Link from "@components/common/Link";
+import { NavLink } from "react-router-dom";
+import Card from "@layouts/Card";
 
 type AdCardProps = {
-  id?: number;
+  id: number;
   title: string;
   src: string;
   alt: string;
   price: number;
-  url: string;
 };
 
-export default function AdCard({ title, src, alt, price, url }: AdCardProps) {
+export default function AdCard({ id, title, src, alt, price }: AdCardProps) {
   return (
     <Card className="ad-card-container">
-      <Link to={url} className="ad-card-link">
+      <NavLink to={`/ads/${id.toString()}`} className="ad-card-link">
         <img className="ad-card-image" alt={alt} src={src} />
         <div className="ad-card-text">
           <div className="ad-card-title">{title}</div>
           <div className="ad-card-price">{`${price.toString()} $`}</div>
         </div>
-      </Link>
+      </NavLink>
     </Card>
   );
 }

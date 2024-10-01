@@ -1,4 +1,4 @@
-import Link from "@components/common/Link";
+import { NavLink } from "react-router-dom";
 
 export default function Navbar() {
   return (
@@ -6,9 +6,9 @@ export default function Navbar() {
       <ul className="categories-navigation">
         {NAVITEMS.map((navitem, index) => (
           <li key={navitem.id}>
-            <Link to={navitem.to} className="category-navigation-link">
+            <NavLink to={navitem.to} className="category-navigation-link">
               {navitem.name}
-            </Link>{" "}
+            </NavLink>{" "}
             {index < NAVITEMS.length - 1 && " • "}
           </li>
         ))}
