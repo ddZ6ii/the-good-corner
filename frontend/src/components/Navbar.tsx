@@ -1,21 +1,6 @@
+import styled from "styled-components";
 import { NavLink } from "react-router-dom";
-
-export default function Navbar() {
-  return (
-    <nav>
-      <ul className="categories-navigation">
-        {NAVITEMS.map((navitem, index) => (
-          <li key={navitem.id}>
-            <NavLink to={navitem.to} className="category-navigation-link">
-              {navitem.name}
-            </NavLink>{" "}
-            {index < NAVITEMS.length - 1 && " • "}
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
-}
+import { theme } from "@/themes/theme";
 
 const NAVITEMS = [
   {
@@ -84,3 +69,51 @@ const NAVITEMS = [
     to: "",
   },
 ];
+
+const { color } = theme;
+
+const Nav = styled.nav`
+  & .navlist {
+    padding: 16px 10px 6px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #666;
+    white-space: nowrap;
+    overflow-x: auto;
+    @media screen and (min-width: 720px) {
+      padding-top: 14px;
+    }
+  }
+
+  & li {
+    padding: 4px 8px;
+  }
+
+  & .nav__link {
+    text-decoration: unset;
+    color: inherit;
+    transition: color 0.15s ease-in-out;
+    &:hover {
+      color: ${color.primary};
+    }
+  }
+`;
+
+export default function Navbar() {
+  return (
+    <Nav>
+      <ul className="navlist">
+        {NAVITEMS.map((navitem) => (
+          <li key={navitem.id}>
+            <NavLink to={navitem.to} className="nav__link">
+              {navitem.name}
+            </NavLink>{" "}
+          </li>
+        ))}
+      </ul>
+    </Nav>
+  );
+}

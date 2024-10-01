@@ -1,17 +1,30 @@
+import styled, { css } from "styled-components";
+import { theme } from "@themes/theme";
+import { baseButtonStyle } from "@/themes/styles";
+
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode;
-  variant?: "primary" | "secondary";
+  $primary?: boolean;
 }
 
-export default function Button({
-  type = "button",
-  variant = "primary",
-  children,
-  ...rest
-}: ButtonProps) {
-  return (
-    <button type={type} className={`button button-${variant}`} {...rest}>
-      {children}
-    </button>
-  );
-}
+const { borderRadius, color } = theme;
+
+export const Button = styled.button<ButtonProps>`
+  ${baseButtonStyle}
+  border: ${borderRadius.rounded} solid ${color.primary};
+  border-radius: ${borderRadius.rounded_lg};
+  &:is(:hover, :focus-visible) {
+    background-color: ${color.primary};
+    color: ${color.white};
+  }
+
+  ${({ $primary }) =>
+    $primary &&
+    css`
+      background-color: ${color.primary};
+      color: ${color.white};
+      &:is(:hover, :focus-visible) {
+        background-color: ${color.white};
+        color: ${color.primary};
+      }
+    `};
+`;

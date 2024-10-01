@@ -1,19 +1,19 @@
 /* ______________________________________________________________________ *\
   Reset CSS
 \* ______________________________________________________________________ */
-* {
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+html {
   box-sizing: border-box;
 }
 
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
 body {
-  margin: 0;
   font-family:
     system-ui,
     -apple-system,
@@ -29,162 +29,13 @@ body {
   background-color: #f5f5f5;
 }
 
-h1 {
-  margin: 0;
+img {
+  max-width: 100%;
+  display: block;
 }
 
 ul {
-  margin: 0;
-  padding: 0;
   list-style: none;
-}
-
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  border-bottom: 1px solid lightgray;
-  padding: 10px;
-  background-color: white;
-}
-
-.main-menu {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  color: #ffa41b;
-}
-
-.categories-navigation {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  font-weight: bold;
-  color: #666;
-  padding: 16px 10px 6px;
-  white-space: nowrap;
-  overflow-x: scroll;
-}
-
-.category-navigation-link {
-  text-decoration: unset;
-  color: inherit;
-}
-
-.button {
-  min-width: 40px;
-  height: 40px;
-  padding: 8px;
-  border-radius: 8px;
-  border: 2px solid #ffa41b;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 3px;
-  font-size: 12px;
-  font-weight: bold;
-  color: #ffa41b;
-  background-color: white;
-  cursor: pointer;
-}
-
-.logo {
-  border: none;
-}
-
-.button-primary {
-  background-color: #ffa41b;
-  color: white;
-}
-
-.text-field-with-button {
-  display: flex;
-  flex-grow: 1;
-  justify-content: center;
-  gap: 4px;
-}
-
-.main-search-field {
-  width: 100%;
-  min-width: 120px;
-  max-width: 360px;
-  flex-grow: 1;
-}
-
-.text-field {
-  height: 40px;
-  background-color: white;
-  padding: 8px;
-  border: 2px solid #ffa41b;
-  border-radius: 8px;
-  font-size: 12px;
-  font-family: inherit;
-}
-
-.link-button {
-  text-decoration: none;
-}
-
-.desktop-long-label {
-  display: none;
-}
-
-.main-content {
-  max-width: 832px;
-  padding: 0 16px;
-  margin: 120px auto 48px;
-}
-
-.recent-ads {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-}
-
-.ad-card-container {
-  background-color: white;
-  border-radius: 8px;
-  border: 1px solid lightgray;
-  box-shadow:
-    0 4px 6px -1px rgb(0 0 0 / 0.1),
-    0 2px 4px -2px rgb(0 0 0 / 0.1);
-  color: inherit;
-  transition: box-shadow 0.3s ease-in-out;
-  &:has(.ad-card-link:is(:hover, :focus-visible)) {
-    outline: 1px solid #ffa41b;
-    box-shadow: -8px 8px 20px 0px rgba(0, 0, 0, 0.2);
-  }
-}
-
-.ad-card-link {
-  text-decoration: inherit;
-  color: inherit;
-  &:focus-visible {
-    outline: none;
-  }
-}
-
-.ad-card-image {
-  width: 100%;
-  border-radius: 8px;
-}
-
-.ad-card-text {
-  padding: 12px;
-  font-size: 18px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.ad-card-title {
-  font-weight: bold;
-}
-
-.ad-card-price {
-  font-weight: medium;
-  color: #ffa41b;
 }
 
 .ad-details-image-container {
@@ -202,17 +53,6 @@ ul {
 }
 
 @media screen and (min-width: 720px) {
-  .mobile-short-label {
-    display: none;
-  }
-  .desktop-long-label {
-    display: initial;
-  }
-
-  .categories-navigation {
-    padding-top: 14px;
-  }
-
   .ad-details-image-container {
     margin-inline-start: unset;
     margin-inline-end: unset;

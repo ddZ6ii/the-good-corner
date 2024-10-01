@@ -1,7 +1,11 @@
-type NavigationHeaderProps = {
-  children: React.ReactNode;
-};
+import styled from "styled-components";
+import { theme } from "@themes/theme";
 
-export default function NavigationHeader({ children }: NavigationHeaderProps) {
-  return <header className="header">{children}</header>;
-}
+const { borderRadius, color } = theme;
+
+export const NavigationHeader = styled.header`
+  padding: 10px;
+  background-color: ${color.white};
+  border-bottom: ${borderRadius.rounded} solid ${color.neutral.lightest};
+  overflow: hidden;
+`;

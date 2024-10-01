@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import Card from "@layouts/Card";
+import { Card } from "@layouts/Card";
 
 type AdCardProps = {
   id: number;
@@ -11,12 +11,12 @@ type AdCardProps = {
 
 export default function AdCard({ id, title, src, alt, price }: AdCardProps) {
   return (
-    <Card className="ad-card-container">
-      <NavLink to={`/ads/${id.toString()}`} className="ad-card-link">
-        <img className="ad-card-image" alt={alt} src={src} />
-        <div className="ad-card-text">
-          <div className="ad-card-title">{title}</div>
-          <div className="ad-card-price">{`${price.toString()} $`}</div>
+    <Card>
+      <NavLink to={`/ads/${id.toString()}`} className="card__link">
+        <img className="card__thumbnail" alt={alt} src={src} />
+        <div className="card__details">
+          <h3 className="card__title">{title}</h3>
+          <p className="card__price">{`${price.toString()} $`}</p>
         </div>
       </NavLink>
     </Card>

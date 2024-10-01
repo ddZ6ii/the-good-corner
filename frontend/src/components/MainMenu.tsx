@@ -1,7 +1,24 @@
-type MainMenuProps = {
-  children: React.ReactNode;
-};
+import styled from "styled-components";
+import { theme } from "@themes/theme";
 
-export default function MainMenu({ children }: MainMenuProps) {
-  return <div className="main-menu">{children}</div>;
-}
+const { color } = theme;
+
+export const MainMenu = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  color: ${color.primary};
+
+  & .mobile__short {
+    @media screen and (min-width: 720px) {
+      display: none;
+    }
+  }
+  & .desktop__long {
+    display: none;
+    @media screen and (min-width: 720px) {
+      display: initial;
+    }
+  }
+`;

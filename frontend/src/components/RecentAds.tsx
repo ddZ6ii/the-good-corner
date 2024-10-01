@@ -1,21 +1,30 @@
+import styled from "styled-components";
 import AdCard from "@components/AdCard";
 
 export default function RecentAds() {
   return (
-    <>
-      <h2>Recent ads</h2>
-      <section>
-        <ul className="recent-ads">
-          {ADS.map((ad) => (
-            <li key={ad.id}>
-              <AdCard {...ad} />
-            </li>
-          ))}
-        </ul>
-      </section>
-    </>
+    <section>
+      <Heading>Recent ads</Heading>
+      <AdList>
+        {ADS.map((ad) => (
+          <li key={ad.id}>
+            <AdCard {...ad} />
+          </li>
+        ))}
+      </AdList>
+    </section>
   );
 }
+
+const Heading = styled.h2`
+  margin-bottom: 40px;
+`;
+
+const AdList = styled.ul`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+`;
 
 const ADS = [
   {

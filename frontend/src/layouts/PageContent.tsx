@@ -1,7 +1,7 @@
-type PageContentProps = {
-  children: React.ReactNode;
-};
+import styled from "styled-components";
 
-export default function PageContent({ children }: PageContentProps) {
-  return <main className="main-content">{children}</main>;
-}
+export const PageContent = styled.main`
+  margin: 120px auto 48px;
+  padding: 0 16px;
+  max-width: 832px;
+`;
