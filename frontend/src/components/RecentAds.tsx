@@ -1,14 +1,25 @@
+import { useState } from "react";
 import styled from "styled-components";
 import AdCard from "@components/AdCard";
+import { Ad } from "@/types/types";
+import { formatPrice } from "@/utils/format";
 
 export default function RecentAds() {
+  const [totalPrice, setTotalPrice] = useState(0);
+  const formattedPrice = formatPrice(totalPrice);
+
+  const handleAddPrice = (price: number): void => {
+    setTotalPrice(totalPrice + price);
+  };
+
   return (
     <section>
       <Heading>Recent ads</Heading>
+      <p>Total price: {formattedPrice}</p>
       <AdList>
         {ADS.map((ad) => (
           <li key={ad.id}>
-            <AdCard {...ad} />
+            <AdCard ad={ad} onAddPrice={handleAddPrice} />
           </li>
         ))}
       </AdList>
@@ -26,53 +37,47 @@ const AdList = styled.ul`
   gap: 16px;
 `;
 
-const ADS = [
+const ADS: Ad[] = [
   {
     id: 1,
     title: "Table",
     src: "/assets/images/table.webp",
     alt: "Table",
-    price: 120,
-    url: "/ads/table",
+    price: 12000,
   },
   {
     id: 2,
     title: "Carboy",
     src: "/assets/images/carboy.webp",
     alt: "Carboy",
-    price: 75,
-    url: "/ads/carboy",
+    price: 7500,
   },
   {
     id: 3,
     title: "Trinket tray",
     src: "/assets/images/trinket-tray.webp",
     alt: "Trinket tray",
-    price: 4,
-    url: "/ads/trinket-tray",
+    price: 400,
   },
   {
     id: 4,
     title: "Dresser",
     src: "/assets/images/dresser.webp",
     alt: "Dresser",
-    price: 900,
-    url: "/ads/dresser",
+    price: 90000,
   },
   {
     id: 5,
     title: "Candle",
     src: "/assets/images/candle.webp",
     alt: "Candle",
-    price: 8,
-    url: "/ads/candle",
+    price: 800,
   },
   {
     id: 6,
     title: "Magazine rack",
     src: "/assets/images/magazine-rack.webp",
     alt: "Magazine rack",
-    price: 45,
-    url: "/ads/magazine-rack",
+    price: 4500,
   },
 ];
