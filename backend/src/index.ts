@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import express from 'express';
 import 'dotenv/config';
+import cors from 'cors';
 import chalk from 'chalk';
 import { dataSource } from './database/db.config.ts';
 import router from '@routers/router.ts';
@@ -10,6 +11,7 @@ const API_PORT = parseInt(process.env.API_PORT ?? '3000', 10);
 const app = express();
 
 // Application-level middlewares.
+app.use(cors({ origin: process.env.FRONTEND_URL }));
 app.use(express.json());
 app.use('/', router);
 /** Custom error-handling middleware
