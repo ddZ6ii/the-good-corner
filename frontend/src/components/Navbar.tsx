@@ -1,74 +1,53 @@
 import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 import { theme } from "@/themes/theme";
+import { AxiosRequestConfig } from "axios";
+import { useAxios } from "@/hooks/useAxios";
+import { Category } from "@/types/types";
+import { Loader } from "@/common/Loader";
+import { capitalize } from "@/utils/format";
 
-const NAVITEMS = [
-  {
-    id: 1,
-    name: "Furniture",
-    to: "",
-  },
-  {
-    id: 2,
-    name: "Household Appliances",
-    to: "",
-  },
-  {
-    id: 3,
-    name: "Photography",
-    to: "",
-  },
-  {
-    id: 4,
-    name: "Computing",
-    to: "",
-  },
-  {
-    id: 5,
-    name: "Mobile",
-    to: "",
-  },
-  {
-    id: 6,
-    name: "Bikes",
-    to: "",
-  },
-  {
-    id: 7,
-    name: "Vehicules",
-    to: "",
-  },
-  {
-    id: 8,
-    name: "Sport",
-    to: "",
-  },
-  {
-    id: 9,
-    name: "Clothing",
-    to: "",
-  },
-  {
-    id: 10,
-    name: "Baby",
-    to: "",
-  },
-  {
-    id: 11,
-    name: "Tools",
-    to: "",
-  },
-  {
-    id: 12,
-    name: "Services",
-    to: "",
-  },
-  {
-    id: 13,
-    name: "Holidays",
-    to: "",
-  },
-];
+const FETCH_OPTIONS: AxiosRequestConfig = {
+  method: "GET",
+};
+
+export default function Navbar() {
+  const {
+    data: categories,
+    error,
+    isLoading,
+  } = useAxios<Category[]>("categories", FETCH_OPTIONS);
+
+  if (isLoading) {
+    return <Loader size="sm" />;
+  }
+
+  if (error) {
+    console.error(error);
+    return <p>{error}</p>;
+  }
+
+  if (!categories) {
+    return <p>Data was null</p>;
+  }
+
+  return (
+    <Nav>
+      <ul className="navlist">
+        {categories.map((category) => (
+          <li key={category.id}>
+            <NavLink
+              to={`categories/${category.id.toString()}`}
+              className="nav__link"
+            >
+              {capitalize(category.name)}
+            </NavLink>{" "}
+          </li>
+        ))}
+      </ul>
+    </Nav>
+  );
+}
 
 const { color } = theme;
 
@@ -101,19 +80,3 @@ const Nav = styled.nav`
     }
   }
 `;
-
-export default function Navbar() {
-  return (
-    <Nav>
-      <ul className="navlist">
-        {NAVITEMS.map((navitem) => (
-          <li key={navitem.id}>
-            <NavLink to={navitem.to} className="nav__link">
-              {navitem.name}
-            </NavLink>{" "}
-          </li>
-        ))}
-      </ul>
-    </Nav>
-  );
-}

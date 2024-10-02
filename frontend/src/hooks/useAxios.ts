@@ -35,7 +35,6 @@ export function useAxios<T>(
           url: `${BASE_URL}/${endpoint}`,
           signal: controller.signal,
         });
-        console.log("response", response);
         if (!ignore) {
           setData(response.data);
         }
