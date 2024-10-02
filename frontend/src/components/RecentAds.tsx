@@ -45,6 +45,6 @@ export default function RecentAds({ handleAddPrice }: RecentAdsProps) {
 
 const AdList = styled.ul`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: 40px;
 `;

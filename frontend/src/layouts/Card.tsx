@@ -4,19 +4,18 @@ import { theme } from "@/themes/theme";
 const { color, borderRadius, shadow } = theme;
 
 export const Card = styled.div`
-  padding: 1rem;
+  margin: 0 auto;
+  width: min(300px, 100%);
   display: grid;
+  align-items: center;
   background-color: ${color.white};
   border-radius: ${borderRadius.rounded_lg};
-  border: ${borderRadius.rounded} solid ${color.neutral.lightest};
   box-shadow: ${shadow.base};
   color: inherit;
   transition: box-shadow 0.3s ease-in-out;
   overflow: hidden;
 
   &:has(.card__link:is(:hover, :focus-visible)) {
-    outline: ${borderRadius.rounded_sm} solid ${color.primary};
-    border-color: transparent;
     box-shadow: ${shadow.md};
   }
 
@@ -35,16 +34,17 @@ export const Card = styled.div`
 
   & .card__thumbnail {
     max-width: 100%;
-    border-radius: ${borderRadius.rounded_lg};
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
     transition: transform 0.3s ease-in-out;
   }
 
   & .card__details {
-    padding: 12px;
-    font-size: 18px;
+    margin-block: 8px;
+    padding: 1rem;
     display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
+    font-size: 18px;
+    text-align: left;
     gap: 16px;
   }
 
@@ -57,13 +57,17 @@ export const Card = styled.div`
   }
 
   & .card__price {
+    font-size: 14px;
     font-weight: medium;
     color: ${color.primary};
     white-space: nowrap;
   }
 
+  & .card__wrapper__cta {
+    padding: 0 1rem 1rem;
+  }
+
   & .card__cta {
-    width: "100%";
-    display: "block";
+    width: 100%;
   }
 `;

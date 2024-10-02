@@ -24,13 +24,17 @@ export default function AdCard({
       <NavLink to={formattedUrl} className="card__link">
         <img className="card__thumbnail" alt={title} src={picture} />
         <div className="card__details">
-          <h3 className="card__title">{title}</h3>
+          <h3 title={title} className="card__title">
+            {title}
+          </h3>
           <p className="card__price">{formattedPrice}</p>
         </div>
       </NavLink>
-      <Button style={{ display: "block", width: "100%" }} onClick={handleClick}>
-        Add price to total
-      </Button>
+      <div className="card__wrapper__cta">
+        <Button className="card__cta" onClick={handleClick}>
+          Add price to total
+        </Button>
+      </div>
     </Card>
   );
 }
