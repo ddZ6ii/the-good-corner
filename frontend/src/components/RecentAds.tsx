@@ -1,20 +1,15 @@
 import styled from "styled-components";
 import { useAxios } from "@/hooks/useAxios";
 import AdCard from "@components/AdCard";
-import { Ad } from "@/types/types";
+import { AdNoTags } from "@tgc/common";
 import { Loader } from "@/common/Loader";
-import { AxiosRequestConfig } from "axios";
 
 type RecentAdsProps = {
   handleAddPrice: (price: number) => void;
 };
 
-const FETCH_OPTIONS: AxiosRequestConfig = {
-  method: "GET",
-};
-
 export default function RecentAds({ handleAddPrice }: RecentAdsProps) {
-  const { data: ads, error, isLoading } = useAxios<Ad[]>("ads", FETCH_OPTIONS);
+  const { data: ads, error, isLoading } = useAxios<AdNoTags[]>("ads");
 
   if (isLoading) {
     return (

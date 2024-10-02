@@ -3,6 +3,7 @@ import PageLayout from "@layouts/PageLayout";
 import HomePage from "@pages/HomePage";
 import AdPage from "@pages/AdPage";
 import AboutPage from "@pages/AboutPage";
+import CategoryPage from "@/pages/CategoryPage";
 import "./App.css";
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" Component={PageLayout}>
           <Route index Component={HomePage} />
           <Route path="ads/:id" Component={AdPage} />
+          <Route path="categories/:id" Component={CategoryPage} />
           <Route path="about" Component={AboutPage} />
           <Route path="*" Component={HomePage} />
         </Route>

@@ -12,6 +12,7 @@ export const theme = {
     primary: "#ffa41b",
     neutral: {
       lightest: "#D3D3D3",
+      light: "#666",
       darkest: "#2A2A2A",
     },
   },

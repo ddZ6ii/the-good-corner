@@ -1,11 +1,11 @@
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
 import { theme } from "@/themes/theme";
 import { AxiosRequestConfig } from "axios";
 import { useAxios } from "@/hooks/useAxios";
-import { Category } from "@/types/types";
+import { Category } from "@tgc/common";
 import { Loader } from "@/common/Loader";
 import { capitalize } from "@/utils/format";
+import { NavLink } from "react-router-dom";
 
 const FETCH_OPTIONS: AxiosRequestConfig = {
   method: "GET",
@@ -41,7 +41,7 @@ export default function Navbar() {
               className="nav__link"
             >
               {capitalize(category.name)}
-            </NavLink>{" "}
+            </NavLink>
           </li>
         ))}
       </ul>
@@ -49,7 +49,7 @@ export default function Navbar() {
   );
 }
 
-const { color } = theme;
+const { borderRadius, color } = theme;
 
 const Nav = styled.nav`
   & .navlist {
@@ -59,7 +59,7 @@ const Nav = styled.nav`
     gap: 16px;
     font-size: 12px;
     font-weight: bold;
-    color: #666;
+    color: ${color.neutral.light};
     white-space: nowrap;
     overflow-x: auto;
     @media screen and (min-width: 720px) {
@@ -68,15 +68,19 @@ const Nav = styled.nav`
   }
 
   & li {
-    padding: 4px 8px;
+    margin-bottom: 4px;
   }
 
   & .nav__link {
-    text-decoration: unset;
+    padding: 4px 8px;
+    border-radius: ${borderRadius.rounded_lg};
     color: inherit;
-    transition: color 0.15s ease-in-out;
+    cursor: pointer;
+    text-decoration: unset;
+    transition: all 0.3s ease-in-out;
     &:hover {
-      color: ${color.primary};
+      color: ${color.white};
+      background-color: ${color.primary};
     }
   }
 `;

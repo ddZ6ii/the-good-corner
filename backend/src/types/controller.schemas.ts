@@ -1,5 +1,6 @@
 import z from 'zod';
 import {
+  IdParamSchema,
   AdContentSchema,
   AdPartialContentSchema,
   CategoryContentSchema,
@@ -16,10 +17,6 @@ export function SearchSchema<T>(schema: z.ZodType<T>) {
     query: schema,
   });
 }
-
-export const IdParamSchema = z.object({
-  id: z.string(),
-});
 
 export const IdSchema = IdParamSchema.extend({
   id: z.coerce.number().int().safe().positive(),

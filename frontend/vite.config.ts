@@ -31,7 +31,6 @@ export default defineConfig({
       "@reducers": resolve(join(import.meta.dirname, "src/reducers")),
       "@stores": resolve(join(import.meta.dirname, "src/stores")),
       "@themes": resolve(join(import.meta.dirname, "src/themes")),
-      // "@types": resolve(join(import.meta.dirname, "src/types")),
       "@utils": resolve(join(import.meta.dirname, "src/utils")),
     },
   },

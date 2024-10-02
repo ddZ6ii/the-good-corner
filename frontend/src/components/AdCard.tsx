@@ -2,10 +2,10 @@ import { NavLink } from "react-router-dom";
 import { Card } from "@layouts/Card";
 import { Button } from "@common/Button";
 import { formatPrice, formatUrl } from "@utils/format";
-import { Ad } from "@/types/types";
+import { AdNoTags } from "@tgc/common";
 
 type AdCardProps = {
-  ad: Ad;
+  ad: AdNoTags;
   onAddPrice: (price: number) => void;
 };
 

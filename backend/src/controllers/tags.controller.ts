@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import * as tagsModel from '@models/tags.model.ts';
-import { isEmpty } from '@tgc/common';
+import { IdParam, isEmpty } from '@tgc/common';
 import { Tag } from '@/database/entities/Tag.ts';
-import { IdParam, AffectedRow, TagFilter } from '@/types/controller.type.ts';
+import { AffectedRow, TagFilter } from '@/types/controller.type.ts';
 import { TagContent } from '@/types/tags.types.ts';
 import { NotFoundError } from '@/types/CustomError.types.ts';
 

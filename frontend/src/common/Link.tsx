@@ -12,6 +12,7 @@ const { borderRadius, color } = theme;
 export const Link = styled(NavLink)<LinkProps>`
   ${baseButtonStyle}
   border: none;
+  border-radius: ${borderRadius.rounded_lg};
   text-decoration: none;
 
   ${({ $outline }) =>

@@ -1,13 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import * as categoriesModel from '@models/categories.model.ts';
-import { isEmpty } from '@tgc/common';
+import { IdParam, isEmpty } from '@tgc/common';
 import { Category } from '@database/entities/Category.ts';
 import { CategoryContent } from '@/types/categories.types.ts';
-import {
-  IdParam,
-  AffectedRow,
-  CategoryFilter,
-} from '@/types/controller.type.ts';
+import { AffectedRow, CategoryFilter } from '@/types/controller.type.ts';
 import { NotFoundError } from '@/types/CustomError.types.ts';
 
 export async function getAll(
@@ -21,16 +17,16 @@ export async function getAll(
 
 export async function getOne(
   req: Request<IdParam>,
-  res: Response<Category[]>,
+  res: Response<Category>,
   next: NextFunction,
 ): Promise<void> {
   const id = parseInt(req.params.id, 10);
-  const categories = await categoriesModel.findOneBy(id);
-  if (isEmpty(categories)) {
+  const category = await categoriesModel.findOneBy(id);
+  if (category === null) {
     next(new NotFoundError(`No existing category with "id" ${id.toString()}.`));
     return;
   }
-  res.json(categories);
+  res.json(category);
 }
 
 export async function create(

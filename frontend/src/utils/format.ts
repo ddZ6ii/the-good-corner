@@ -7,7 +7,7 @@ export function capitalize(text: string): string {
 }
 
 export function formatUrl(baseUrl: string, id: number): string {
-  return `/${baseUrl}/${id.toString()}`;
+  return `${baseUrl}/${id.toString()}`;
 }
 
 export function formatPrice(priceInCents: number): string {

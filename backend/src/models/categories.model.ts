@@ -9,8 +9,11 @@ export function findAll(categoryName: string | undefined): Promise<Category[]> {
   });
 }
 
-export function findOneBy(categoryId: number): Promise<Category[]> {
-  return Category.findBy({ id: categoryId });
+export function findOneBy(categoryId: number): Promise<Category | null> {
+  return Category.findOne({
+    where: { id: categoryId },
+    relations: ['ads', 'ads.tags'],
+  });
 }
 
 export function create(content: CategoryContent): Promise<Category> {

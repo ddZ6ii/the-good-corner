@@ -35,6 +35,10 @@ const TAG_CONSTRAINTS = {
 /* -------------------------------------------------------------------------- */
 /*                                Schemas                                     */
 /* -------------------------------------------------------------------------- */
+export const IdParamSchema = z.object({
+  id: z.string(),
+});
+
 export const AdContentSchema = z.object({
   title: z
     .string()
@@ -71,7 +75,6 @@ export const AdContentSchema = z.object({
       {
         invalid_type_error:
           "Expected an array of objects with an 'id' property.",
-        // message: "Expected an object with an 'id' property.",
       }
     )
     .array()
@@ -80,12 +83,42 @@ export const AdContentSchema = z.object({
 
 export const AdPartialContentSchema = AdContentSchema.partial();
 
+// !TODO: to be updated with tags...
+export const AdNoTagsSchema = AdContentSchema.omit({
+  category: true,
+  tags: true,
+}).extend({
+  id: z.number().int().positive(),
+  createdAt: z.string().trim(),
+  category: z.object(
+    {
+      id: z.number().int().positive(),
+      name: z
+        .string()
+        .trim()
+        .min(CATEGORY_CONSTRAINTS.name.minLength)
+        .max(CATEGORY_CONSTRAINTS.name.maxLength),
+    },
+    {
+      invalid_type_error: "Expected an object with 'id' and 'name' properties.",
+    }
+  ),
+});
+
 export const CategoryContentSchema = z.object({
   name: z
     .string()
     .trim()
     .min(CATEGORY_CONSTRAINTS.name.minLength)
     .max(CATEGORY_CONSTRAINTS.name.maxLength),
+});
+
+export const CategorySchema = CategoryContentSchema.extend({
+  id: z.number().int().positive(),
+});
+
+export const CategoryWthAdsSchema = CategorySchema.extend({
+  ads: z.array(AdNoTagsSchema),
 });
 
 export const CategoryPartialContentSchema = CategoryContentSchema.partial();
@@ -98,7 +131,21 @@ export const TagContentSchema = z.object({
     .max(TAG_CONSTRAINTS.name.maxLength),
 });
 
+export const TagSchema = TagContentSchema.extend({
+  id: z.number().int().positive(),
+});
+
 export const TagPartialContentSchema = TagContentSchema.partial();
+
+/* -------------------------------------------------------------------------- */
+/*                                Types                                     */
+/* -------------------------------------------------------------------------- */
+export type IdParam = z.infer<typeof IdParamSchema>;
+export type AdNoTags = z.infer<typeof AdNoTagsSchema>;
+export type AdContent = z.infer<typeof AdContentSchema>;
+export type Category = z.infer<typeof CategorySchema>;
+export type CategoryWithAds = z.infer<typeof CategoryWthAdsSchema>;
+export type Tag = z.infer<typeof TagSchema>;
 
 /* -------------------------------------------------------------------------- */
 /*                        Utilitary functions                                 */

@@ -59,7 +59,7 @@ export const Card = styled.div`
   & .card__price {
     font-size: 14px;
     font-weight: medium;
-    color: ${color.primary};
+    color: ${color.neutral.light};
     white-space: nowrap;
   }
 

@@ -30,7 +30,6 @@
       "@reducers/*": ["reducers/*"],
       "@stores/*": ["stores/*"],
       "@themes/*": ["themes/*"],
-      // "@types/*": ["types/*"],
       "@utils/*": ["utils/*"]
     }
   },

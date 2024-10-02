@@ -4,6 +4,7 @@ import { theme } from "@themes/theme";
 const { color } = theme;
 
 export const MainMenu = styled.div`
+  margin-bottom: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
