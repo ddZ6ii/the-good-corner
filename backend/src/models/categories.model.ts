@@ -23,7 +23,6 @@ export async function remove(categoryId: number): Promise<DeleteResult> {
   return Category.delete({ id: categoryId });
 }
 
-// !TODO: should throw a NotFound custom error instead of returning undefined...
 export async function patch(
   categoryId: number,
   newContent: Partial<CategoryContent>,
@@ -34,7 +33,6 @@ export async function patch(
   return category.save();
 }
 
-// !TODO: should throw a NotFound custom error instead of returning undefined...
 export async function put(
   categoryId: number,
   nextContent: CategoryContent,
