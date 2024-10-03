@@ -26,3 +26,16 @@ export const Link = styled(NavLink)<LinkProps>`
       }
     `};
 `;
+
+export const LinkNav = styled(NavLink)<LinkProps>`
+  padding: 4px 8px;
+  border-radius: ${borderRadius.rounded_lg};
+  color: inherit;
+  cursor: pointer;
+  text-decoration: unset;
+  transition: all 0.3s ease-in-out;
+  &:hover {
+    color: ${color.white};
+    background-color: ${color.primary};
+  }
+`;

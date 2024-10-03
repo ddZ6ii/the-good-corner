@@ -1,13 +1,11 @@
-import styled from "styled-components";
 import { Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import styled from "styled-components";
+import { Link } from "@/common/Link";
 import Logo from "@components/Logo";
-import { MainMenu } from "@components/MainMenu";
 import Navbar from "@components/Navbar";
 import SearchBar from "@components/SearchBar";
-import { NavigationHeader } from "@layouts/NavigationHeader";
-import { PageContent } from "@layouts/PageContent";
-import { Link } from "@/common/Link";
+import { theme } from "@/themes/theme";
 
 export default function PageLayout() {
   return (
@@ -33,6 +31,8 @@ export default function PageLayout() {
   );
 }
 
+const { borderRadius, color } = theme;
+
 const Container = styled.div`
   margin: 0 auto;
   min-height: 100dvh;
@@ -40,4 +40,36 @@ const Container = styled.div`
   display: grid;
   grid-template-rows: auto 1fr;
   text-align: center;
+`;
+
+const NavigationHeader = styled.header`
+  padding: 10px;
+  background-color: ${color.white};
+  border-bottom: ${borderRadius.rounded} solid ${color.neutral.lightest};
+  overflow: hidden;
+`;
+
+const MainMenu = styled.div`
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  color: ${color.primary};
+
+  & .mobile__short {
+    @media screen and (min-width: 720px) {
+      display: none;
+    }
+  }
+  & .desktop__long {
+    display: none;
+    @media screen and (min-width: 720px) {
+      display: initial;
+    }
+  }
+`;
+
+const PageContent = styled.main`
+  padding: 32px 0;
 `;
