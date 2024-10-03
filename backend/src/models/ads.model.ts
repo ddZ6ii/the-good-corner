@@ -12,8 +12,11 @@ export function findAll(categoryFilter: string | undefined): Promise<Ad[]> {
   });
 }
 
-export function findOneBy(adId: number): Promise<Ad[]> {
-  return Ad.find({ relations: ['tags'], where: { id: adId } });
+export function findOneBy(adId: number): Promise<Ad | null> {
+  return Ad.findOne({
+    where: { id: adId },
+    relations: ['tags'],
+  });
 }
 
 export function create(content: AdContent): Promise<Ad> {
