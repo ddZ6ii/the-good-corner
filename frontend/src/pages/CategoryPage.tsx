@@ -1,82 +1,44 @@
-import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { AxiosRequestConfig } from "axios";
-import styled from "styled-components";
 import { useAxios } from "@/hooks/useAxios";
-import { capitalize, formatUrl } from "@/utils/format";
 import { CategoryWithAds, IdParam, IdParamSchema } from "@tgc/common";
-import { Loader } from "@/common/Loader";
-import AdCard from "@/components/AdCard";
-
-const FETCH_OPTIONS: AxiosRequestConfig = {
-  method: "GET",
-};
+import Loader from "@/common/Loader";
+import MainContent from "@/layouts/MainContent";
+import AdGallery from "@/layouts/AdGallery";
+import { capitalize } from "@/utils/format";
+import { sortAdsByCreationDate } from "@/utils/sort";
 
 export default function CategoryPage() {
   const params = useParams<IdParam>();
-  const { id: parsedCateggoryId } = IdParamSchema.parse(params);
-  const formattedUrl = formatUrl("categories", parseInt(parsedCateggoryId, 10));
-
+  const { id } = IdParamSchema.parse(params);
   const {
     data: category,
     error,
     isLoading,
-  } = useAxios<CategoryWithAds>(formattedUrl, FETCH_OPTIONS);
+  } = useAxios<CategoryWithAds>(`categories/${id}`);
 
-  const filteredAds = category?.ads;
-
-  const [totalPrice, setTotalPrice] = useState(0);
-
-  const handleAddPrice = (price: number): void => {
-    setTotalPrice(totalPrice + price);
-  };
+  const pageTitle = capitalize(category?.name);
 
   if (isLoading) {
     return (
-      <Loader>
-        <p>Loading ads...</p>
-      </Loader>
+      <MainContent title={pageTitle}>
+        <Loader />
+      </MainContent>
     );
   }
 
-  if (error) {
-    return <p>{error}</p>;
+  if (error || category === null) {
+    return (
+      <MainContent title={pageTitle}>
+        <p>No exisiting category...</p>
+      </MainContent>
+    );
   }
 
-  if (!filteredAds) {
-    return <p>Data was null</p>;
-  }
+  const filteredAds = sortAdsByCreationDate(category.ads);
 
   return (
-    <Section>
-      <Container>
-        <h2>{capitalize(category.name)}</h2>
-      </Container>
-      <AdList>
-        {filteredAds.map((ad) => (
-          <li key={ad.id}>
-            <AdCard ad={ad} onAddPrice={handleAddPrice} />
-          </li>
-        ))}
-      </AdList>
-    </Section>
+    <MainContent title={pageTitle}>
+      <AdGallery ads={filteredAds} />
+    </MainContent>
   );
 }
-
-const AdList = styled.ul`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
-  gap: 40px;
-`;
-
-const Container = styled.div`
-  margin-bottom: 32px;
-  & h2 {
-    margin-bottom: 16px;
-  }
-`;
-
-const Section = styled.section`
-  display: grid;
-  gap: 16px;
-`;

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { useAxios } from "@/hooks/useAxios";
 import { Category } from "@tgc/common";
-import { Loader } from "@/common/Loader";
+import Loader from "@/common/Loader";
 import { LinkNav } from "@/common/Link";
 import { theme } from "@/themes/theme";
 import { capitalize } from "@/utils/format";

@@ -33,7 +33,7 @@ export const Card = styled.div`
   }
 
   & .card__thumbnail {
-    max-width: 100%;
+    width: 100%;
     aspect-ratio: 3 / 2;
     object-fit: cover;
     transition: transform 0.3s ease-in-out;

@@ -1,4 +1,3 @@
-import { IconBase } from "react-icons";
 import { ZodError } from "zod";
 
 export function mapZodError<T extends object>(

@@ -11,7 +11,7 @@ type LoaderProps = Partial<SpinnerProps> & {
   children?: React.ReactNode;
 };
 
-export function Loader({ size = "md", children }: LoaderProps) {
+export default function Loader({ size = "md", children }: LoaderProps) {
   return (
     <Container>
       <Spinner size={size} />
@@ -38,7 +38,6 @@ const variant = {
 };
 
 const Container = styled.div`
-  margin-top: 16px;
   display: flex;
   align-items: center;
   justify-content: center;

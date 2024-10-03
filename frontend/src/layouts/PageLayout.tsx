@@ -34,12 +34,16 @@ export default function PageLayout() {
 const { borderRadius, color } = theme;
 
 const Container = styled.div`
+  padding-inline: 16px;
   margin: 0 auto;
   min-height: 100dvh;
   max-width: 1280px;
   display: grid;
   grid-template-rows: auto 1fr;
   text-align: center;
+  @media screen and (min-width: 720px) {
+    padding-inline: 32px;
+  }
 `;
 
 const NavigationHeader = styled.header`
@@ -71,5 +75,8 @@ const MainMenu = styled.div`
 `;
 
 const PageContent = styled.main`
-  padding: 32px 0;
+  padding-block: 16px;
+  @media screen and (min-width: 720px) {
+    padding-block: 32px;
+  }
 `;

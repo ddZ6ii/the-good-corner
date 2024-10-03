@@ -1,9 +1,14 @@
 import { useState } from "react";
-import styled from "styled-components";
-import RecentAds from "@components/RecentAds";
+import { useAxios } from "@/hooks/useAxios";
+import { AdNoTags } from "@tgc/common";
+import Loader from "@/common/Loader";
+import AdGallery from "@/layouts/AdGallery";
+import MainContent from "@/layouts/MainContent";
 import { formatPriceWithCurrency } from "@/utils/format";
+import { sortAdsByCreationDate } from "@/utils/sort";
 
 export default function HomePage() {
+  const { data: ads, error, isLoading } = useAxios<AdNoTags[]>("ads");
   const [totalPrice, setTotalPrice] = useState(0);
   const formattedPrice = formatPriceWithCurrency(totalPrice);
 
@@ -11,25 +16,33 @@ export default function HomePage() {
     setTotalPrice(totalPrice + price);
   };
 
+  if (isLoading) {
+    return (
+      <MainContent title="Recent ads">
+        <Loader />
+      </MainContent>
+    );
+  }
+
+  if (error || ads === null) {
+    return (
+      <MainContent title="Recent ads">
+        <p>No ads currently available...</p>
+      </MainContent>
+    );
+  }
+
+  const sortedAds = sortAdsByCreationDate(ads);
+
   return (
-    <Section>
-      <Container>
-        <h2>Recent ads</h2>
-        <p>Total price: {formattedPrice}</p>
-      </Container>
-      <RecentAds handleAddPrice={handleAddPrice} />
-    </Section>
+    <MainContent title="Recent ads">
+      <p>Total price: {formattedPrice}</p>
+      <AdGallery
+        ads={sortedAds}
+        onClick={(_, ad) => {
+          handleAddPrice(ad.price);
+        }}
+      />
+    </MainContent>
   );
 }
-
-const Container = styled.div`
-  margin-bottom: 32px;
-  & h2 {
-    margin-bottom: 16px;
-  }
-`;
-
-const Section = styled.section`
-  display: grid;
-  gap: 16px;
-`;
