@@ -17,16 +17,16 @@ export async function getAll(
 
 export async function getOne(
   req: Request<IdParam>,
-  res: Response<Ad[]>,
+  res: Response<Ad>,
   next: NextFunction,
 ): Promise<void> {
   const id = parseInt(req.params.id, 10);
-  const ads = await adsModel.findOneBy(id);
-  if (isEmpty(ads)) {
+  const ad = await adsModel.findOneBy(id);
+  if (ad === null) {
     next(new NotFoundError(`No existing ad with "id" ${id.toString()}.`));
     return;
   }
-  res.json(ads);
+  res.json(ad);
 }
 
 export async function create(
