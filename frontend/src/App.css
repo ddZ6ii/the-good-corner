@@ -48,6 +48,10 @@ ul {
   list-style: none;
 }
 
+.Toastify {
+  text-align: left;
+}
+
 .ad-details-image-container {
   margin-inline-start: -24px;
   margin-inline-end: -24px;

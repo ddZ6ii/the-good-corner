@@ -27,4 +27,15 @@ export const Button = styled.button<ButtonProps>`
         color: ${color.primary};
       }
     `};
+
+  &[disabled] {
+    background-color: color-mix(
+      in srgb,
+      ${color.neutral.lightest} 50%,
+      transparent
+    );
+    border-color: transparent;
+    color: ${color.neutral.light};
+    cursor: not-allowed;
+  }
 `;

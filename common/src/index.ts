@@ -39,6 +39,10 @@ export const IdParamSchema = z.object({
   id: z.string(),
 });
 
+export const IdSchema = IdParamSchema.extend({
+  id: z.coerce.number().int().safe().positive(),
+});
+
 export const AdContentSchema = z.object({
   title: z
     .string()
@@ -63,8 +67,7 @@ export const AdContentSchema = z.object({
       id: z.number().int().positive(),
     },
     {
-      invalid_type_error: "Expected an object with an 'id' property.",
-      // message: "Expected an object with an 'id' property.",
+      invalid_type_error: 'is invalid',
     }
   ),
   tags: z
@@ -83,7 +86,11 @@ export const AdContentSchema = z.object({
 
 export const AdPartialContentSchema = AdContentSchema.partial();
 
-// !TODO: to be updated with tags...
+export const AdSchema = AdContentSchema.extend({
+  id: z.number().int().positive(),
+  createdAt: z.string().trim(),
+});
+
 export const AdNoTagsSchema = AdContentSchema.omit({
   category: true,
   tags: true,
@@ -141,7 +148,9 @@ export const TagPartialContentSchema = TagContentSchema.partial();
 /*                                Types                                     */
 /* -------------------------------------------------------------------------- */
 export type IdParam = z.infer<typeof IdParamSchema>;
+export type Id = z.infer<typeof IdSchema>;
 export type AdNoTags = z.infer<typeof AdNoTagsSchema>;
+export type Ad = z.infer<typeof AdSchema>;
 export type AdContent = z.infer<typeof AdContentSchema>;
 export type Category = z.infer<typeof CategorySchema>;
 export type CategoryWithAds = z.infer<typeof CategoryWthAdsSchema>;
@@ -158,5 +167,9 @@ export function isEmpty(obj: unknown) {
   if (Array.isArray(obj) && !obj.length) return true;
   if (typeof obj === 'object' && !Object.keys(obj).length) return true;
   return false;
+}
+
+export function getOjectKeys<Obj extends object>(obj: Obj): (keyof Obj)[] {
+  return Object.keys(obj) as (keyof Obj)[];
 }
 /* -------------------------------------------------------------------------- */

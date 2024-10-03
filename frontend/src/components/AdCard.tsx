@@ -1,8 +1,8 @@
-import { NavLink } from "react-router-dom";
-import { Card } from "@layouts/Card";
 import { Button } from "@common/Button";
-import { formatPrice, formatUrl } from "@utils/format";
+import { Card } from "@layouts/Card";
 import { AdNoTags } from "@tgc/common";
+import { formatPriceWithCurrency, formatUrl } from "@utils/format";
+import { NavLink } from "react-router-dom";
 
 type AdCardProps = {
   ad: AdNoTags;
@@ -13,7 +13,7 @@ export default function AdCard({
   ad: { id, title, picture, price },
   onAddPrice,
 }: AdCardProps) {
-  const formattedPrice = formatPrice(price);
+  const formattedPrice = formatPriceWithCurrency(price);
   const formattedUrl = formatUrl("ads", id);
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();

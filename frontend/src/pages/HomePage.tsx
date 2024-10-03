@@ -1,11 +1,11 @@
 import { useState } from "react";
 import styled from "styled-components";
 import RecentAds from "@components/RecentAds";
-import { formatPrice } from "@/utils/format";
+import { formatPriceWithCurrency } from "@/utils/format";
 
 export default function HomePage() {
   const [totalPrice, setTotalPrice] = useState(0);
-  const formattedPrice = formatPrice(totalPrice);
+  const formattedPrice = formatPriceWithCurrency(totalPrice);
 
   const handleAddPrice = (price: number): void => {
     setTotalPrice(totalPrice + price);

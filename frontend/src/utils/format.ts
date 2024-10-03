@@ -10,7 +10,19 @@ export function formatUrl(baseUrl: string, id: number): string {
   return `${baseUrl}/${id.toString()}`;
 }
 
-export function formatPrice(priceInCents: number): string {
+export function convertPriceToCents(price: string): number {
+  return Number(parseFloat(price || "0").toFixed(2)) * 100;
+}
+
+export function convertPriceInCents(priceInCents: number): number {
   const price = priceInCents / 100;
-  return `${price.toFixed(2).toString()} $`;
+  return Number(price.toFixed(2));
+}
+
+export function formatPrice(priceInCents: number): string {
+  return convertPriceInCents(priceInCents).toString();
+}
+
+export function formatPriceWithCurrency(priceInCents: number): string {
+  return `${formatPrice(priceInCents)} $`;
 }

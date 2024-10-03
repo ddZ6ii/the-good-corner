@@ -5,11 +5,17 @@ export const theme = {
   borderRadius: {
     rounded_sm: "1px",
     rounded: "2px",
+    rounded_md: "4px",
     rounded_lg: "8px",
   },
   color: {
     white: "#ffffff",
     primary: "#ffa41b",
+    status: {
+      success: "#00C851",
+      warning: "#ffbb33",
+      danger: "#c00504",
+    },
     neutral: {
       lightest: "#D3D3D3",
       light: "#666",

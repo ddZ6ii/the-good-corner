@@ -38,6 +38,14 @@ export default tseslint.config(
         { allowConstantExport: true },
       ],
       "@typescript-eslint/consistent-type-definitions": "off",
+      "@typescript-eslint/no-misused-promises": [
+        2,
+        {
+          checksVoidReturn: {
+            attributes: false,
+          },
+        },
+      ],
     },
     settings: { react: { version: "18.3" } },
   },

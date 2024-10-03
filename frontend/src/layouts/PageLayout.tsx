@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Outlet } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import Logo from "@components/Logo";
 import { MainMenu } from "@components/MainMenu";
 import Navbar from "@components/Navbar";
@@ -15,7 +16,7 @@ export default function PageLayout() {
         <MainMenu>
           <Logo />
           <SearchBar />
-          <Link to="/post-ad" $outline>
+          <Link to="/ads/new" $outline>
             <span className="mobile__short">New</span>
             <span className="desktop__long">New ad</span>
           </Link>
@@ -26,6 +27,8 @@ export default function PageLayout() {
       <PageContent>
         <Outlet />
       </PageContent>
+
+      <ToastContainer />
     </Container>
   );
 }
