@@ -3,6 +3,7 @@ import { useAxios } from "@/hooks/useAxios";
 import AdCard from "@components/AdCard";
 import { AdNoTags } from "@tgc/common";
 import { Loader } from "@/common/Loader";
+import { sortAdsByCreationDate } from "@/utils/sort";
 
 type RecentAdsProps = {
   handleAddPrice: (price: number) => void;
@@ -24,12 +25,14 @@ export default function RecentAds({ handleAddPrice }: RecentAdsProps) {
   }
 
   if (!ads) {
-    return <p>Data was null</p>;
+    return <p>No ads currently available...</p>;
   }
+
+  const sortedAds = sortAdsByCreationDate(ads);
 
   return (
     <AdList>
-      {ads.map((ad) => (
+      {sortedAds.map((ad) => (
         <li key={ad.id}>
           <AdCard ad={ad} onAddPrice={handleAddPrice} />
         </li>
