@@ -47,6 +47,15 @@ export default tseslint.config(
           },
         },
       ],
+      // Allow unused variables only when prefixed with '_'.
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
     },
     settings: { react: { version: "18.3" } },
   },
