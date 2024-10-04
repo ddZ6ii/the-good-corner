@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useReducer, useRef } from "react";
 import { ZodError } from "zod";
 import styled, { css } from "styled-components";
 import { IoChevronDown } from "react-icons/io5";
@@ -8,35 +8,29 @@ import {
   AdContentSchema,
   Category,
   getOjectKeys,
-  Id,
   Tag,
 } from "@tgc/common";
 import { Button } from "@/common/Button";
 import { theme } from "@/themes/theme";
-import { FormError, FormState } from "@/types/form.types";
 import { convertPriceToCents, formatPrice } from "@/utils/format";
 import { mapZodError } from "@/utils/mapZodErrors";
 import { notifyError } from "@/utils/notify";
 import { baseInputStyle } from "@/themes/styles";
+import { AdFormState } from "@/types/adForm.types";
+import { adFormReducer } from "@/reducers/adForm.reducer";
 
 type AdFormProps = {
-  initialFormState: FormState;
-  initialFormError: FormError;
-  errorMessage?: string;
+  initialFormState: AdFormState;
   onSubmit: (parsedBody: AdContent) => Promise<void>;
 };
 
-// !TODO: refactor code with useReducer to handle state changes (a different event handler on each event listener)...
-
 export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
-  { initialFormState, initialFormError, onSubmit },
+  { initialFormState, onSubmit },
   forwardedRef,
 ) {
   const { data: categories } = useAxios<Category[]>("categories");
   const { data: tags } = useAxios<Tag[]>("tags");
-  const [formState, setFormState] = useState<FormState>(initialFormState);
-  const [formError, setFormError] = useState<FormError>(initialFormError);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formState, dispatch] = useReducer(adFormReducer, initialFormState);
 
   const ref = useRef<HTMLFormElement>(null);
   useImperativeHandle<HTMLFormElement, HTMLFormElement>(forwardedRef, () => {
@@ -46,82 +40,27 @@ export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
     return ref.current;
   }, []);
 
-  const handleChange = (
-    e:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
-      | React.ChangeEvent<HTMLSelectElement>,
-  ): void => {
-    const targetEl = e.target;
-    let nextStateValue: string | number | undefined | Id | Id[] =
-      targetEl.value;
-
-    const nextFormError = { ...formError };
-    if (targetEl.name in formError) {
-      delete nextFormError[targetEl.name as keyof FormError];
-    }
-    setFormError(nextFormError);
-
-    if (targetEl.name === "price") {
-      nextStateValue = convertPriceToCents(targetEl.value);
-    }
-
-    if (targetEl.name === "tags") {
-      const nextValue = parseInt(targetEl.value, 10);
-      const isChecked = formState.tags.some((tag) => tag.id === nextValue);
-      nextStateValue = isChecked
-        ? formState.tags.filter((tag) => tag.id !== nextValue)
-        : [...formState.tags, { id: nextValue }];
-    }
-    if (targetEl.name === "category") {
-      nextStateValue = { id: parseInt(targetEl.value, 10) };
-    }
-    setFormState((prevState) => ({
-      ...prevState,
-      [targetEl.name]: nextStateValue,
-    }));
-  };
-
-  const handleBlur = (
-    e:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
-      | React.ChangeEvent<HTMLSelectElement>,
-  ): void => {
-    try {
-      const targetEl = e.target;
-      let nextValue: string | number | undefined | Id | Id[] = targetEl.value;
-      if (targetEl.name === "tags") return;
-      if (targetEl.name === "category") {
-        nextValue = { id: parseInt(targetEl.value, 10) };
-      }
-      if (targetEl.name === "price") {
-        nextValue = convertPriceToCents(targetEl.value);
-      }
-      AdContentSchema.partial().parse({
-        [targetEl.name]: nextValue,
-      });
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const nextFormError = mapZodError(error, { ...formError });
-        setFormError(nextFormError);
-      }
-    }
-  };
-
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
   ): Promise<void> => {
     try {
       e.preventDefault();
-      setIsSubmitting(true);
-      setFormError(initialFormError);
-      const parsedBody = AdContentSchema.parse(formState);
+      dispatch({
+        type: "update_submit_status",
+        payload: { isSubmitting: true },
+      });
+      dispatch({
+        type: "reset_form_error",
+      });
+      const parsedBody = AdContentSchema.parse(formState.data);
       await onSubmit(parsedBody);
     } catch (error: unknown) {
       if (error instanceof ZodError) {
-        const nextFormError = mapZodError(error, initialFormError);
-        setFormError(nextFormError);
+        const nextFormError = mapZodError(error, formState.error);
+        dispatch({
+          type: "validate_form",
+          payload: { nextFormError },
+        });
         const keys = getOjectKeys(nextFormError);
         const firstInputWithError = keys.find(
           (key) => nextFormError[key] !== "",
@@ -136,7 +75,10 @@ export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
       );
       console.error(error);
     } finally {
-      setIsSubmitting(false);
+      dispatch({
+        type: "update_submit_status",
+        payload: { isSubmitting: false },
+      });
     }
   };
 
@@ -152,12 +94,22 @@ export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
           id="title"
           placeholder="What's your ad's title?"
           autoFocus
-          value={formState.title}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          disabled={isSubmitting}
+          value={formState.data.title}
+          onChange={(e) => {
+            dispatch({
+              type: "update_input",
+              payload: { name: e.target.name, nextValue: e.target.value },
+            });
+          }}
+          onBlur={(e) => {
+            dispatch({
+              type: "validate_field",
+              payload: { name: e.target.name, nextValue: e.target.value },
+            });
+          }}
+          disabled={formState.isSubmitting}
         />
-        {formError.title && <Text>{formError.title}</Text>}
+        {formState.error.title && <Text>{formState.error.title}</Text>}
       </Field>
       <Field>
         <Label htmlFor="description">
@@ -168,12 +120,24 @@ export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
           id="description"
           rows={10}
           placeholder="Try your best to describe your item to other customers..."
-          value={formState.description}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          disabled={isSubmitting}
+          value={formState.data.description}
+          onChange={(e) => {
+            dispatch({
+              type: "update_input",
+              payload: { name: e.target.name, nextValue: e.target.value },
+            });
+          }}
+          onBlur={(e) => {
+            dispatch({
+              type: "validate_field",
+              payload: { name: e.target.name, nextValue: e.target.value },
+            });
+          }}
+          disabled={formState.isSubmitting}
         ></TextArea>
-        {formError.description && <Text>{formError.description}</Text>}
+        {formState.error.description && (
+          <Text>{formState.error.description}</Text>
+        )}
       </Field>
       <Field>
         <Label htmlFor="owner">
@@ -184,12 +148,22 @@ export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
           name="owner"
           id="owner"
           placeholder="Enter your email adress..."
-          value={formState.owner}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          disabled={isSubmitting}
+          value={formState.data.owner}
+          onChange={(e) => {
+            dispatch({
+              type: "update_input",
+              payload: { name: e.target.name, nextValue: e.target.value },
+            });
+          }}
+          onBlur={(e) => {
+            dispatch({
+              type: "validate_field",
+              payload: { name: e.target.name, nextValue: e.target.value },
+            });
+          }}
+          disabled={formState.isSubmitting}
         />
-        {formError.owner && <Text>{formError.owner}</Text>}
+        {formState.error.owner && <Text>{formState.error.owner}</Text>}
       </Field>
       <Field>
         <Label htmlFor="price">
@@ -200,12 +174,28 @@ export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
           name="price"
           id="price"
           placeholder="Estimate the value of your item..."
-          value={formatPrice(formState.price)}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          disabled={isSubmitting}
+          value={formatPrice(formState.data.price)}
+          onChange={(e) => {
+            dispatch({
+              type: "update_input",
+              payload: {
+                name: e.target.name,
+                nextValue: convertPriceToCents(e.target.value),
+              },
+            });
+          }}
+          onBlur={(e) => {
+            dispatch({
+              type: "validate_field",
+              payload: {
+                name: e.target.name,
+                nextValue: convertPriceToCents(e.target.value),
+              },
+            });
+          }}
+          disabled={formState.isSubmitting}
         />
-        {formError.price && <Text>{formError.price}</Text>}
+        {formState.error.price && <Text>{formState.error.price}</Text>}
       </Field>
       <Field>
         <Label htmlFor="picture">
@@ -216,12 +206,22 @@ export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
           name="picture"
           id="picture"
           placeholder="Add a url picture of your item..."
-          value={formState.picture}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          disabled={isSubmitting}
+          value={formState.data.picture}
+          onChange={(e) => {
+            dispatch({
+              type: "update_input",
+              payload: { name: e.target.name, nextValue: e.target.value },
+            });
+          }}
+          onBlur={(e) => {
+            dispatch({
+              type: "validate_field",
+              payload: { name: e.target.name, nextValue: e.target.value },
+            });
+          }}
+          disabled={formState.isSubmitting}
         />
-        {formError.picture && <Text>{formError.picture}</Text>}
+        {formState.error.picture && <Text>{formState.error.picture}</Text>}
       </Field>
       <Field>
         <Label htmlFor="location">
@@ -232,12 +232,22 @@ export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
           name="location"
           id="location"
           placeholder="Enter your city..."
-          value={formState.location}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          disabled={isSubmitting}
+          value={formState.data.location}
+          onChange={(e) => {
+            dispatch({
+              type: "update_input",
+              payload: { name: e.target.name, nextValue: e.target.value },
+            });
+          }}
+          onBlur={(e) => {
+            dispatch({
+              type: "validate_field",
+              payload: { name: e.target.name, nextValue: e.target.value },
+            });
+          }}
+          disabled={formState.isSubmitting}
         />
-        {formError.location && <Text>{formError.location}</Text>}
+        {formState.error.location && <Text>{formState.error.location}</Text>}
       </Field>
       <Field>
         <Label htmlFor="category">
@@ -247,11 +257,27 @@ export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
           <Select
             name="category"
             id="category"
-            value={formState.category?.id ?? "none"}
+            value={formState.data.category?.id ?? "none"}
             multiple={false}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            disabled={isSubmitting}
+            onChange={(e) => {
+              dispatch({
+                type: "update_input",
+                payload: {
+                  name: e.target.name,
+                  nextValue: { id: parseInt(e.target.value, 10) },
+                },
+              });
+            }}
+            onBlur={(e) => {
+              dispatch({
+                type: "validate_field",
+                payload: {
+                  name: e.target.name,
+                  nextValue: { id: parseInt(e.target.value, 10) },
+                },
+              });
+            }}
+            disabled={formState.isSubmitting}
           >
             <option key={crypto.randomUUID()} value="none" disabled hidden>
               Select a category
@@ -264,9 +290,9 @@ export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
           </Select>
           <IoChevronDown />
         </Container>
-        {formError.category && <Text>Please select a category</Text>}
+        {formState.error.category && <Text>Please select a category</Text>}
       </Field>
-      <Fieldset disabled={isSubmitting}>
+      <Fieldset disabled={formState.isSubmitting}>
         <Legend>Tag(s)</Legend>
         <Wrapper>
           {tags?.map((tag) => (
@@ -276,17 +302,25 @@ export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
                 id={tag.name}
                 name="tags"
                 value={tag.id}
-                checked={formState.tags.some((t) => t.id === tag.id)}
-                onChange={handleChange}
+                checked={formState.data.tags.some((t) => t.id === tag.id)}
+                onChange={(e) => {
+                  dispatch({
+                    type: "update_input",
+                    payload: {
+                      name: e.target.name,
+                      nextValue: parseInt(e.target.value, 10),
+                      checked: e.target.checked,
+                    },
+                  });
+                }}
               />
               <Label htmlFor={tag.name}>{tag.name}</Label>
             </Field>
           ))}
         </Wrapper>
-        {formError.tags && <Text>{formError.tags}</Text>}
+        {formState.error.tags && <Text>{formState.error.tags}</Text>}
       </Fieldset>
-      {/* <Button type="submit" $primary disabled={isSubmitting || hasError}> */}
-      <Button type="submit" $primary disabled={isSubmitting}>
+      <Button type="submit" $primary disabled={formState.isSubmitting}>
         Create ad
       </Button>
     </Form>
@@ -315,6 +349,9 @@ const Container = styled.div<{ $margin?: boolean }>`
     `}
   &:has(+ p) select {
     border-color: ${color.status.danger};
+    &:focus-visible {
+      outline-color: ${color.status.danger};
+    }
   }
 `;
 
