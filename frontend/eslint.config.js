@@ -38,6 +38,7 @@ export default tseslint.config(
         { allowConstantExport: true },
       ],
       "@typescript-eslint/consistent-type-definitions": "off",
+      "@typescript-eslint/no-dynamic-delete": "warn",
       "@typescript-eslint/no-misused-promises": [
         2,
         {
