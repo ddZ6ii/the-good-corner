@@ -1,11 +1,14 @@
 import { DeleteResult, Like } from 'typeorm';
 import { Category } from '@database/entities/Category.ts';
-import { CategoryContent } from '@/types/categories.types.ts';
+import { CategoryContent } from '@/types/categories.types';
 
-export function findAll(categoryName: string | undefined): Promise<Category[]> {
-  if (!categoryName) return Category.find();
-  return Category.findBy({
-    name: Like(`%${categoryName.toLowerCase()}%`),
+export function findAll(categoryName?: string): Promise<Category[]> {
+  if (!categoryName) return Category.find({ relations: ['ads', 'ads.tags'] });
+  return Category.find({
+    where: {
+      name: Like(`%${categoryName.toLowerCase()}%`),
+    },
+    relations: ['ads', 'ads.tags'],
   });
 }
 
@@ -16,9 +19,9 @@ export function findOneBy(categoryId: number): Promise<Category | null> {
   });
 }
 
-export function create(content: CategoryContent): Promise<Category> {
+export function create(newCategoryContent: CategoryContent): Promise<Category> {
   const newCategory = new Category();
-  Object.assign(newCategory, content);
+  Object.assign(newCategory, newCategoryContent);
   return newCategory.save();
 }
 
@@ -28,20 +31,10 @@ export async function remove(categoryId: number): Promise<DeleteResult> {
 
 export async function patch(
   categoryId: number,
-  newContent: Partial<CategoryContent>,
-): Promise<Category | undefined> {
+  updatedCategoryContent: Partial<CategoryContent>,
+): Promise<Category | null> {
   const category = await Category.findOneBy({ id: categoryId });
-  if (category === null) return;
-  Object.assign(category, newContent);
-  return category.save();
-}
-
-export async function put(
-  categoryId: number,
-  nextContent: CategoryContent,
-): Promise<Category | undefined> {
-  const category = await Category.findOneBy({ id: categoryId });
-  if (category === null) return;
-  Object.assign(category, nextContent);
+  if (category === null) return null;
+  Object.assign(category, updatedCategoryContent);
   return category.save();
 }

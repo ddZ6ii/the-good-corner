@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
 } from 'typeorm';
+import { Field, ID, ObjectType } from 'type-graphql';
 import { Ad } from './Ad.ts';
 
 /** Active record pattern
@@ -14,11 +15,14 @@ import { Ad } from './Ad.ts';
  * It gives access to some useful methods like save, remove, etc.
  */
 @Entity()
+@ObjectType()
 export class Tag extends BaseEntity {
   @PrimaryGeneratedColumn()
+  @Field(() => ID)
   id!: number;
 
   @Column({ type: 'text', length: 50 })
+  @Field(() => String)
   name!: string;
 
   /** Many-to-Many relation options
@@ -29,5 +33,6 @@ export class Tag extends BaseEntity {
   @ManyToMany(() => Ad, (ad) => ad.tags, {
     onDelete: 'CASCADE',
   })
+  @Field(() => [Ad])
   ads!: Ad[];
 }

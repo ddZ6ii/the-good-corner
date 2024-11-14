@@ -8,6 +8,8 @@ import {
   JoinTable,
   BeforeInsert,
 } from 'typeorm';
+import { Field, ID, Int, ObjectType } from 'type-graphql';
+import { GraphQLDateTime } from 'graphql-scalars';
 import { Category } from './Category.ts';
 import { Tag } from './Tag.ts';
 
@@ -18,29 +20,39 @@ import { Tag } from './Tag.ts';
  * It gives access to some useful methods like save, remove, etc.
  */
 @Entity()
+@ObjectType()
 export class Ad extends BaseEntity {
   @PrimaryGeneratedColumn()
+  @Field(() => ID)
   id!: number;
 
   @Column({ type: 'text', length: 50 })
+  @Field(() => String)
   title!: string;
 
   @Column({ type: 'text', length: 500 })
+  @Field(() => String)
   description!: string;
 
   @Column({ type: 'text' })
+  @Field(() => String)
   owner!: string;
 
+  // Price is in cents to avoid floating point arithmetic issues.
   @Column({ type: 'integer', unsigned: true })
+  @Field(() => Int)
   price!: number;
 
   @Column({ type: 'text' })
+  @Field(() => String)
   picture!: string;
 
   @Column({ type: 'text', length: 50 })
+  @Field(() => String)
   location!: string;
 
   @Column({ type: 'text' })
+  @Field(() => GraphQLDateTime)
   createdAt!: string;
 
   // The updateDates() method is called before creating a new ad.
@@ -51,14 +63,14 @@ export class Ad extends BaseEntity {
 
   /** Relation options
    * ----------------------
-   * The option { eager: true } will automatically fetch the related category when fetching an ad, without having to explicitly set the option { relations: ['category'] } when calling Ad.find() or Ad.findBy().
-   *
+   * The option { eager: true } will automatically fetch the related category when fetching an ad, without having to explicitly set the option { relations: ['category'] } when calling Ad.find(), Ad.findBy() or findOneBy().
    * The option { nullable: false } will make sure that a category must be provided when creating an ad.
    */
   @ManyToOne(() => Category, (category) => category.ads, {
     eager: true,
     nullable: false,
   })
+  @Field(() => Category)
   category!: Category;
 
   /** Join table
@@ -68,5 +80,6 @@ export class Ad extends BaseEntity {
    */
   @ManyToMany(() => Tag, (tag) => tag.ads)
   @JoinTable()
+  @Field(() => [Tag], { nullable: true })
   tags!: Tag[];
 }

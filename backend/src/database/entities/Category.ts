@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
 } from 'typeorm';
+import { Field, ID, ObjectType } from 'type-graphql';
 import { Ad } from './Ad.ts';
 
 /** Active record pattern
@@ -14,13 +15,17 @@ import { Ad } from './Ad.ts';
  * It gives access to some useful methods like save, remove, etc.
  */
 @Entity()
+@ObjectType()
 export class Category extends BaseEntity {
   @PrimaryGeneratedColumn()
+  @Field(() => ID)
   id!: number;
 
   @Column({ type: 'text', length: 50 })
+  @Field(() => String)
   name!: string;
 
   @OneToMany(() => Ad, (ad) => ad.category)
+  @Field(() => [Ad])
   ads!: Ad[];
 }
