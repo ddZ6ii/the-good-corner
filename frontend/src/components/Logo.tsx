@@ -1,13 +1,13 @@
 import styled from "styled-components";
-import { Link } from "@/common/Link";
+import { LinkBtn } from "@/common/Link";
 
 export default function Logo() {
   return (
     <Heading>
-      <Link to="/">
+      <LinkBtn to="/">
         <span className="mobile__short">TGC</span>
         <span className="desktop__long">THE GOOD CORNER</span>
-      </Link>
+      </LinkBtn>
     </Heading>
   );
 }

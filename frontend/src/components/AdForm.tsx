@@ -1,6 +1,6 @@
+import styled, { css } from "styled-components";
 import { forwardRef, useImperativeHandle, useReducer, useRef } from "react";
 import { ZodError } from "zod";
-import styled, { css } from "styled-components";
 import { IoChevronDown } from "react-icons/io5";
 import { useAxios } from "@/hooks/useAxios";
 import {
@@ -327,17 +327,15 @@ export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
   );
 });
 
-const { color, borderRadius } = theme;
-
 const Form = styled.form`
   margin: 0 auto;
   padding: 16px 32px;
   width: min(100%, 640px);
   display: grid;
   gap: 16px;
-  background-color: ${color.white};
-  border: ${borderRadius.rounded_sm} solid ${color.neutral.lightest};
-  border-radius: ${borderRadius.rounded_lg};
+  background-color: ${theme.color.white};
+  border: ${theme.borderRadius.rounded_sm} solid ${theme.color.neutral.lightest};
+  border-radius: ${theme.borderRadius.rounded_lg};
 `;
 
 const Container = styled.div<{ $margin?: boolean }>`
@@ -348,9 +346,9 @@ const Container = styled.div<{ $margin?: boolean }>`
       margin-bottom: 32px;
     `}
   &:has(+ p) select {
-    border-color: ${color.status.danger};
+    border-color: ${theme.color.status.danger};
     &:focus-visible {
-      outline-color: ${color.status.danger};
+      outline-color: ${theme.color.status.danger};
     }
   }
 `;
@@ -373,7 +371,7 @@ const Field = styled.div<{ $inline?: boolean }>`
 `;
 
 const Label = styled.label`
-  color: ${color.neutral.light};
+  color: ${theme.color.neutral.light};
   font-weight: bold;
 `;
 
@@ -407,22 +405,22 @@ const Select = styled.select`
     top: 50%;
     right: 12px;
     translate: 0 -50%;
-    stroke: color-mix(in srgb, ${color.neutral.light} 80%, transparent);
+    stroke: color-mix(in srgb, ${theme.color.neutral.light} 80%, transparent);
   }
 `;
 
 const Fieldset = styled.fieldset`
   padding: 16px;
-  border: ${borderRadius.rounded_sm} solid ${color.neutral.lightest};
-  border-radius: ${borderRadius.rounded_md};
+  border: ${theme.borderRadius.rounded_sm} solid ${theme.color.neutral.lightest};
+  border-radius: ${theme.borderRadius.rounded_md};
   & input[type="checkbox"] + label {
     color: black;
   }
   &::placeholder {
-    color: color-mix(in srgb, ${color.neutral.light} 50%, transparent);
+    color: color-mix(in srgb, ${theme.color.neutral.light} 50%, transparent);
   }
   &:focus-visible {
-    outline-color: ${color.primary};
+    outline-color: ${theme.color.primary};
   }
 `;
 
@@ -436,15 +434,15 @@ const Wrapper = styled.div`
 const Legend = styled.legend`
   text-align: left;
   font-size: 14px;
-  color: ${color.neutral.light};
+  color: ${theme.color.neutral.light};
   font-weight: bold;
 `;
 
 const Text = styled.p`
-  color: ${color.status.danger};
+  color: ${theme.color.status.danger};
   font-size: 12px;
 `;
 
 const Info = styled.span`
-  color: ${color.status.danger};
+  color: ${theme.color.status.danger};
 `;

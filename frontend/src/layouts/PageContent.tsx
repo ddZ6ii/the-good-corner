@@ -1,16 +1,15 @@
 import styled from "styled-components";
+import { ReactNode } from "react";
 
-type MainContentProps = {
-  title?: React.ReactNode;
-  children: React.ReactNode;
+type PageContentProps = {
+  title?: ReactNode;
+  children: ReactNode;
 };
 
-export default function MainContent({ title, children }: MainContentProps) {
+export default function PageContent({ title, children }: PageContentProps) {
   return (
     <Section>
-      <Container>
-        <Title>{title}</Title>
-      </Container>
+      <Title>{title}</Title>
       {children}
     </Section>
   );
@@ -21,12 +20,9 @@ const Title = styled.h2`
   font-weight: 700;
 `;
 
-const Container = styled.div``;
-
 const Section = styled.section`
   height: 100%;
   display: grid;
   grid-template-rows: auto 1fr;
-  align-items: start;
   gap: 32px;
 `;

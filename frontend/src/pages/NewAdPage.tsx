@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { AdContent } from "@tgc/common";
 import { AdForm } from "@/components/AdForm";
-import MainContent from "@/layouts/MainContent";
+import MainContent from "@/layouts/PageContent";
 import { initialFormState } from "@/reducers/adForm.reducer";
 import { createAd } from "@/services/ads";
 import { notifySuccess } from "@/utils/notify";

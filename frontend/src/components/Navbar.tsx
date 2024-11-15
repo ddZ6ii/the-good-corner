@@ -1,28 +1,19 @@
 import styled from "styled-components";
-import { useAxios } from "@/hooks/useAxios";
+import { useSuspenseQuery } from "@apollo/client";
 import { Category } from "@tgc/common";
-import Loader from "@/common/Loader";
-import { LinkNav } from "@/common/Link";
+import { NavLink } from "@/common/Link";
+import { GET_CATEGORIES } from "@/graphql/categories";
 import { theme } from "@/themes/theme";
 import { capitalize } from "@/utils/format";
 
 export default function Navbar() {
-  const {
-    data: categories,
-    error,
-    isLoading,
-  } = useAxios<Category[]>("categories");
-
-  if (isLoading) {
-    return <Loader size="sm" />;
-  }
+  const { data: { categories = [] } = {}, error } = useSuspenseQuery<{
+    categories: Category[];
+  }>(GET_CATEGORIES);
 
   if (error) {
-    return <p>{error}</p>;
-  }
-
-  if (!categories) {
-    return <p>No categories available...</p>;
+    console.error(error);
+    return <p>No categories currently available...</p>;
   }
 
   return (
@@ -30,20 +21,15 @@ export default function Navbar() {
       <NavList>
         {categories.map((category) => (
           <li key={category.id}>
-            <LinkNav
-              to={`categories/${category.id.toString()}`}
-              className="nav__link"
-            >
+            <NavLink to={`categories/${category.id.toString()}`}>
               {capitalize(category.name)}
-            </LinkNav>
+            </NavLink>
           </li>
         ))}
       </NavList>
     </nav>
   );
 }
-
-const { color } = theme;
 
 const NavList = styled.ul`
   padding: 16px 10px 6px;
@@ -52,7 +38,7 @@ const NavList = styled.ul`
   gap: 16px;
   font-size: 12px;
   font-weight: bold;
-  color: ${color.neutral.light};
+  color: ${theme.color.neutral.light};
   white-space: nowrap;
   overflow-x: auto;
   & li {

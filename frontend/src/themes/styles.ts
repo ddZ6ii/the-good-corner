@@ -1,8 +1,6 @@
 import { css } from "styled-components";
 import { theme } from "@/themes/theme";
 
-const { borderRadius, color } = theme;
-
 export const baseButtonStyle = css`
   padding: 8px;
   min-width: 40px;
@@ -13,34 +11,34 @@ export const baseButtonStyle = css`
   align-items: center;
   gap: 3px;
 
-  background-color: ${color.white};
+  background-color: ${theme.color.white};
 
-  color: ${color.primary};
+  color: ${theme.color.primary};
   cursor: pointer;
   font-size: 12px;
   font-weight: bold;
   transition: all 0.3s ease-in-out;
 
   &:is(:hover, :focus-visible) {
-    background-color: ${color.primary};
-    color: ${color.white};
+    background-color: ${theme.color.primary};
+    color: ${theme.color.white};
   }
 `;
 
 export const baseInputStyle = css`
   padding: 8px 8px;
-  border: ${borderRadius.rounded_sm} solid ${color.neutral.lightest};
-  border-radius: ${borderRadius.rounded_md};
+  border: ${theme.borderRadius.rounded_sm} solid ${theme.color.neutral.lightest};
+  border-radius: ${theme.borderRadius.rounded_md};
   &::placeholder {
-    color: color-mix(in srgb, ${color.neutral.light} 50%, transparent);
+    color: color-mix(in srgb, ${theme.color.neutral.light} 50%, transparent);
   }
   &:focus-visible {
-    outline-color: ${color.primary};
+    outline-color: ${theme.color.primary};
   }
   &:has(+ p) {
-    border-color: ${color.status.danger};
+    border-color: ${theme.color.status.danger};
     &:focus-visible {
-      outline-color: ${color.status.danger};
+      outline-color: ${theme.color.status.danger};
     }
   }
 `;
