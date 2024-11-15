@@ -10,17 +10,17 @@ import { mapZodError } from "@/utils/mapZodErrors";
 
 /** Test config.
  * ----------------------
-// const initialFormData: AdFormData = {
-//   title: "this is a title",
-//   owner: "myemail@gmail.com",
-//   price: 199,
-//   picture:
-//     "https://static1.squarespace.com/static/56acc1138a65e2a286012c54/56ad05dfb09f9505c22897ef/5756ca76d51cd46816d2aa74/1613662125137/pixabaytest6-7.jpg?format=1500w",
-//   description: "this is a very long description...",
-//   location: "petaouchnok",
-//   category: undefined,
-//   tags: [{ id: 1 }, { id: 3 }],
-// };
+const initialFormData: AdFormData = {
+  title: "this is a title",
+  owner: "myemail@gmail.com",
+  price: 199,
+  picture:
+    "https://static1.squarespace.com/static/56acc1138a65e2a286012c54/56ad05dfb09f9505c22897ef/5756ca76d51cd46816d2aa74/1613662125137/pixabaytest6-7.jpg?format=1500w",
+  description: "this is a very long description...",
+  location: "petaouchnok",
+  category: {id: 1},
+  tags: [{ id: 1 }, { id: 3 }],
+};
  */
 
 const initialFormData: AdFormData = {

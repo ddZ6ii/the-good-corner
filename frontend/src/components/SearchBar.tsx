@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { Input } from "@/common/Input";
 import { Button } from "@common/Button";
+import { Input } from "@/common/Input";
 
 export default function SearchBar() {
   return (

@@ -626,7 +626,7 @@ VALUES    (
           "Modern dining set with a table and four chairs, perfect for small spaces.",
           "dining.set.seller@gmail.com",
           50000,
-          "https://quatropi.com/cdn/shop/files/quatropi-6-seater-modern-dining-set-walnut-cream-47329159053606.jpg?v=1718711961",
+          "https://img5.su-cdn.com/cdn-cgi/image/width=750,height=750/mall/file/2022/05/17/604f6e4618a5d8b53abc1a6a831dec42.jpg",
           "Bordeaux",
           "2023-08-25T16:20:05.621Z",
           4

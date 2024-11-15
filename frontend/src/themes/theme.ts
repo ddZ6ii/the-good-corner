@@ -11,6 +11,7 @@ export const theme = {
   color: {
     white: "#ffffff",
     primary: "#ffa41b",
+    secondary: "#005fcc",
     status: {
       success: "#00C851",
       warning: "#ffbb33",

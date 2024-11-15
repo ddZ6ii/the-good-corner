@@ -1,7 +1,9 @@
+import styled from "styled-components";
+import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import styled from "styled-components";
-import { Link } from "@/common/Link";
+import { LinkBtn } from "@/common/Link";
+import Loader from "@/common/Loader";
 import Logo from "@components/Logo";
 import Navbar from "@components/Navbar";
 import SearchBar from "@components/SearchBar";
@@ -14,24 +16,24 @@ export default function PageLayout() {
         <MainMenu>
           <Logo />
           <SearchBar />
-          <Link to="/ads/new" $outline>
+          <LinkBtn to="/ads/new" $outline>
             <span className="mobile__short">New</span>
             <span className="desktop__long">New ad</span>
-          </Link>
+          </LinkBtn>
         </MainMenu>
-        <Navbar />
+        <Suspense fallback={<Loader size="sm" $mt={1.4} $mb={0.35} />}>
+          <Navbar />
+        </Suspense>
       </NavigationHeader>
 
-      <PageContent>
+      <MainContent>
         <Outlet />
-      </PageContent>
+      </MainContent>
 
       <ToastContainer />
     </Container>
   );
 }
-
-const { borderRadius, color } = theme;
 
 const Container = styled.div`
   padding-inline: 16px;
@@ -48,8 +50,9 @@ const Container = styled.div`
 
 const NavigationHeader = styled.header`
   padding: 10px;
-  background-color: ${color.white};
-  border-bottom: ${borderRadius.rounded} solid ${color.neutral.lightest};
+  background-color: ${theme.color.white};
+  border-bottom: ${theme.borderRadius.rounded} solid
+    ${theme.color.neutral.lightest};
   overflow: hidden;
 `;
 
@@ -59,7 +62,7 @@ const MainMenu = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  color: ${color.primary};
+  color: ${theme.color.primary};
 
   & .mobile__short {
     @media screen and (min-width: 720px) {
@@ -74,7 +77,7 @@ const MainMenu = styled.div`
   }
 `;
 
-const PageContent = styled.main`
+const MainContent = styled.main`
   padding-block: 16px;
   @media screen and (min-width: 720px) {
     padding-block: 32px;
