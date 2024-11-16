@@ -1,14 +1,18 @@
 import styled, { css } from "styled-components";
-import { forwardRef, useImperativeHandle, useReducer, useRef } from "react";
+import {
+  forwardRef,
+  Suspense,
+  useImperativeHandle,
+  useReducer,
+  useRef,
+} from "react";
 import { ZodError } from "zod";
 import { IoChevronDown } from "react-icons/io5";
-import { useAxios } from "@/hooks/useAxios";
 import {
   AdContent,
   AdContentSchema,
   Category,
   getOjectKeys,
-  Tag,
 } from "@tgc/common";
 import { Button } from "@/common/Button";
 import { theme } from "@/themes/theme";
@@ -18,19 +22,32 @@ import { notifyError } from "@/utils/notify";
 import { baseInputStyle } from "@/themes/styles";
 import { AdFormState } from "@/types/adForm.types";
 import { adFormReducer } from "@/reducers/adForm.reducer";
+import { useQuery } from "@apollo/client";
+import Loader from "@/common/Loader";
+import { Input } from "@/components/form/Input";
+import { Field } from "@/components/form/Field";
+import { Label } from "@/components/form/Label";
+import { Text } from "@/components/form/Text";
+import Tags from "@/components/form/Tags";
+import { GET_CATEGORIES } from "@/graphql/categories";
 
 type AdFormProps = {
   initialFormState: AdFormState;
   onSubmit: (parsedBody: AdContent) => Promise<void>;
 };
 
+// !TODO: finish refactor form component...
+// !TODO: use a context and a provider to pass info to subcomponents...
 export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
   { initialFormState, onSubmit },
   forwardedRef,
 ) {
-  const { data: categories } = useAxios<Category[]>("categories");
-  const { data: tags } = useAxios<Tag[]>("tags");
   const [formState, dispatch] = useReducer(adFormReducer, initialFormState);
+  const {
+    data: { categories = [] } = {},
+    error: categoriesError,
+    loading: categoriesLoading,
+  } = useQuery<{ categories: Category[] }>(GET_CATEGORIES);
 
   const ref = useRef<HTMLFormElement>(null);
   useImperativeHandle<HTMLFormElement, HTMLFormElement>(forwardedRef, () => {
@@ -39,6 +56,17 @@ export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
     }
     return ref.current;
   }, []);
+
+  const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    dispatch({
+      type: "update_input",
+      payload: {
+        name: e.target.name,
+        nextValue: Number(e.target.value),
+        checked: e.target.checked,
+      },
+    });
+  };
 
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
@@ -282,7 +310,7 @@ export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
             <option key={crypto.randomUUID()} value="none" disabled hidden>
               Select a category
             </option>
-            {categories?.map((category) => (
+            {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
@@ -292,34 +320,14 @@ export const AdForm = forwardRef<HTMLFormElement, AdFormProps>(function AdForm(
         </Container>
         {formState.error.category && <Text>Please select a category</Text>}
       </Field>
-      <Fieldset disabled={formState.isSubmitting}>
-        <Legend>Tag(s)</Legend>
-        <Wrapper>
-          {tags?.map((tag) => (
-            <Field key={tag.id} $inline>
-              <Input
-                type="checkbox"
-                id={tag.name}
-                name="tags"
-                value={tag.id}
-                checked={formState.data.tags.some((t) => t.id === tag.id)}
-                onChange={(e) => {
-                  dispatch({
-                    type: "update_input",
-                    payload: {
-                      name: e.target.name,
-                      nextValue: parseInt(e.target.value, 10),
-                      checked: e.target.checked,
-                    },
-                  });
-                }}
-              />
-              <Label htmlFor={tag.name}>{tag.name}</Label>
-            </Field>
-          ))}
-        </Wrapper>
-        {formState.error.tags && <Text>{formState.error.tags}</Text>}
-      </Fieldset>
+      <Suspense fallback={<Loader size="md" />}>
+        <Tags
+          submittting={formState.isSubmitting}
+          tagsData={formState.data.tags}
+          tagsError={formState.error.tags}
+          onTagChange={handleTagChange}
+        />
+      </Suspense>
       <Button type="submit" $primary disabled={formState.isSubmitting}>
         Create ad
       </Button>
@@ -353,40 +361,6 @@ const Container = styled.div<{ $margin?: boolean }>`
   }
 `;
 
-const Field = styled.div<{ $inline?: boolean }>`
-  display: grid;
-  text-align: left;
-  gap: 8px;
-  font-size: 14px;
-  ${({ $inline }) =>
-    $inline &&
-    css`
-      grid-template-columns: auto 1fr;
-      gap: 4px;
-    `}
-  & input[type="checkbox"] + label {
-    cursor: pointer;
-    font-weight: normal;
-  }
-`;
-
-const Label = styled.label`
-  color: ${theme.color.neutral.light};
-  font-weight: bold;
-`;
-
-const Input = styled.input`
-  ${baseInputStyle}
-  ${({ type }) =>
-    type === "checkbox" &&
-    css`
-      cursor: pointer;
-    `}
-  &[disabled] {
-    cursor: not-allowed;
-  }
-`;
-
 const TextArea = styled.textarea`
   ${baseInputStyle}
 `;
@@ -407,40 +381,6 @@ const Select = styled.select`
     translate: 0 -50%;
     stroke: color-mix(in srgb, ${theme.color.neutral.light} 80%, transparent);
   }
-`;
-
-const Fieldset = styled.fieldset`
-  padding: 16px;
-  border: ${theme.borderRadius.rounded_sm} solid ${theme.color.neutral.lightest};
-  border-radius: ${theme.borderRadius.rounded_md};
-  & input[type="checkbox"] + label {
-    color: black;
-  }
-  &::placeholder {
-    color: color-mix(in srgb, ${theme.color.neutral.light} 50%, transparent);
-  }
-  &:focus-visible {
-    outline-color: ${theme.color.primary};
-  }
-`;
-
-const Wrapper = styled.div`
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 12px;
-`;
-
-const Legend = styled.legend`
-  text-align: left;
-  font-size: 14px;
-  color: ${theme.color.neutral.light};
-  font-weight: bold;
-`;
-
-const Text = styled.p`
-  color: ${theme.color.status.danger};
-  font-size: 12px;
 `;
 
 const Info = styled.span`
