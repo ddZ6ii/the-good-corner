@@ -4,7 +4,7 @@ import { useQuery } from "@apollo/client";
 import { CategoryWithAds, IdParam, IdParamSchema } from "@tgc/common";
 import Loader from "@/common/Loader";
 import AdList from "@/components/AdList";
-import { GET_CATEGORY } from "@/graphql/category";
+import { GET_CATEGORY } from "@/graphql";
 import PageContent from "@/layouts/PageContent";
 import { capitalize } from "@/utils/format";
 import { sortAdsByCreationDate } from "@/utils/sort";

@@ -13,21 +13,21 @@ export const AD_CONSTRAINTS = {
     maxLength: 500,
   },
   location: {
-    minLength: 5,
+    minLength: 3,
     maxLength: 50,
   },
 }
 
 export const CATEGORY_CONSTRAINTS = {
   name: {
-    minLength: 5,
+    minLength: 3,
     maxLength: 50,
   },
 }
 
 export const TAG_CONSTRAINTS = {
   name: {
-    minLength: 5,
+    minLength: 3,
     maxLength: 50,
   },
 }
@@ -64,7 +64,7 @@ export const AdContentSchema = z.object({
     .max(AD_CONSTRAINTS.location.maxLength),
   category: z.object(
     {
-      id: z.number().int().positive(),
+      id: z.coerce.number().int().positive(),
     },
     {
       invalid_type_error: "is invalid",
@@ -73,7 +73,7 @@ export const AdContentSchema = z.object({
   tags: z
     .object(
       {
-        id: z.number().int().positive(),
+        id: z.coerce.number().int().positive(),
       },
       {
         invalid_type_error:
@@ -87,8 +87,37 @@ export const AdContentSchema = z.object({
 export const AdPartialContentSchema = AdContentSchema.partial()
 
 export const AdSchema = AdContentSchema.extend({
-  id: z.number().int().positive(),
-  createdAt: z.string().trim(),
+  id: z.coerce.number().int().positive(),
+  category: z.object(
+    {
+      id: z.coerce.number().int().positive(),
+      name: z
+        .string()
+        .trim()
+        .min(CATEGORY_CONSTRAINTS.name.minLength)
+        .max(CATEGORY_CONSTRAINTS.name.maxLength),
+    },
+    {
+      invalid_type_error: "Expected an object with 'id' and 'name' properties.",
+    }
+  ),
+  tags: z
+    .object(
+      {
+        id: z.coerce.number().int().positive(),
+        name: z
+          .string()
+          .trim()
+          .min(TAG_CONSTRAINTS.name.minLength)
+          .max(TAG_CONSTRAINTS.name.maxLength),
+      },
+      {
+        invalid_type_error:
+          "Expected an array of objects with an 'id' property.",
+      }
+    )
+    .array()
+    .optional(),
 })
 
 export const AdNoTagsSchema = AdContentSchema.omit({

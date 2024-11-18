@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useSuspenseQuery } from "@apollo/client";
 import { Id, Tag } from "@tgc/common";
 import { Field, Input, Label, Text } from "@/components/editor";
-import { GET_TAGS } from "@/graphql/tags";
+import { GET_TAGS } from "@/graphql";
 import { theme } from "@/themes/theme";
 
 type SelectTagsProps = {

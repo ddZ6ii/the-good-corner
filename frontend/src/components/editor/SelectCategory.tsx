@@ -3,7 +3,7 @@ import { useSuspenseQuery } from "@apollo/client";
 import { IoChevronDown } from "react-icons/io5";
 import { Category } from "@tgc/common";
 import { Field, Info, Label, Text } from "@/components/editor";
-import { GET_CATEGORIES } from "@/graphql/categories";
+import { GET_CATEGORIES } from "@/graphql";
 import { baseInputStyle } from "@/themes/styles";
 import { theme } from "@/themes/theme";
 

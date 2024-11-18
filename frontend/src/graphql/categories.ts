@@ -1,6 +1,6 @@
-import { DocumentNode, gql } from "@apollo/client";
+import { gql } from "@apollo/client";
 
-export const GET_CATEGORIES: DocumentNode = gql`
+export const GET_CATEGORIES = gql`
   query categories {
     categories {
       id

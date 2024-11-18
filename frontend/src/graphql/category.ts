@@ -1,6 +1,6 @@
-import { DocumentNode, gql } from "@apollo/client";
+import { gql } from "@apollo/client";
 
-export const GET_CATEGORY: DocumentNode = gql`
+export const GET_CATEGORY = gql`
   query category($id: ID!) {
     category(id: $id) {
       id

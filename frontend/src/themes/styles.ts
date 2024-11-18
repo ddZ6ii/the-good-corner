@@ -42,3 +42,12 @@ export const baseInputStyle = css`
     }
   }
 `;
+
+export const basePillStyle = css`
+  padding: 4px 8px;
+  margin-left: -4px;
+  width: fit-content;
+  font-size: 12px;
+  background-color: ${theme.color.secondary.light};
+  border-radius: ${theme.borderRadius.pill};
+`;

@@ -1,11 +1,10 @@
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Reference, useMutation } from "@apollo/client";
+import { gql, Reference, useMutation } from "@apollo/client";
 import "react-toastify/dist/ReactToastify.css";
 import { Ad, AdContent } from "@tgc/common";
 import { AdEditor } from "@/components/AdEditor";
-import { CREATE_AD } from "@/graphql/createAd";
-import { CORE_AD_FIELDS } from "@/graphql/fragments";
+import { CREATE_AD } from "@/graphql";
 import MainContent from "@/layouts/PageContent";
 import { initialFormState } from "@/reducers/adForm.reducer";
 import { notifySuccess } from "@/utils/notify";
@@ -32,16 +31,29 @@ export default function NewAdPage() {
        *
        * Here the latter option is used.
        */
-      update: (cache, { data }) => {
+      update(cache, { data }) {
         if (!data?.createAd) return;
         cache.modify({
           fields: {
-            ads(existingAds = []) {
-              const newAdRef = cache.writeFragment<Ad>({
+            ads(
+              existingAdRefs: readonly Reference[] = [],
+              { readField },
+            ): Reference[] {
+              const newAdRef = cache.writeFragment({
                 data: data.createAd,
-                fragment: CORE_AD_FIELDS,
+                fragment: gql`
+                  fragment NewAd on Ad {
+                    id
+                  }
+                `,
               });
-              return [newAdRef, ...(existingAds as Reference[])] as Reference[];
+              if (!newAdRef) return [...existingAdRefs];
+              // Quick safety check: if the new ad is already in cache, we don't need to add it again.
+              const alreadyInCache = existingAdRefs.some(
+                (adRef) => readField("id", adRef) === data.createAd.id,
+              );
+              if (alreadyInCache) return [...existingAdRefs];
+              return [...existingAdRefs, newAdRef];
             },
           },
         });
@@ -61,7 +73,7 @@ export default function NewAdPage() {
   };
 
   return (
-    <MainContent title="Post new ad">
+    <MainContent title="Post your ad">
       <AdEditor
         initialFormState={initialFormState}
         ref={formRef}

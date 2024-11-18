@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useSuspenseQuery } from "@apollo/client";
 import { Category } from "@tgc/common";
 import { NavLink } from "@/common/Link";
-import { GET_CATEGORIES } from "@/graphql/categories";
+import { GET_CATEGORIES } from "@/graphql";
 import { theme } from "@/themes/theme";
 import { capitalize } from "@/utils/format";
 

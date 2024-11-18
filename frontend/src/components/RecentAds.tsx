@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useSuspenseQuery } from "@apollo/client";
 import { Ad as AdType } from "@tgc/common";
-import { GET_ADS } from "@/graphql/ads";
+import { GET_ADS } from "@/graphql";
 import AdList from "@/components/AdList";
 import { sortAdsByCreationDate } from "@/utils/sort";
 

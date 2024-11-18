@@ -24,12 +24,13 @@ import { mapZodError } from "@/utils/mapZodErrors";
 import { notifyError } from "@/utils/notify";
 
 type AdEditorProps = {
+  edit?: boolean;
   initialFormState: AdFormState;
   onSubmit: (parsedBody: AdContent) => Promise<void>;
 };
 
 export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
-  function AdForm({ initialFormState, onSubmit }, forwardedRef) {
+  function AdForm({ edit = false, initialFormState, onSubmit }, forwardedRef) {
     const [formState, dispatch] = useReducer(adFormReducer, initialFormState);
 
     const ref = useRef<HTMLFormElement>(null);
@@ -208,7 +209,7 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
           />
         </Suspense>
         <Button type="submit" $primary disabled={formState.isSubmitting}>
-          Create ad
+          {edit ? "Update" : "Create"} ad
         </Button>
       </Form>
     );
