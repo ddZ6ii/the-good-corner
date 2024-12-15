@@ -1,6 +1,7 @@
 import styled, { css } from "styled-components";
 
 export const Field = styled.div<{ $inline?: boolean }>`
+  position: relative;
   display: grid;
   text-align: left;
   gap: 8px;

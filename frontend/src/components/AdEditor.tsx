@@ -196,6 +196,15 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
             onCategoryBlur={(e) => {
               handleBlur(e, { id: parseInt(e.target.value, 10) });
             }}
+            onCategoryAdd={(newCategoryId: string) => {
+              dispatch({
+                type: "update_input",
+                payload: {
+                  name: "category",
+                  nextValue: { id: parseInt(newCategoryId, 10) },
+                },
+              });
+            }}
           />
         </Suspense>
         <Suspense fallback={<Loader size="md" />}>

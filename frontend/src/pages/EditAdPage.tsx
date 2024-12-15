@@ -31,7 +31,6 @@ export default function EditAdPage() {
 
   if (error || !ad) {
     if (error) console.error(error);
-    console.error(error);
     return <p>No ad found!</p>;
   }
 
