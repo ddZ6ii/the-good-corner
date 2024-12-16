@@ -91,6 +91,7 @@ export default function SelectCategory({
       <Modal portal open={isModalOpen} onClose={closeModal}>
         <CategoryEditor
           label="category"
+          data={categories}
           onCategoryAdd={(newCategoryId: string) => {
             onCategoryAdd(newCategoryId);
             closeModal();

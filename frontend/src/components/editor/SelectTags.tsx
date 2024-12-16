@@ -78,6 +78,7 @@ export default function SelectTags({
       <Modal portal open={isModalOpen} onClose={closeModal}>
         <TagEditor
           label="tag"
+          data={tags}
           onTagAdd={(newTagId: string) => {
             onTagAdd(newTagId);
             closeModal();

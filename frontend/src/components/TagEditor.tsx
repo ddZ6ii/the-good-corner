@@ -1,27 +1,33 @@
 import styled from "styled-components";
 import { useRef, useState } from "react";
 import { ZodError } from "zod";
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { Tag, TagContentSchema } from "@tgc/common";
 import { Button } from "@/common/Button";
 import { InputField } from "@/components/editor";
-import { GET_TAGS_BY_NAME, CREATE_TAG, GET_TAGS } from "@/graphql";
+import { CREATE_TAG, GET_TAGS } from "@/graphql";
 import { capitalize } from "@/utils/format";
 
-type TagEditorProps = {
+type Data = {
+  id: number;
+  name: string;
+};
+
+type TagEditorProps<T extends Data[]> = {
   label: string;
+  data: T;
   onTagAdd: (newTagId: string) => void;
 };
 
-export function TagEditor({ label, onTagAdd }: TagEditorProps) {
+export function TagEditor<T extends Data[]>({
+  label,
+  data,
+  onTagAdd,
+}: TagEditorProps<T>) {
   const formRef = useRef<HTMLFormElement>(null);
   const [newTag, setTag] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-
-  const [getTagByName] = useLazyQuery<{
-    tags: Tag[];
-  }>(GET_TAGS_BY_NAME);
 
   const [createTag] = useMutation<{ createTag: Tag }>(CREATE_TAG);
 
@@ -30,17 +36,8 @@ export function TagEditor({ label, onTagAdd }: TagEditorProps) {
     const target = formRef.current.elements.namedItem(label);
     if (target instanceof HTMLElement) target.focus();
   };
-  const checkIfAlreadyExist = async (tagName: string) => {
-    const { data, error: errorGetTagByName } = await getTagByName({
-      variables: { name: tagName },
-    });
-    if (errorGetTagByName || !data) {
-      throw new Error("Failed to get tags by name");
-    }
-    const alreadyExist = data.tags.some(
-      (tag) => tag.name === newTag.trim().toLowerCase(),
-    );
-    return alreadyExist;
+  const checkIfAlreadyExist = (newName: string) => {
+    return data.some((el) => el.name === newName.trim().toLowerCase());
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -73,7 +70,7 @@ export function TagEditor({ label, onTagAdd }: TagEditorProps) {
         return;
       }
       // Check for already existing tag.
-      const alreadyExist = await checkIfAlreadyExist(newTag);
+      const alreadyExist = checkIfAlreadyExist(newTag);
       if (alreadyExist) {
         focusInput();
         setError(`${capitalize(label)} already exists!`);

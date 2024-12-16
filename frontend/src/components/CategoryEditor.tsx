@@ -1,31 +1,33 @@
 import styled from "styled-components";
 import { useRef, useState } from "react";
 import { ZodError } from "zod";
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { Category, CategoryContentSchema } from "@tgc/common";
 import { Button } from "@/common/Button";
 import { InputField } from "@/components/editor";
-import {
-  GET_CATEGORIES_BY_NAME,
-  CREATE_CATEGORY,
-  GET_CATEGORIES,
-} from "@/graphql";
+import { CREATE_CATEGORY, GET_CATEGORIES } from "@/graphql";
 import { capitalize } from "@/utils/format";
 
-type CategoryEditorProps = {
+type Data = {
+  id: number;
+  name: string;
+};
+
+type CategoryEditorProps<T extends Data[]> = {
   label: string;
+  data: T;
   onCategoryAdd: (newCategoryId: string) => void;
 };
 
-export function CategoryEditor({ label, onCategoryAdd }: CategoryEditorProps) {
+export function CategoryEditor<T extends Data[]>({
+  label,
+  data,
+  onCategoryAdd,
+}: CategoryEditorProps<T>) {
   const formRef = useRef<HTMLFormElement>(null);
   const [newCategory, setCategory] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-
-  const [getCategoryByName] = useLazyQuery<{
-    categories: Category[];
-  }>(GET_CATEGORIES_BY_NAME);
 
   const [createCategory] = useMutation<{ createCategory: Category }>(
     CREATE_CATEGORY,
@@ -36,17 +38,8 @@ export function CategoryEditor({ label, onCategoryAdd }: CategoryEditorProps) {
     const target = formRef.current.elements.namedItem(label);
     if (target instanceof HTMLElement) target.focus();
   };
-  const checkIfAlreadyExist = async (categoryName: string) => {
-    const { data, error: errorGetCategoryByName } = await getCategoryByName({
-      variables: { name: categoryName },
-    });
-    if (errorGetCategoryByName || !data) {
-      throw new Error("Failed to get categories by name");
-    }
-    const alreadyExist = data.categories.some(
-      (category) => category.name === newCategory.trim().toLowerCase(),
-    );
-    return alreadyExist;
+  const checkIfAlreadyExist = (newName: string) => {
+    return data.some((el) => el.name === newName.trim().toLowerCase());
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +72,7 @@ export function CategoryEditor({ label, onCategoryAdd }: CategoryEditorProps) {
         return;
       }
       // Check for already existing category.
-      const alreadyExist = await checkIfAlreadyExist(newCategory);
+      const alreadyExist = checkIfAlreadyExist(newCategory);
       if (alreadyExist) {
         focusInput();
         setError(`${capitalize(label)} already exists!`);
