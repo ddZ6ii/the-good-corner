@@ -215,6 +215,16 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
             onTagChange={(e) => {
               handleChange(e, Number(e.target.value), e.target.checked);
             }}
+            onTagAdd={(newTagId: string) => {
+              dispatch({
+                type: "update_input",
+                payload: {
+                  name: "tags",
+                  nextValue: Number(newTagId),
+                  checked: true,
+                },
+              });
+            }}
           />
         </Suspense>
         <Button type="submit" $primary disabled={formState.isSubmitting}>
