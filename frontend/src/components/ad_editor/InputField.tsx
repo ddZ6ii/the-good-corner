@@ -1,6 +1,6 @@
 import styled, { css } from "styled-components";
 import { HTMLProps } from "react";
-import { Label, Field, Info, Text } from "@/components/editor";
+import { Label, Field, Info, Text } from "@/components/ad_editor";
 import { baseInputStyle } from "@/themes/styles";
 import { capitalize } from "@/utils/format";
 

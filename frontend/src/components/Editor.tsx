@@ -1,56 +1,50 @@
 import styled from "styled-components";
 import { useRef, useState } from "react";
-import { ZodError } from "zod";
-import { useLazyQuery, useMutation } from "@apollo/client";
-import { Tag, TagContentSchema } from "@tgc/common";
+import { z, ZodError } from "zod";
 import { Button } from "@/common/Button";
-import { InputField } from "@/components/editor";
-import { GET_TAGS_BY_NAME, CREATE_TAG, GET_TAGS } from "@/graphql";
+import { InputField } from "@/components/ad_editor";
 import { capitalize } from "@/utils/format";
 
-type TagEditorProps = {
-  label: string;
-  onTagAdd: (newTagId: string) => void;
+type Data = {
+  id: number;
+  name: string;
 };
 
-export function TagEditor({ label, onTagAdd }: TagEditorProps) {
+type EditorProps<T extends Data[]> = {
+  label: string;
+  data: T;
+  validationSchema: z.Schema;
+  onAdd: (newId: string) => Promise<void>;
+};
+
+export function Editor<T extends Data[]>({
+  label,
+  data,
+  validationSchema,
+  onAdd,
+}: EditorProps<T>) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [newTag, setTag] = useState("");
+  const [name, setName] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-
-  const [getTagByName] = useLazyQuery<{
-    tags: Tag[];
-  }>(GET_TAGS_BY_NAME);
-
-  const [createTag] = useMutation<{ createTag: Tag }>(CREATE_TAG);
 
   const focusInput = () => {
     if (!formRef.current) return;
     const target = formRef.current.elements.namedItem(label);
     if (target instanceof HTMLElement) target.focus();
   };
-  const checkIfAlreadyExist = async (tagName: string) => {
-    const { data, error: errorGetTagByName } = await getTagByName({
-      variables: { name: tagName },
-    });
-    if (errorGetTagByName || !data) {
-      throw new Error("Failed to get tags by name");
-    }
-    const alreadyExist = data.tags.some(
-      (tag) => tag.name === newTag.trim().toLowerCase(),
-    );
-    return alreadyExist;
+  const alreadyExists = (name: string) => {
+    return data.some((el) => el.name === name.trim().toLowerCase());
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
-    setTag(e.target.value);
+    setName(e.target.value);
   };
   const handleBlur = (_e: React.FocusEvent<HTMLInputElement>) => {
     try {
       setError("");
-      TagContentSchema.parse({ name: newTag });
+      validationSchema.parse({ name });
     } catch (error: unknown) {
       if (error instanceof ZodError) {
         const { name: zodError = [] } = error.formErrors.fieldErrors;
@@ -72,29 +66,16 @@ export function TagEditor({ label, onTagAdd }: TagEditorProps) {
         focusInput();
         return;
       }
-      // Check for already existing tag.
-      const alreadyExist = await checkIfAlreadyExist(newTag);
-      if (alreadyExist) {
+      // Check for already existing name.
+      if (alreadyExists(name)) {
         focusInput();
         setError(`${capitalize(label)} already exists!`);
         return;
       }
-      // Add new tag to database.
-      const createdTag = await createTag({
-        variables: {
-          data: { name: newTag.trim().toLowerCase() },
-        },
-        // Refetch tags after adding a new one.
-        refetchQueries: [{ query: GET_TAGS }],
-      });
-      if (!createdTag.data) {
-        throw new Error("Failed to create tag");
-      }
-      // Set newly added tag as current selection in the parent form.
-      const { id: newTagId } = createdTag.data.createTag;
-      onTagAdd(newTagId as unknown as string);
+      // Add new name to database and update parent form current selection.
+      await onAdd(name);
       // Reset form.
-      setTag("");
+      setName("");
     } catch (error: unknown) {
       console.error(error);
     } finally {
@@ -107,7 +88,7 @@ export function TagEditor({ label, onTagAdd }: TagEditorProps) {
       <InputField
         label={label}
         placeholder={`Enter a new ${label} name...`}
-        value={newTag}
+        value={name}
         disabled={submitting}
         error={error}
         onChange={handleChange}

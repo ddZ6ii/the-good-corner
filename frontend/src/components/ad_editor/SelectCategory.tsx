@@ -2,13 +2,13 @@ import styled, { css } from "styled-components";
 import { useState } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { IoChevronDown } from "react-icons/io5";
-import { useSuspenseQuery } from "@apollo/client";
-import { Category } from "@tgc/common";
+import { useMutation, useSuspenseQuery } from "@apollo/client";
+import { Category, CategoryContentSchema } from "@tgc/common";
 import { Button } from "@/common/Button";
+import { Editor } from "@/components/Editor";
 import { Modal } from "@/common/Modal";
-import { Field, Info, Label, Text } from "@/components/editor";
-import { CategoryEditor } from "@/components/CategoryEditor";
-import { GET_CATEGORIES } from "@/graphql";
+import { Field, Info, Label, Text } from "@/components/ad_editor";
+import { CREATE_CATEGORY, GET_CATEGORIES } from "@/graphql";
 import { baseInputStyle } from "@/themes/styles";
 import { theme } from "@/themes/theme";
 
@@ -36,8 +36,31 @@ export default function SelectCategory({
       categories: Category[];
     }>(GET_CATEGORIES);
 
+  const [createCategory] = useMutation<{ createCategory: Category }>(
+    CREATE_CATEGORY,
+  );
+
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleAddCategory = async (newCategoryName: string) => {
+    // Add new category to database.
+    const createdCategory = await createCategory({
+      variables: {
+        data: { name: newCategoryName.trim().toLowerCase() },
+      },
+      // Refetch categories after adding a new one.
+      refetchQueries: [{ query: GET_CATEGORIES }],
+    });
+    if (!createdCategory.data) {
+      throw new Error("Failed to create category");
+    }
+    // Set newly added category as current selection in the parent form.
+    const { id: newCategoryId } = createdCategory.data.createCategory;
+    onCategoryAdd(newCategoryId as unknown as string);
+
+    closeModal();
   };
 
   if (errorCategories) {
@@ -89,12 +112,11 @@ export default function SelectCategory({
 
       {/* Pass the "portal" prop to avoid nested forms (prevents inner form submission to trigger parent form submission). */}
       <Modal portal open={isModalOpen} onClose={closeModal}>
-        <CategoryEditor
+        <Editor
           label="category"
-          onCategoryAdd={(newCategoryId: string) => {
-            onCategoryAdd(newCategoryId);
-            closeModal();
-          }}
+          data={categories}
+          validationSchema={CategoryContentSchema}
+          onAdd={handleAddCategory}
         />
       </Modal>
     </>

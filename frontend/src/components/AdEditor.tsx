@@ -14,7 +14,7 @@ import {
   SelectTags,
   SelectCategory,
   TextareaField,
-} from "@/components/editor";
+} from "@/components/ad_editor";
 import Loader from "@/common/Loader";
 import { adFormReducer } from "@/reducers/adForm.reducer";
 import { theme } from "@/themes/theme";

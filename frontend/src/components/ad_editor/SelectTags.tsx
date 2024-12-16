@@ -1,13 +1,13 @@
 import styled from "styled-components";
 import { useState } from "react";
-import { useSuspenseQuery } from "@apollo/client";
+import { useMutation, useSuspenseQuery } from "@apollo/client";
 import { IoMdAddCircleOutline } from "react-icons/io";
-import { Id, Tag } from "@tgc/common";
+import { Id, Tag, TagContentSchema } from "@tgc/common";
 import { Button } from "@/common/Button";
+import { Editor } from "@/components/Editor";
 import { Modal } from "@/common/Modal";
-import { Field, Input, Label, Text } from "@/components/editor";
-import { TagEditor } from "@/components/TagEditor";
-import { GET_TAGS } from "@/graphql";
+import { Field, Input, Label, Text } from "@/components/ad_editor";
+import { CREATE_TAG, GET_TAGS } from "@/graphql";
 import { theme } from "@/themes/theme";
 
 type SelectTagsProps = {
@@ -31,8 +31,29 @@ export default function SelectTags({
     tags: Tag[];
   }>(GET_TAGS);
 
+  const [createTag] = useMutation<{ createTag: Tag }>(CREATE_TAG);
+
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleAddTag = async (newTagName: string) => {
+    // Add new tag to database.
+    const createdTag = await createTag({
+      variables: {
+        data: { name: newTagName.trim().toLowerCase() },
+      },
+      // Refetch tags after adding a new one.
+      refetchQueries: [{ query: GET_TAGS }],
+    });
+    if (!createdTag.data) {
+      throw new Error("Failed to create tag");
+    }
+    // Set newly added tag as current selection in the parent form.
+    const { id: newTagId } = createdTag.data.createTag;
+    onTagAdd(newTagId as unknown as string);
+
+    closeModal();
   };
 
   if (errorTags) {
@@ -76,12 +97,11 @@ export default function SelectTags({
 
       {/* Pass the "portal" prop to avoid nested forms (prevents inner form submission to trigger parent form submission). */}
       <Modal portal open={isModalOpen} onClose={closeModal}>
-        <TagEditor
+        <Editor
           label="tag"
-          onTagAdd={(newTagId: string) => {
-            onTagAdd(newTagId);
-            closeModal();
-          }}
+          data={tags}
+          validationSchema={TagContentSchema}
+          onAdd={handleAddTag}
         />
       </Modal>
     </>
