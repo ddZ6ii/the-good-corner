@@ -1,6 +1,6 @@
 import { Arg, Args, ID, Mutation, Query, Resolver } from 'type-graphql';
-import { Ad } from '@database/entities/Ad';
-import * as adsModel from '@models/ads.model';
+import { Ad } from '@/entities/Ad';
+import * as adsModel from '@/models/ads.model';
 import {
   AddAdInput,
   GetAdArgs,

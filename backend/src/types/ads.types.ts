@@ -8,7 +8,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { AD_CONSTRAINTS, Id } from '@tgc/common';
-import { Ad } from '@database/entities/Ad.ts';
+import { Ad } from '@/entities/Ad.ts';
 import { ExcludeMethods, IdInput } from './utils.types.ts';
 
 type AdContentNoRelation = Omit<

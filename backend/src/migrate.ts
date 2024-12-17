@@ -1,10 +1,10 @@
 import fs from 'fs';
 import sqlite3 from 'sqlite3';
-import { resolve } from 'node:path';
-import { dbFileUrl } from './database/db.config.ts';
 import chalk from 'chalk';
+import { resolve } from 'node:path';
+import { dbFileUrl } from '@/db.config';
 
-const dumpFileUrl = resolve(import.meta.dirname, 'database/dump.sql');
+const dumpFileUrl = resolve(import.meta.dirname, 'dump.sql');
 
 const db = new sqlite3.Database(dbFileUrl);
 

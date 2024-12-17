@@ -1,7 +1,7 @@
 import { ArgsType, Field, ID, InputType } from 'type-graphql';
 import { IsNotEmpty, Length } from 'class-validator';
 import { CATEGORY_CONSTRAINTS } from '@tgc/common';
-import { Category } from '@database/entities/Category.ts';
+import { Category } from '@/entities/Category.ts';
 import { ExcludeMethods } from './utils.types.ts';
 
 export type CategoryContent = Omit<ExcludeMethods<Category>, 'id' | 'ads'>;

@@ -1,6 +1,6 @@
 import { DeleteResult, Like } from 'typeorm';
-import { Ad } from '@database/entities/Ad.ts';
-import { merge } from '@utils/merge';
+import { Ad } from '@/entities/Ad';
+import { merge } from '@/utils/merge';
 import { AdContent } from '@/types/ads.types.ts';
 
 export function findAll(categoryFilter?: string): Promise<Ad[]> {
