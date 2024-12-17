@@ -6,7 +6,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Ad } from './Ad.ts';
+import { Ad } from '@/entities/Ad';
 
 /** Active record pattern
  * ----------------------

@@ -4,10 +4,10 @@ import { startStandaloneServer } from '@apollo/server/standalone';
 import { buildSchema } from 'type-graphql';
 import chalk from 'chalk';
 import 'dotenv/config';
-import { dataSource } from '@database/db.config.ts';
-import { CategoriesResolver } from '@resolvers/Categories.resolver.ts';
-import { AdsResolver } from '@resolvers/Ads.resolver.ts';
-import { TagsResolver } from '@resolvers/Tags.resolver';
+import { dataSource } from '@/db.config';
+import { CategoriesResolver } from '@/resolvers/Categories.resolver.ts';
+import { AdsResolver } from '@/resolvers/Ads.resolver.ts';
+import { TagsResolver } from '@/resolvers/Tags.resolver';
 
 const API_PORT = parseInt(process.env.API_PORT ?? '3000', 10);
 

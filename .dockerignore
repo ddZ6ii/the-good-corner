@@ -1,0 +1,21 @@
+**/node_modules
+**/dist
+!/common/dist
+**/queries.sql
+**/bin
+
+**/.DS_Store
+**/.env*
+**/.git
+**/.gitignore
+**/.prettierignore
+.vs
+.vscode
+
+**/eslint.config.js
+**/prettier.config.js
+
+# MD files
+**/*.md
+**/*.txt
+

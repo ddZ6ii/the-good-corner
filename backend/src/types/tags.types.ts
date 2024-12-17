@@ -1,7 +1,7 @@
 import { ArgsType, Field, ID, InputType } from 'type-graphql';
 import { IsNotEmpty, Length } from 'class-validator';
 import { TAG_CONSTRAINTS } from '@tgc/common';
-import { Tag } from '@database/entities/Tag.ts';
+import { Tag } from '@/entities/Tag.ts';
 import { ExcludeMethods } from './utils.types.ts';
 
 export type TagContent = Omit<ExcludeMethods<Tag>, 'id' | 'ads'>;

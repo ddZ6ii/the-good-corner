@@ -1,6 +1,6 @@
 import { Arg, Args, ID, Mutation, Query, Resolver } from 'type-graphql';
-import { Tag } from '@database/entities/Tag';
-import * as tagsModel from '@models/tags.model.ts';
+import { Tag } from '@/entities/Tag';
+import * as tagsModel from '@/models/tags.model.ts';
 import {
   AddTagInput,
   GetTagArgs,

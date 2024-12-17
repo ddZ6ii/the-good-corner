@@ -10,8 +10,8 @@ import {
 } from 'typeorm';
 import { Field, ID, Int, ObjectType } from 'type-graphql';
 import { GraphQLDateTime } from 'graphql-scalars';
-import { Category } from './Category.ts';
-import { Tag } from './Tag.ts';
+import { Category } from '@/entities/Category';
+import { Tag } from '@/entities/Tag';
 
 /** Active record pattern
  * ----------------------

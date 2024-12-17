@@ -1,5 +1,5 @@
 import { DeleteResult, Like } from 'typeorm';
-import { Category } from '@database/entities/Category.ts';
+import { Category } from '@/entities/Category';
 import { CategoryContent } from '@/types/categories.types';
 
 export function findAll(categoryName?: string): Promise<Category[]> {

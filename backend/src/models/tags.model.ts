@@ -1,5 +1,5 @@
 import { DeleteResult, Like } from 'typeorm';
-import { Tag } from '@database/entities/Tag.ts';
+import { Tag } from '@/entities/Tag';
 import { TagContent } from '@/types/tags.types.ts';
 
 export function findAll(tagName?: string): Promise<Tag[]> {
