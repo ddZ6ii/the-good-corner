@@ -21,7 +21,7 @@ export class Tag extends BaseEntity {
   @Field(() => ID)
   id!: number;
 
-  @Column({ type: 'text', length: 50 })
+  @Column({ type: 'text' })
   @Field(() => String)
   name!: string;
 
