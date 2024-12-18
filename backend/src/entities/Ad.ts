@@ -26,11 +26,11 @@ export class Ad extends BaseEntity {
   @Field(() => ID)
   id!: number;
 
-  @Column({ type: 'text', length: 50 })
+  @Column({ type: 'text' })
   @Field(() => String)
   title!: string;
 
-  @Column({ type: 'text', length: 500 })
+  @Column({ type: 'text' })
   @Field(() => String)
   description!: string;
 
@@ -47,7 +47,7 @@ export class Ad extends BaseEntity {
   @Field(() => String)
   picture!: string;
 
-  @Column({ type: 'text', length: 50 })
+  @Column({ type: 'text' })
   @Field(() => String)
   location!: string;
 
