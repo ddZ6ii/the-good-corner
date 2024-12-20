@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useMemo } from "react";
 import { useSuspenseQuery } from "@apollo/client";
 import { Category } from "@tgc/common";
 import { NavLink } from "@/common/Link";
@@ -11,6 +12,12 @@ export default function Navbar() {
     categories: Category[];
   }>(GET_CATEGORIES);
 
+  const sortedCategories = useMemo(
+    () =>
+      [...categories].sort((cat1, cat2) => cat1.name.localeCompare(cat2.name)),
+    [categories],
+  );
+
   if (error) {
     console.error(error);
     return <p>No categories currently available...</p>;
@@ -19,7 +26,7 @@ export default function Navbar() {
   return (
     <nav>
       <NavList>
-        {categories.map((category) => (
+        {sortedCategories.map((category) => (
           <li key={category.id}>
             <NavLink to={`categories/${category.id.toString()}`}>
               {capitalize(category.name)}
