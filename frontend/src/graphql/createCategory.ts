@@ -1,10 +1,10 @@
-import { gql } from "@apollo/client";
+import { graphql } from "@/gql";
 
-export const CREATE_CATEGORY = gql`
+export const CREATE_CATEGORY = graphql(/* GraphQL */ `
   mutation createCategory($data: AddCategoryInput!) {
     createCategory(data: $data) {
       id
       name
     }
   }
-`;
+`);

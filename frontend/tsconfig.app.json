@@ -33,6 +33,6 @@
       "@utils/*": ["utils/*"]
     }
   },
-  "include": ["src", "prettier.config.js"],
+  "include": ["src", "prettier.config.js", "codegen.ts"],
   "exclude": ["dist", "node_modules", "public"]
 }

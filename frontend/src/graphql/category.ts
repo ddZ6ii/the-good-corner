@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
+import { graphql } from "@/gql";
 
-export const GET_CATEGORY = gql`
+export const GET_CATEGORY = graphql(/* GraphQL */ `
   query category($id: ID!) {
     category(id: $id) {
       id
@@ -14,4 +14,4 @@ export const GET_CATEGORY = gql`
       }
     }
   }
-`;
+`);

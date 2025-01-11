@@ -1,10 +1,10 @@
-import { gql } from "@apollo/client";
+import { graphql } from "@/gql";
 
-export const GET_TAGS = gql`
+export const GET_TAGS = graphql(/* GraphQL */ `
   query tags {
     tags {
       id
       name
     }
   }
-`;
+`);

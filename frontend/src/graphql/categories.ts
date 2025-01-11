@@ -1,10 +1,10 @@
-import { gql } from "@apollo/client";
+import { graphql } from "@/gql";
 
-export const GET_CATEGORIES = gql`
+export const GET_CATEGORIES = graphql(/* GraphQL */ `
   query categories {
     categories {
       id
       name
     }
   }
-`;
+`);

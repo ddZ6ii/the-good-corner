@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
+import { graphql } from "@/gql";
 
-export const CREATE_AD = gql`
+export const CREATE_AD = graphql(/* GraphQL */ `
   mutation createAd($data: AddAdInput!) {
     createAd(data: $data) {
       id
@@ -10,4 +10,4 @@ export const CREATE_AD = gql`
       createdAt
     }
   }
-`;
+`);
