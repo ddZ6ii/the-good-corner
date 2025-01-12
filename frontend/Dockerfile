@@ -10,23 +10,17 @@ WORKDIR /app
 
 # Copy and install the application's dependencies.
 COPY package*.json yarn.lock ./
-COPY common/package*.json common/
-COPY frontend/package*.json frontend/
 RUN yarn install
 
 # Copy the application source code (excluding the files in .dockerignore).
-COPY tsconfig.json .
-COPY common/tsconfig.json common/
-COPY common/dist common/dist
-COPY common/src common/src
-COPY frontend/vite.config.ts frontend/
-COPY frontend/tsconfig*.json frontend/
-COPY frontend/index.html frontend/
-COPY frontend/public frontend/public
-COPY frontend/src frontend/src
+COPY vite.config.ts ./
+COPY tsconfig*.json ./
+COPY index.html ./
+COPY public public
+COPY src src
 
 # Indicate the port on which the application will listen for requests (documentation purposes only).
 EXPOSE 5173
 
 # Define the command to start the application (run at container's startup).
-CMD ["yarn", "dev:front"]
+CMD ["yarn", "dev"]

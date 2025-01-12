@@ -1,10 +1,5 @@
 import { ArgsType, Field, ID, InputType } from 'type-graphql';
 import { IsNotEmpty, Length } from 'class-validator';
-import { TAG_CONSTRAINTS } from '@tgc/common';
-import { Tag } from '@/entities/Tag.ts';
-import { ExcludeMethods } from './utils.types.ts';
-
-export type TagContent = Omit<ExcludeMethods<Tag>, 'id' | 'ads'>;
 
 /**
  * Class validator is used to validate the input data.
@@ -26,17 +21,17 @@ export class GetTagArgs {
 }
 
 @InputType({ description: 'New tag data' })
-export class AddTagInput implements TagContent {
+export class AddTagInput {
   @Field(() => String)
-  @Length(TAG_CONSTRAINTS.name.minLength, TAG_CONSTRAINTS.name.maxLength)
+  @Length(3, 50)
   name!: string;
 }
 
 // !TODO: validation not working when passing "name": null in the data object...
 @InputType({ description: 'Update tag data' })
-export class UpdateTagInput implements Partial<TagContent> {
+export class UpdateTagInput {
   @Field(() => String, { nullable: true }) // Marks the field as optional in TypeGraphQL schema.
   @IsNotEmpty()
-  @Length(TAG_CONSTRAINTS.name.minLength, TAG_CONSTRAINTS.name.maxLength) // Validation: if provided, it must be a string with a certain length.
+  @Length(3, 50) // Validation: if provided, it must be a string with a certain length.
   name?: string;
 }

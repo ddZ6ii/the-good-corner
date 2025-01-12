@@ -13,20 +13,14 @@ WORKDIR /app
 
 # Copy and install the application's dependencies.
 COPY package*.json yarn.lock ./
-COPY common/package*.json common/
-COPY backend/package*.json backend/
 RUN yarn install
 
 # Copy the application source code (excluding the files in .dockerignore).
-COPY tsconfig.json .
-COPY common/tsconfig.json common/
-COPY common/dist common/dist
-COPY common/src common/src
-COPY backend/tsconfig.json backend/
-COPY backend/src backend/src
+COPY tsconfig.json ./
+COPY src src
 
 # Indicate the port on which the application will listen for requests (documentation purposes only).
 EXPOSE 3000
 
 # Define the command to run the application
-CMD ["yarn", "dev:back"]
+CMD ["yarn", "dev"]

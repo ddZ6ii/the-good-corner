@@ -1,6 +1,6 @@
-import { graphql } from "@/gql";
+import { gql } from "@/gql";
 
-export const CREATE_TAG = graphql(/* GraphQL */ `
+export const CREATE_TAG = gql(/* GraphQL */ `
   mutation createTag($data: AddTagInput!) {
     createTag(data: $data) {
       id

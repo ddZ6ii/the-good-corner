@@ -1,9 +1,7 @@
 services:
   client:
     container_name: tgc-client
-    build:
-      context: .
-      dockerfile: ./frontend/Dockerfile
+    build: ./frontend
     env_file: "./frontend/.env.development.local"
     environment:
       - NODE_ENV=development
@@ -22,9 +20,7 @@ services:
 
   server:
     container_name: tgc-server
-    build:
-      context: .
-      dockerfile: ./backend/Dockerfile
+    build: ./backend
     env_file: "./backend/.env"
     environment:
       - NODE_ENV=development

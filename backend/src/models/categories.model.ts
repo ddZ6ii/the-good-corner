@@ -1,6 +1,9 @@
 import { DeleteResult, Like } from 'typeorm';
 import { Category } from '@/entities/Category';
-import { CategoryContent } from '@/types/categories.types';
+import {
+  AddCategoryInput,
+  UpdateCategoryInput,
+} from '@/types/categories.types';
 
 export function findAll(categoryName?: string): Promise<Category[]> {
   if (!categoryName) return Category.find({ relations: ['ads', 'ads.tags'] });
@@ -19,7 +22,9 @@ export function findOneBy(categoryId: number): Promise<Category | null> {
   });
 }
 
-export function create(newCategoryContent: CategoryContent): Promise<Category> {
+export function create(
+  newCategoryContent: AddCategoryInput,
+): Promise<Category> {
   const newCategory = new Category();
   Object.assign(newCategory, newCategoryContent);
   return newCategory.save();
@@ -31,7 +36,7 @@ export async function remove(categoryId: number): Promise<DeleteResult> {
 
 export async function patch(
   categoryId: number,
-  updatedCategoryContent: Partial<CategoryContent>,
+  updatedCategoryContent: UpdateCategoryInput,
 ): Promise<Category | null> {
   const category = await Category.findOneBy({ id: categoryId });
   if (category === null) return null;

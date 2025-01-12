@@ -1,25 +1,27 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./src",
-    "outDir": "./dist",
-
     "target": "ES2021",
     "lib": ["es2020"],
     "module": "ESNext",
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "removeComments": true,
+
+    /* Bundler mode */
     "moduleResolution": "Node",
-    "esModuleInterop": true,
-    "types": ["node"],
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "resolveJsonModule": true,
+    "types": ["node"],
     "declaration": true,
     "noEmit": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
 
+    "rootDir": "./src",
+    "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"],
@@ -28,7 +30,19 @@
       "@resolvers/*": ["src/resolvers/*"],
       "@types/*": ["src/types/*"],
       "@utils/*": ["src/utils/*"]
-    }
+    },
+
+    /* Linting */
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "strict": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true
   },
   "include": ["./**/*.ts", "./**/*.js"],
   "exclude": ["node_modules", "dist"]

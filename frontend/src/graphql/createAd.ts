@@ -1,6 +1,6 @@
-import { graphql } from "@/gql";
+import { gql } from "@/gql";
 
-export const CREATE_AD = graphql(/* GraphQL */ `
+export const CREATE_AD = gql(/* GraphQL */ `
   mutation createAd($data: AddAdInput!) {
     createAd(data: $data) {
       id

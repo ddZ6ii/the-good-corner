@@ -1,6 +1,6 @@
-import { graphql } from "@/gql";
+import { gql } from "@/gql";
 
-export const GET_CATEGORIES = graphql(/* GraphQL */ `
+export const GET_CATEGORIES = gql(/* GraphQL */ `
   query categories {
     categories {
       id

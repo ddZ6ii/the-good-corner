@@ -1,6 +1,6 @@
-import { graphql } from "@/gql";
+import { gql } from "@/gql";
 
-export const GET_TAGS = graphql(/* GraphQL */ `
+export const GET_TAGS = gql(/* GraphQL */ `
   query tags {
     tags {
       id
