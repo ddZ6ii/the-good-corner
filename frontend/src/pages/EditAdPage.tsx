@@ -1,29 +1,32 @@
 import { useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
-import { Ad, AdContent, IdParam, IdParamSchema } from "@tgc/common";
 import Loader from "@/common/Loader";
 import { AdEditor } from "@/components/AdEditor";
-import { GET_AD, UPDATE_AD } from "@/graphql";
+import { GET_AD } from "@/graphql/ad";
+import { UPDATE_AD } from "@/graphql/updateAd";
+import { IdInput, UpdateAdInput } from "@/gql/graphql";
 import MainContent from "@/layouts/PageContent";
 import { initialFormState } from "@/reducers/adForm.reducer";
+import { AdPartialContentSchema, IdParamSchema } from "@/schemas";
 import { mapAdToFormData } from "@/utils/mapAdtoFormData";
 import { notifySuccess } from "@/utils/notify";
+import { AdFormData } from "@/types/adForm.types";
 
 export default function EditAdPage() {
   const navigate = useNavigate();
-  const params = useParams<IdParam>();
+  const params = useParams<IdInput>();
   const formRef = useRef<HTMLFormElement>(null);
   const { id } = IdParamSchema.parse(params);
   const {
     data: { ad } = {},
     error,
     loading,
-  } = useQuery<{ ad: Ad }>(GET_AD, {
+  } = useQuery(GET_AD, {
     variables: { id },
     skip: !id,
   });
-  const [updateAd] = useMutation<{ updateAd: Ad }>(UPDATE_AD);
+  const [updateAd] = useMutation(UPDATE_AD);
 
   if (loading) {
     return <Loader $center size="lg" />;
@@ -39,7 +42,8 @@ export default function EditAdPage() {
     data: mapAdToFormData(ad),
   };
 
-  const editAd = async (parsedBody: AdContent): Promise<void> => {
+  const editAd = async (formData: AdFormData): Promise<void> => {
+    const parsedBody: UpdateAdInput = AdPartialContentSchema.parse(formData);
     const { data, errors } = await updateAd({
       variables: { data: parsedBody, id },
       /** Refetch the ad after edition.
@@ -51,25 +55,27 @@ export default function EditAdPage() {
       refetchQueries: [{ query: GET_AD, variables: { id } }],
     });
 
-    if (errors !== undefined || !data) {
-      console.error("Failed to update ad:", errors);
+    if (errors !== undefined || !data?.updateAd) {
+      if (errors) console.error("Failed to update ad:", errors);
       throw new Error("Failed to update ad!");
     }
+
+    const { id: adId } = data.updateAd;
 
     notifySuccess("Ad successfully updated!");
     setTimeout(() => {
       // Setting the option { replace: true } replaces the current entry in the history stack (instead of adding a new one). This prevents the user from going back to the form page.
-      navigate(`/ads/${data.updateAd.id.toString()}`, { replace: true });
+      navigate(`/ads/${adId}`, { replace: true });
     }, 3000);
   };
 
   return (
     <MainContent title="Edit your ad">
       <AdEditor
+        edit
         initialFormState={initialForm}
         ref={formRef}
         onSubmit={editAd}
-        edit
       />
     </MainContent>
   );

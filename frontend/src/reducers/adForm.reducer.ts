@@ -1,5 +1,5 @@
 import { ZodError } from "zod";
-import { AdContentSchema } from "@tgc/common";
+import { AdContentSchema } from "@/schemas";
 import {
   AdFormAction,
   AdFormData,
@@ -66,11 +66,11 @@ export function adFormReducer(
       let nextStateValue = nextValue;
       if (checked !== undefined && typeof nextValue === "number") {
         const isChecked = formState.data.tags.some(
-          (tag) => tag.id === nextValue,
+          (tag) => tag.id === nextValue.toString(),
         );
         nextStateValue = isChecked
-          ? formState.data.tags.filter((tag) => tag.id !== nextValue)
-          : [...formState.data.tags, { id: nextValue }];
+          ? formState.data.tags.filter((tag) => tag.id !== nextValue.toString())
+          : [...formState.data.tags, { id: nextValue.toString() }];
       }
       return {
         ...formState,

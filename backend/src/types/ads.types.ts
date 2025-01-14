@@ -7,20 +7,7 @@ import {
   Length,
   ValidateNested,
 } from 'class-validator';
-import { AD_CONSTRAINTS, Id } from '@tgc/common';
-import { Ad } from '@/entities/Ad.ts';
-import { ExcludeMethods, IdInput } from './utils.types.ts';
-
-type AdContentNoRelation = Omit<
-  ExcludeMethods<Ad>,
-  'id' | 'createdAt' | 'category' | 'tags'
->;
-
-export type AdContent = AdContentNoRelation & {
-  category: Id;
-} & {
-  tags?: Id[];
-};
+import { IdInput } from './utils.types.ts';
 
 /**
  * Class validator is used to validate the input data.
@@ -42,16 +29,13 @@ export class GetAdArgs {
 }
 
 @InputType({ description: 'New ad data' })
-export class AddAdInput implements AdContent {
+export class AddAdInput {
   @Field(() => String)
-  @Length(AD_CONSTRAINTS.title.minLength, AD_CONSTRAINTS.title.maxLength)
+  @Length(5, 50)
   title!: string;
 
   @Field(() => String)
-  @Length(
-    AD_CONSTRAINTS.description.minLength,
-    AD_CONSTRAINTS.description.maxLength,
-  )
+  @Length(5, 500)
   description!: string;
 
   @Field(() => String)
@@ -67,7 +51,7 @@ export class AddAdInput implements AdContent {
   picture!: string;
 
   @Field(() => String)
-  @Length(AD_CONSTRAINTS.location.minLength, AD_CONSTRAINTS.location.maxLength)
+  @Length(3, 50)
   location!: string;
 
   @Field(() => IdInput)
@@ -81,16 +65,13 @@ export class AddAdInput implements AdContent {
 }
 
 @InputType({ description: 'Update ad data' })
-export class UpdateAdInput implements Partial<AddAdInput> {
+export class UpdateAdInput {
   @Field(() => String, { nullable: true })
-  @Length(AD_CONSTRAINTS.title.minLength, AD_CONSTRAINTS.title.maxLength)
+  @Length(5, 50)
   title?: string;
 
   @Field(() => String, { nullable: true })
-  @Length(
-    AD_CONSTRAINTS.description.minLength,
-    AD_CONSTRAINTS.description.maxLength,
-  )
+  @Length(5, 500)
   description?: string;
 
   @Field(() => String, { nullable: true })
@@ -106,7 +87,7 @@ export class UpdateAdInput implements Partial<AddAdInput> {
   picture?: string;
 
   @Field(() => String, { nullable: true })
-  @Length(AD_CONSTRAINTS.location.minLength, AD_CONSTRAINTS.location.maxLength)
+  @Length(3, 50)
   location?: string;
 
   @Field(() => IdInput, { nullable: true })

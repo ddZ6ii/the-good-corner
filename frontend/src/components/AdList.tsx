@@ -1,12 +1,12 @@
 import styled from "styled-components";
 import { NavLink, NavLinkProps } from "react-router-dom";
-import { Ad as AdType } from "@tgc/common";
 import { Ad, AdContent, AdPrice, AdThumbnail, AdTitle } from "@/components/ad";
+import { AdsQuery } from "@/gql/graphql";
 import { theme } from "@/themes/theme";
 import { formatPriceWithCurrency } from "@utils/format";
 
 type AdListProps = {
-  ads: AdType[];
+  ads: AdsQuery["ads"];
 };
 
 export default function AdList({ ads }: AdListProps) {

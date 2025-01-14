@@ -11,21 +11,27 @@
     "lint": "eslint .",
     "format:lint": "yarn run format && yarn run lint",
     "preview": "vite preview --host --open",
-    "build:preview": "yarn run build && yarn run preview"
+    "build:preview": "yarn run build && yarn run preview",
+    "codegen": "graphql-codegen",
+    "codegen:watch": "graphql-codegen --watch",
+    "dev:codegen:watch": "concurrently \"yarn run dev\" \"yarn run codegen:watch\""
   },
   "dependencies": {
     "@apollo/client": "^3.11.10",
+    "concurrently": "^9.1.2",
     "graphql": "^16.9.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.3.0",
     "react-router-dom": "^6.26.2",
     "react-toastify": "^10.0.5",
-    "styled-components": "^6.1.13"
+    "styled-components": "^6.1.13",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
-    "@tgc/common": "1.0.0",
+    "@graphql-codegen/cli": "^5.0.3",
+    "@parcel/watcher": "^2.5.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

@@ -1,14 +1,12 @@
 import { useMemo } from "react";
 import { useSuspenseQuery } from "@apollo/client";
-import { Ad as AdType } from "@tgc/common";
-import { GET_ADS } from "@/graphql";
 import AdList from "@/components/AdList";
+import { GET_ADS } from "@/graphql/ads";
 import { sortAdsByCreationDate } from "@/utils/sort";
 
 export default function RecentAds() {
-  const { data: { ads = [] } = {}, error } = useSuspenseQuery<{
-    ads: AdType[];
-  }>(GET_ADS);
+  const { data: { ads = [] } = {}, error } = useSuspenseQuery(GET_ADS);
+
   const sortedAds = useMemo(() => sortAdsByCreationDate(ads), [ads]);
 
   if (error) {

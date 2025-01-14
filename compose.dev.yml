@@ -1,0 +1,72 @@
+services:
+  client:
+    container_name: tgc-client
+    build: ./frontend
+    env_file: "./frontend/.env.development.local"
+    environment:
+      - NODE_ENV=development
+      - API_URL=http://server:3000
+    ports:
+      - 5173:5173
+    # Linked volumes ("bind mounts") to map the listed files and directories between the host and the container (hot reloading: ensure the frontend code is updated in the container when the code is changed on the host).
+    volumes:
+      - ./frontend/vite.config.ts:/app/vite.config.ts
+      - ./frontend/codegen.ts:/app/codegen.ts
+      - ./frontend/index.html:/app/index.html
+      - ./frontend/public/:/app/public/
+      - ./frontend/src/:/app/src/
+    depends_on:
+      server:
+        condition: service_healthy # the `server` should be up and healthy prior to starting the `client`, so the codegen script can be safely run to automatically generate the TypeScript types.
+
+  server:
+    container_name: tgc-server
+    build: ./backend
+    env_file: "./backend/.env"
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=db # override DB_HOST in .env (localhost by default when the backend is run without a Docker containter, but use service name when running the backend with Docker to connect to the database container).
+    ports:
+      - 3000:3000
+    depends_on:
+      db:
+        condition: service_started
+    # Linked volumes ("bind mounts") to map the listed files and directories between the host and the container (hot reloading: ensure the frontend code is updated in the container when the code is changed on the host).
+    volumes:
+      - ./backend/src/:/app/src/
+    # Ensure the `server` is up and healthy by fetching the GraphQL schema before starting the `client`.
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "-X",
+          "POST",
+          "http://localhost:3000",
+          "-H",
+          "Content-Type: application/json",
+          "-d",
+          '{"query": "query {__typename}"}',
+        ]
+      interval: 5s
+      timeout: 90s
+
+  db:
+    container_name: tgc-db
+    image: postgres
+    shm_size: 128mb # shared memory limit
+    env_file: "./backend/.env"
+    ports:
+      - 5432:5432
+    volumes:
+      # No volume: data is stored in the container! Not sustainable solution!
+      # Anonymous volume (fully managed by Docker, will be deleted when manually removing the container, enough for local dev):
+      # - /var/lib/postgresql/data
+      # Named volume (can only be deleted manually, recommended for production):
+      - pgdata:/var/lib/postgresql/data
+
+# Specify docker-compose to create the named volume used to persist the database.
+volumes:
+  pgdata:
+    driver: local

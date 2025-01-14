@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
-import { Ad as AdType, IdParam, IdParamSchema } from "@tgc/common";
 import Loader from "@/common/Loader";
 import {
   Ad,
@@ -11,21 +10,23 @@ import {
   AdThumbnail,
   AdTitle,
 } from "@/components/ad";
-import { GET_AD } from "@/graphql";
-import PageContent from "@/layouts/PageContent";
-import { basePillStyle } from "@/themes/styles";
-import { theme } from "@/themes/theme";
-import { capitalize, formatPriceWithCurrency } from "@/utils/format";
 import AdTags from "@/components/ad/AdTags";
+import { GET_AD } from "@/graphql/ad";
+import { IdInput } from "@/gql/graphql";
+import PageContent from "@/layouts/PageContent";
+import { IdParamSchema } from "@/schemas";
+import { theme } from "@/themes/theme";
+import { basePillStyle } from "@/themes/styles";
+import { capitalize, formatPriceWithCurrency } from "@/utils/format";
 
 export default function AdPage() {
-  const params = useParams<IdParam>();
+  const params = useParams<IdInput>();
   const { id } = IdParamSchema.parse(params);
   const {
     data: { ad } = {},
     error,
     loading,
-  } = useQuery<{ ad: AdType }>(GET_AD, {
+  } = useQuery(GET_AD, {
     variables: { id },
     skip: !id,
   });
@@ -35,7 +36,7 @@ export default function AdPage() {
   }
 
   if (error || !ad) {
-    console.error(error);
+    if (error) console.error(error);
     return <p>No ad found!</p>;
   }
 

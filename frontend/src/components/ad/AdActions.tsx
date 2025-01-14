@@ -2,23 +2,22 @@ import styled, { css } from "styled-components";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Reference, useMutation } from "@apollo/client";
-import { Id } from "@tgc/common";
-import { ACTIONS } from "@/components/ad";
 import { Button } from "@/common/Button";
-import { DELETE_AD } from "@/graphql";
+import { ACTIONS } from "@/components/ad";
+import { DELETE_AD } from "@/graphql/deleteAd";
 import { theme } from "@/themes/theme";
 import { notifyError, notifySuccess } from "@/utils/notify";
 
-type AdActionsProps = Id;
+type AdActionsProps = {
+  id: string;
+};
 
 export default function AdActions({ id }: AdActionsProps) {
   const navigate = useNavigate();
   const [disabled, setDisabled] = useState(false);
-  const [deleteAd, { loading }] = useMutation<{
-    deleteAd: number | string | null;
-  }>(DELETE_AD);
+  const [deleteAd, { loading }] = useMutation(DELETE_AD);
 
-  const removeAd = async (id: number | string): Promise<void> => {
+  const removeAd = async (id: string): Promise<void> => {
     try {
       setDisabled(true);
       const { data, errors } = await deleteAd({
@@ -63,7 +62,7 @@ export default function AdActions({ id }: AdActionsProps) {
             disabled={loading || disabled}
             onClick={async (_e) => {
               if (action.title.toLowerCase() === "edit") {
-                navigate(`/ads/${id.toString()}/edit`);
+                navigate(`/ads/${id}/edit`);
               }
               if (action.title.toLowerCase() === "delete") {
                 await removeAd(id);

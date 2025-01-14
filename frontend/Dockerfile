@@ -1,32 +1,27 @@
-# Use the version of source image
+# Specify the base image to extend from.
 FROM node:20-alpine3.21
 
-# Set the working directory inside the container
+# Specify the working in the container where the application code will be copied and commands will be executed.
 WORKDIR /app
 
-# Copy package.json and lock files
-COPY package.json .
-COPY yarn.lock .
-COPY common/package.json common/
-COPY frontend/package.json frontend/
+# Environment variables defined using ARG are only available during the image build, not within the container's environment! They can be passed in either from Docker CLI using the `--build-arg` option, or either from the docker-compose `args` attribute.
 
-# Install dependencies
+# Environment variables defined using ENV are available both during image build and within the container environment. They ccan be passed in either from Docker CLI using the `--build-arg` option, or either from the docker-compose `env_file` or `environement` attributes.
+
+# Copy and install the application's dependencies.
+COPY package*.json yarn.lock ./
 RUN yarn install
 
-# COPY shared config file
-COPY tsconfig.json .
+# Copy the application source code (excluding the files in .dockerignore).
+COPY vite.config.ts .
+COPY tsconfig*.json .
+COPY codegen.ts .
+COPY index.html .
+COPY public public
+COPY src src
 
-# Copy common files
-COPY common/dist common/dist
-COPY common/src common/src
-COPY common/tsconfig.json common/
+# Indicate the port on which the application will listen for requests (documentation purposes only).
+EXPOSE 5173
 
-# Copy service code files (excluding the ones in .dockerignore)
-COPY frontend/public frontend/public
-COPY frontend/src frontend/src
-COPY frontend/index.html frontend/
-COPY frontend/tsconfig*.json frontend/
-COPY frontend/vite.config.ts frontend/
-
-# Define the command to run the application
-CMD ["yarn", "dev:front"]
+# Define the command to start the application (run at container's startup).
+CMD ["yarn", "run", "dev:codegen:watch"]

@@ -1,9 +1,9 @@
 import { DeleteResult, Like } from 'typeorm';
 import { Tag } from '@/entities/Tag';
-import { TagContent } from '@/types/tags.types.ts';
+import { AddTagInput, UpdateTagInput } from '@/types/tags.types';
 
 export function findAll(tagName?: string): Promise<Tag[]> {
-  // Add nested `ads.tags` relations to the query to also display all the other tags related to an ad for eacg tag.
+  // Add nested `ads.tags` relations to the query to also display all the other tags related to an ad for each tag.
   if (!tagName) return Tag.find({ relations: ['ads', 'ads.tags'] });
   return Tag.find({
     where: {
@@ -20,7 +20,7 @@ export function findOneBy(tagId: number): Promise<Tag | null> {
   });
 }
 
-export function create(newTagContent: TagContent): Promise<Tag> {
+export function create(newTagContent: AddTagInput): Promise<Tag> {
   const newTag = new Tag();
   Object.assign(newTag, newTagContent);
   return newTag.save();
@@ -32,7 +32,7 @@ export async function remove(tagId: number): Promise<DeleteResult> {
 
 export async function patch(
   tagId: number,
-  updatedTagContent: Partial<TagContent>,
+  updatedTagContent: UpdateTagInput,
 ): Promise<Tag | null> {
   const tag = await Tag.findOneBy({ id: tagId });
   if (tag === null) return null;

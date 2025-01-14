@@ -1,7 +1,8 @@
-import { Ad, AdSchema } from "@tgc/common";
+import { AdQuery } from "@/gql/graphql";
+import { AdSchema } from "@/schemas";
 import { AdFormData } from "@/types/adForm.types";
 
-export function mapAdToFormData(ad: Ad): AdFormData {
+export function mapAdToFormData(ad: AdQuery["ad"]): AdFormData {
   // Parse ad data to remove extra query fields.
   const parsedAd = AdSchema.parse(ad);
   // Remove catagory's name and set tags to [] if undedined.

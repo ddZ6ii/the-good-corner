@@ -1,7 +1,7 @@
 import { DeleteResult, Like } from 'typeorm';
 import { Ad } from '@/entities/Ad';
+import { AddAdInput, UpdateAdInput } from '@/types/ads.types.ts';
 import { merge } from '@/utils/merge';
-import { AdContent } from '@/types/ads.types.ts';
 
 export function findAll(categoryFilter?: string): Promise<Ad[]> {
   // The 'categories' relation is not specified here since the { eager: true } option is set in the Ad entity to automatically fetch the related category when fetching an Ad.
@@ -23,7 +23,7 @@ export function findOneBy(adId: number): Promise<Ad | null> {
   });
 }
 
-export function create(newAdContent: AdContent): Promise<Ad> {
+export function create(newAdContent: AddAdInput): Promise<Ad> {
   const newAd = new Ad();
   Object.assign(newAd, newAdContent);
   return newAd.save();
@@ -35,7 +35,7 @@ export async function remove(adId: number): Promise<DeleteResult> {
 
 export async function patch(
   adId: number,
-  updatedAdContent: Partial<AdContent>,
+  updatedAdContent: UpdateAdInput,
 ): Promise<Ad | null> {
   const ad = await Ad.findOne({
     where: { id: adId },
@@ -43,6 +43,6 @@ export async function patch(
   });
   if (ad === null) return null;
   // Merge the updated data on the existing Ad entity and avoid unique constraint errors.
-  const updatedAd = merge(ad, updatedAdContent);
+  const updatedAd = merge(ad, updatedAdContent as Record<string, unknown>);
   return updatedAd.save();
 }

@@ -1,7 +1,7 @@
-import { gql } from "@apollo/client";
+import { gql } from "@/gql";
 
-export const DELETE_AD = gql`
+export const DELETE_AD = gql(/* GraphQL */ `
   mutation deleteAd($id: ID!) {
     deleteAd(id: $id)
   }
-`;
+`);

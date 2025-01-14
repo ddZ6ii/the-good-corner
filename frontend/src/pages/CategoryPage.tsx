@@ -1,26 +1,28 @@
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
-import { CategoryWithAds, IdParam, IdParamSchema } from "@tgc/common";
 import Loader from "@/common/Loader";
 import AdList from "@/components/AdList";
-import { GET_CATEGORY } from "@/graphql";
+import { GET_CATEGORY } from "@/graphql/category";
+import { IdInput } from "@/gql/graphql";
 import PageContent from "@/layouts/PageContent";
+import { IdParamSchema } from "@/schemas";
 import { capitalize } from "@/utils/format";
 import { sortAdsByCreationDate } from "@/utils/sort";
 
 export default function CategoryPage() {
-  const params = useParams<IdParam>();
+  const params = useParams<IdInput>();
   const { id } = IdParamSchema.parse(params);
-
   const {
-    data: { category: { name = "", ads = [] } = {} } = {},
+    data: { category } = {},
     error,
     loading,
-  } = useQuery<{ category: CategoryWithAds }>(GET_CATEGORY, {
+  } = useQuery(GET_CATEGORY, {
     variables: { id },
     skip: !id,
   });
+  const { name = "", ads = [] } = category ?? {};
+
   const sortedAds = useMemo(() => sortAdsByCreationDate(ads), [ads]);
 
   if (loading) {

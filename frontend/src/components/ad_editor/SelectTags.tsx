@@ -2,16 +2,19 @@ import styled from "styled-components";
 import { useState } from "react";
 import { useMutation, useSuspenseQuery } from "@apollo/client";
 import { IoMdAddCircleOutline } from "react-icons/io";
-import { Id, Tag, TagContentSchema } from "@tgc/common";
 import { Button } from "@/common/Button";
 import { Editor } from "@/components/Editor";
 import { Modal } from "@/common/Modal";
 import { Field, Input, Label, Text } from "@/components/ad_editor";
-import { CREATE_TAG, GET_TAGS } from "@/graphql";
+import { CREATE_TAG } from "@/graphql/createTag";
+import { GET_TAGS } from "@/graphql/tags";
+import { IdInput } from "@/gql/graphql";
+import { TagContentSchema } from "@/schemas";
 import { theme } from "@/themes/theme";
+import { notifySuccess } from "@/utils/notify";
 
 type SelectTagsProps = {
-  selectedTags: Id[];
+  selectedTags: IdInput[];
   error: string;
   disabled: boolean;
   onTagChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -27,11 +30,10 @@ export default function SelectTags({
 }: SelectTagsProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data: { tags = [] } = {}, error: errorTags } = useSuspenseQuery<{
-    tags: Tag[];
-  }>(GET_TAGS);
+  const { data: { tags = [] } = {}, error: errorTags } =
+    useSuspenseQuery(GET_TAGS);
 
-  const [createTag] = useMutation<{ createTag: Tag }>(CREATE_TAG);
+  const [createTag] = useMutation(CREATE_TAG);
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -51,9 +53,10 @@ export default function SelectTags({
     }
     // Set newly added tag as current selection in the parent form.
     const { id: newTagId } = createdTag.data.createTag;
-    onTagAdd(newTagId as unknown as string);
+    onTagAdd(newTagId);
 
     closeModal();
+    notifySuccess("Tag successfully created!");
   };
 
   if (errorTags) {
@@ -85,7 +88,7 @@ export default function SelectTags({
                 id={tag.name}
                 name="tags"
                 value={tag.id}
-                checked={selectedTags.some((t) => t.id === Number(tag.id))}
+                checked={selectedTags.some((t) => t.id === tag.id)}
                 onChange={onTagChange}
               />
               <Label htmlFor={tag.name}>{tag.name}</Label>

@@ -4,17 +4,11 @@
   "version": "1.0.0",
   "author": "Denis Dezest <denis.dezest@gmail.com>",
   "license": "MIT",
-  "workspaces": [
-    "backend",
-    "common",
-    "frontend"
-  ],
   "scripts": {
-    "dev": "concurrently \"yarn dev:back\" \"yarn dev:front\"",
-    "dev:back": "yarn workspace backend dev",
-    "dev:front": "yarn workspace frontend dev",
-    "build:common": "yarn workspace @tgc/common build",
-    "migrate": "yarn workspace backend migrate"
+    "dev": "concurrently \"yarn run dev:back\" \"yarn run dev:front\"",
+    "dev:back": "cd backend && yarn run dev",
+    "dev:front": "cd frontend && yarn run dev",
+    "migrate": "cd backend && yarn run migrate"
   },
   "devDependencies": {
     "concurrently": "^9.0.1"
