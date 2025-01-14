@@ -1,4 +1,4 @@
-import { Id } from "@tgc/common";
+import { IdInput } from "@/gql/graphql";
 
 export type AdFormData = {
   title: string;
@@ -7,8 +7,8 @@ export type AdFormData = {
   picture: string;
   description: string;
   location: string;
-  category: Id | undefined;
-  tags: Id[];
+  category: IdInput | undefined;
+  tags: IdInput[];
 };
 
 export type AdFormError = {
@@ -38,7 +38,7 @@ interface UpdateInput extends ActionType {
   type: "update_input";
   payload: {
     name: string;
-    nextValue: string | number | Id | Id[];
+    nextValue: string | number | IdInput | IdInput[];
     checked?: boolean;
   };
 }
@@ -54,7 +54,7 @@ interface ValidateField extends ActionType {
   type: "validate_field";
   payload: {
     name: string;
-    nextValue: string | number | Id;
+    nextValue: string | number | IdInput;
   };
 }
 

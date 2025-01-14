@@ -13,9 +13,10 @@ COPY package*.json yarn.lock ./
 RUN yarn install
 
 # Copy the application source code (excluding the files in .dockerignore).
-COPY vite.config.ts ./
-COPY tsconfig*.json ./
-COPY index.html ./
+COPY vite.config.ts .
+COPY tsconfig*.json .
+COPY codegen.ts .
+COPY index.html .
 COPY public public
 COPY src src
 
@@ -23,4 +24,4 @@ COPY src src
 EXPOSE 5173
 
 # Define the command to start the application (run at container's startup).
-CMD ["yarn", "dev"]
+CMD ["yarn", "run", "dev:codegen:watch"]

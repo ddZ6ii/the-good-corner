@@ -1,16 +1,14 @@
 import styled from "styled-components";
 import { useMemo } from "react";
 import { useSuspenseQuery } from "@apollo/client";
-import { Category } from "@tgc/common";
 import { NavLink } from "@/common/Link";
-import { GET_CATEGORIES } from "@/graphql";
+import { GET_CATEGORIES } from "@/graphql/categories";
 import { theme } from "@/themes/theme";
 import { capitalize } from "@/utils/format";
 
 export default function Navbar() {
-  const { data: { categories = [] } = {}, error } = useSuspenseQuery<{
-    categories: Category[];
-  }>(GET_CATEGORIES);
+  const { data: { categories = [] } = {}, error } =
+    useSuspenseQuery(GET_CATEGORIES);
 
   const sortedCategories = useMemo(
     () =>

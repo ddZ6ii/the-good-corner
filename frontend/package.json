@@ -13,10 +13,12 @@
     "preview": "vite preview --host --open",
     "build:preview": "yarn run build && yarn run preview",
     "codegen": "graphql-codegen",
-    "codegen:watch": "graphql-codegen --watch"
+    "codegen:watch": "graphql-codegen --watch",
+    "dev:codegen:watch": "concurrently \"yarn run dev\" \"yarn run codegen:watch\""
   },
   "dependencies": {
     "@apollo/client": "^3.11.10",
+    "concurrently": "^9.1.2",
     "graphql": "^16.9.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

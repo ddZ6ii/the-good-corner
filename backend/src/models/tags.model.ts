@@ -3,7 +3,7 @@ import { Tag } from '@/entities/Tag';
 import { AddTagInput, UpdateTagInput } from '@/types/tags.types';
 
 export function findAll(tagName?: string): Promise<Tag[]> {
-  // Add nested `ads.tags` relations to the query to also display all the other tags related to an ad for eacg tag.
+  // Add nested `ads.tags` relations to the query to also display all the other tags related to an ad for each tag.
   if (!tagName) return Tag.find({ relations: ['ads', 'ads.tags'] });
   return Tag.find({
     where: {

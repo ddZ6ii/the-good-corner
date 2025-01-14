@@ -12,15 +12,15 @@ import {
 } from "@/components/ad";
 import AdTags from "@/components/ad/AdTags";
 import { GET_AD } from "@/graphql/ad";
+import { IdInput } from "@/gql/graphql";
 import PageContent from "@/layouts/PageContent";
 import { IdParamSchema } from "@/schemas";
 import { theme } from "@/themes/theme";
 import { basePillStyle } from "@/themes/styles";
-import { IdParam } from "@/types";
 import { capitalize, formatPriceWithCurrency } from "@/utils/format";
 
 export default function AdPage() {
-  const params = useParams<IdParam>();
+  const params = useParams<IdInput>();
   const { id } = IdParamSchema.parse(params);
   const {
     data: { ad } = {},

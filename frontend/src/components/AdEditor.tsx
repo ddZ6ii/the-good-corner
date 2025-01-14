@@ -7,7 +7,6 @@ import {
   useRef,
 } from "react";
 import { ZodError } from "zod";
-import { AdContent, AdContentSchema, getOjectKeys, Id } from "@tgc/common";
 import { Button } from "@/common/Button";
 import {
   InputField,
@@ -16,9 +15,11 @@ import {
   TextareaField,
 } from "@/components/ad_editor";
 import Loader from "@/common/Loader";
+import { IdInput } from "@/gql/graphql";
 import { adFormReducer } from "@/reducers/adForm.reducer";
 import { theme } from "@/themes/theme";
-import { AdFormError, AdFormState } from "@/types/adForm.types";
+import { getOjectKeys } from "@/types/utils.types";
+import { AdFormData, AdFormError, AdFormState } from "@/types/adForm.types";
 import { convertPriceToCents, formatPrice } from "@/utils/format";
 import { mapZodError } from "@/utils/mapZodErrors";
 import { notifyError } from "@/utils/notify";
@@ -26,7 +27,7 @@ import { notifyError } from "@/utils/notify";
 type AdEditorProps = {
   edit?: boolean;
   initialFormState: AdFormState;
-  onSubmit: (parsedBody: AdContent) => Promise<void>;
+  onSubmit: (formData: AdFormData) => Promise<void>;
 };
 
 export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
@@ -52,7 +53,7 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
       e: React.ChangeEvent<
         HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
       >,
-      nextValue?: string | number | Id,
+      nextValue?: string | number | IdInput,
       checked?: boolean,
     ): void => {
       dispatch({
@@ -69,7 +70,7 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
       e: React.ChangeEvent<
         HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
       >,
-      nextValue?: string | number | Id,
+      nextValue?: string | number | IdInput,
     ): void => {
       dispatch({
         type: "validate_field",
@@ -91,8 +92,7 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
         dispatch({
           type: "reset_form_error",
         });
-        const parsedBody = AdContentSchema.parse(formState.data);
-        await onSubmit(parsedBody);
+        await onSubmit(formState.data);
       } catch (error: unknown) {
         if (error instanceof ZodError) {
           const nextFormError = mapZodError(error, formState.error);
@@ -102,10 +102,10 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
           });
           focusFirstFieldWithError(nextFormError);
         } else {
+          console.error(error);
           notifyError(
             "Oops... an error has occured. Please check the form or try again later.",
           );
-          console.error(error);
         }
         dispatch({
           type: "update_submit_status",
@@ -157,7 +157,8 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
           error={formState.error.price}
           disabled={formState.isSubmitting}
           onChange={(e) => {
-            handleChange(e, convertPriceToCents(e.target.value));
+            const priceInCents = convertPriceToCents(e.target.value);
+            handleChange(e, priceInCents);
           }}
           onBlur={(e) => {
             handleBlur(e, convertPriceToCents(e.target.value));
@@ -191,17 +192,17 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
             disabled={formState.isSubmitting}
             error={formState.error.category}
             onCategoryChange={(e) => {
-              handleChange(e, { id: parseInt(e.target.value, 10) });
+              handleChange(e, { id: e.target.value });
             }}
             onCategoryBlur={(e) => {
-              handleBlur(e, { id: parseInt(e.target.value, 10) });
+              handleBlur(e, { id: e.target.value });
             }}
             onCategoryAdd={(newCategoryId: string) => {
               dispatch({
                 type: "update_input",
                 payload: {
                   name: "category",
-                  nextValue: { id: parseInt(newCategoryId, 10) },
+                  nextValue: { id: newCategoryId },
                 },
               });
             }}

@@ -3,10 +3,12 @@ import { useRef, useState } from "react";
 import { z, ZodError } from "zod";
 import { Button } from "@/common/Button";
 import { InputField } from "@/components/ad_editor";
+import { IdInput } from "@/gql/graphql";
 import { capitalize } from "@/utils/format";
+import { notifyError } from "@/utils/notify";
 
 type Data = {
-  id: number;
+  id: IdInput["id"];
   name: string;
 };
 
@@ -78,6 +80,9 @@ export function Editor<T extends Data[]>({
       setName("");
     } catch (error: unknown) {
       console.error(error);
+      notifyError(
+        `Oops... an error has occured. ${capitalize(label)} could not be added! Please try again later.`,
+      );
     } finally {
       setSubmitting(false);
     }

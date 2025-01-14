@@ -17,7 +17,7 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-    "rootDir": "src",
+    "rootDir": "./",
     "baseUrl": "src",
     "paths": {
       "@/*": ["*"],

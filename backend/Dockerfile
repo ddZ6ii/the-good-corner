@@ -16,11 +16,11 @@ COPY package*.json yarn.lock ./
 RUN yarn install
 
 # Copy the application source code (excluding the files in .dockerignore).
-COPY tsconfig.json ./
+COPY tsconfig.json .
 COPY src src
 
 # Indicate the port on which the application will listen for requests (documentation purposes only).
 EXPOSE 3000
 
 # Define the command to run the application
-CMD ["yarn", "dev"]
+CMD ["yarn", "run", "dev"]

@@ -2,19 +2,22 @@ import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { gql, Reference, useMutation } from "@apollo/client";
 import "react-toastify/dist/ReactToastify.css";
-import { Ad, AdContent } from "@tgc/common";
 import { AdEditor } from "@/components/AdEditor";
-import { CREATE_AD } from "@/graphql";
+import { CREATE_AD } from "@/graphql/createAd";
+import { AddAdInput } from "@/gql/graphql";
 import MainContent from "@/layouts/PageContent";
 import { initialFormState } from "@/reducers/adForm.reducer";
+import { AdContentSchema } from "@/schemas";
 import { notifySuccess } from "@/utils/notify";
+import { AdFormData } from "@/types/adForm.types";
 
 export default function NewAdPage() {
   const formRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
-  const [createAd] = useMutation<{ createAd: Ad }>(CREATE_AD);
+  const [createAd] = useMutation(CREATE_AD);
 
-  const postNewAd = async (parsedBody: AdContent): Promise<void> => {
+  const postNewAd = async (formData: AdFormData): Promise<void> => {
+    const parsedBody: AddAdInput = AdContentSchema.parse(formData);
     const { data, errors } = await createAd({
       variables: { data: parsedBody },
       /** Refetch other ads queries to update the UI with the new created ad.
@@ -60,15 +63,17 @@ export default function NewAdPage() {
       },
     });
 
-    if (errors !== undefined || !data) {
-      console.error("Failed to create ad:", errors);
+    if (errors !== undefined || !data?.createAd) {
+      if (errors) console.error("Failed to create ad:", errors);
       throw new Error("Failed to create ad!");
     }
+
+    const { id: adId } = data.createAd;
 
     notifySuccess("Ad successfully created!");
     setTimeout(() => {
       // Setting the option { replace: true } replaces the current entry in the history stack (instead of adding a new one). This prevents the user from going back to the form page.
-      navigate(`/ads/${data.createAd.id.toString()}`, { replace: true });
+      navigate(`/ads/${adId}`, { replace: true });
     }, 3000);
   };
 

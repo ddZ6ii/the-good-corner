@@ -1,11 +1,11 @@
 import styled, { css } from "styled-components";
 import { HTMLProps } from "react";
-import { Tag } from "@tgc/common";
+import { Tag } from "@/gql/graphql";
 import { basePillStyle } from "@/themes/styles";
 import { mapColor } from "@/themes/theme";
 
 type AdTagsProps = {
-  tags: Tag[];
+  tags: Omit<Tag, "ads">[];
 };
 
 export default function AdTags({ tags }: AdTagsProps) {

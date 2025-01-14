@@ -3,17 +3,19 @@ import { useState } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { IoChevronDown } from "react-icons/io5";
 import { useMutation, useSuspenseQuery } from "@apollo/client";
-import { Category, CategoryContentSchema } from "@tgc/common";
 import { Button } from "@/common/Button";
 import { Editor } from "@/components/Editor";
 import { Modal } from "@/common/Modal";
 import { Field, Info, Label, Text } from "@/components/ad_editor";
-import { CREATE_CATEGORY, GET_CATEGORIES } from "@/graphql";
+import { GET_CATEGORIES } from "@/graphql/categories";
+import { CREATE_CATEGORY } from "@/graphql/createCategory";
+import { CategoryContentSchema } from "@/schemas";
 import { baseInputStyle } from "@/themes/styles";
 import { theme } from "@/themes/theme";
+import { notifySuccess } from "@/utils/notify";
 
 type SelectCategoryProps = {
-  value: string | number;
+  value: string;
   error: string;
   disabled: boolean;
   onCategoryChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -32,13 +34,9 @@ export default function SelectCategory({
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: { categories = [] } = {}, error: errorCategories } =
-    useSuspenseQuery<{
-      categories: Category[];
-    }>(GET_CATEGORIES);
+    useSuspenseQuery(GET_CATEGORIES);
 
-  const [createCategory] = useMutation<{ createCategory: Category }>(
-    CREATE_CATEGORY,
-  );
+  const [createCategory] = useMutation(CREATE_CATEGORY);
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -61,6 +59,7 @@ export default function SelectCategory({
     onCategoryAdd(newCategoryId as unknown as string);
 
     closeModal();
+    notifySuccess("Category successfully created!");
   };
 
   if (errorCategories) {
