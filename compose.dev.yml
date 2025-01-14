@@ -22,6 +22,7 @@ services:
   server:
     container_name: tgc-server
     build: ./backend
+    # Note: all environment variables (defined using the `env_file` attribute or the `environment` attribute) are direclty injected into the container's environment (no need to use the `dotenv` package to access then fron the server's code base).
     env_file: "./backend/.env"
     environment:
       - NODE_ENV=development

@@ -1,5 +1,5 @@
 import { hash, verify } from 'argon2';
-import jwt, { PrivateKey } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import chalk from 'chalk';
 import Cookies from 'cookies';
 import { Arg, Args, Ctx, Mutation, Query, Resolver } from 'type-graphql';
@@ -11,6 +11,7 @@ import {
 } from '@/config/safety.options';
 import { User } from '@/entities/User';
 import * as usersModel from '@/models/users.model';
+import { ContextType } from '@/types/context.types';
 import {
   AddUserInput,
   GetUserArgs,
@@ -55,7 +56,7 @@ export class UsersResolver {
       const createdUser = await usersModel.create(newUserContent);
       return createdUser;
     } catch (error) {
-      console.log(chalk.red(error));
+      console.error(chalk.red(error));
       let errorMessage = 'Failed to create user!';
       if (error instanceof Error) {
         errorMessage += ` ${error.message}`;
@@ -67,7 +68,7 @@ export class UsersResolver {
   @Mutation(() => User, { nullable: true })
   async signInUser(
     @Arg('data', () => SignInInput) data: SignInInput,
-    @Ctx() context: any,
+    @Ctx() context: ContextType,
   ): Promise<User | null> {
     try {
       // Authenticate user (verify its identity through credentials).
@@ -80,16 +81,12 @@ export class UsersResolver {
         return null;
       }
       // Authorize user (generate JWT token to be stored in the client's browser's cookies, will be sent in all further requests to serve as a proof of the user'identity).
-      const token = jwt.sign(
-        { id: user.id },
-        JWT_SECRET_KEY as PrivateKey,
-        JWT_OPTIONS,
-      );
+      const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, JWT_OPTIONS);
       const cookies = new Cookies(context.req, context.res);
       cookies.set('token', token, COOKIES_OPTIONS);
       return user;
     } catch (error) {
-      console.log(chalk.red(error));
+      console.error(chalk.red(error));
       let errorMessage = 'Failed to sign in!';
       if (error instanceof Error) {
         errorMessage += `: ${error.message}`;

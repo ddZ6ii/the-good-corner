@@ -1,4 +1,12 @@
-import { Arg, Args, ID, Mutation, Query, Resolver } from 'type-graphql';
+import {
+  Arg,
+  Args,
+  Authorized,
+  ID,
+  Mutation,
+  Query,
+  Resolver,
+} from 'type-graphql';
 import { Ad } from '@/entities/Ad';
 import * as adsModel from '@/models/ads.model';
 import {
@@ -10,6 +18,8 @@ import {
 
 @Resolver()
 export class AdsResolver {
+  // Make this query private to allow only authenticated users to access it (all non @Authorized queries are public).
+  @Authorized()
   @Query(() => [Ad])
   async ads(
     // Allow to pass optional categoryName parameter to filter ads by category's name.

@@ -1,6 +1,6 @@
 import { argon2id, Options } from 'argon2';
 import Cookies from 'cookies';
-import { SignOptions } from 'jsonwebtoken';
+import { Secret, SignOptions } from 'jsonwebtoken';
 
 /** OWASP minimum recommendations for argon2id:
  *
@@ -22,7 +22,7 @@ export const JWT_OPTIONS: SignOptions = {
   expiresIn: '3 days',
 };
 
-export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY as Secret;
 if (!JWT_SECRET_KEY) {
   throw new Error('JWT_SECRET_KEY is not defined!');
 }

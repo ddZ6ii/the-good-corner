@@ -9,6 +9,7 @@ import { CategoriesResolver } from '@/resolvers/Categories.resolver.ts';
 import { AdsResolver } from '@/resolvers/Ads.resolver.ts';
 import { TagsResolver } from '@/resolvers/Tags.resolver';
 import { UsersResolver } from '@/resolvers/Users.resolver';
+import { ContextType } from '@/types/context.types';
 
 const API_PORT = parseInt(process.env.API_PORT ?? '3000', 10);
 
@@ -19,7 +20,8 @@ async function initialize(): Promise<void> {
   // Build GraphQL schema.
   const schema = await buildSchema({
     resolvers: [CategoriesResolver, AdsResolver, TagsResolver, UsersResolver],
-    validate: true, // Enable 'class-validator' integration: automatically validate all input arguments.
+    validate: true, // enable 'class-validator' integration: automatically validate all input arguments
+    authChecker, // register the authorization checker function (💡 set to "null" to temporarily silent auth guards)
   });
 
   // Create and run GraphQL server.
@@ -27,10 +29,12 @@ async function initialize(): Promise<void> {
   const { url } = await startStandaloneServer(server, {
     listen: { port: API_PORT },
     // Provide context to share data between resolvers (JWT token). The `context` function is called for each request. Resolvers can access the context with the `contextValue` object parameter.
-    context: async ({ req, res }) => ({
-      req,
-      res,
-    }),
+    context: async ({ req, res }: ContextType): Promise<ContextType> => {
+      return {
+        req,
+        res,
+      };
+    },
   });
   console.info(chalk.yellow(`GraphQL server ready and running at ${url}...`));
 }

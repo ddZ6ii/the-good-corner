@@ -44,7 +44,7 @@ export class AddUserInput {
 
   @Field(() => String)
   @IsStrongPassword(PASSWORD_OPTIONS, {
-    message: `Password is too weak. Make sure it has a minimum of ${PASSWORD_RESTRICTIONS.minLength} characters, including at least ${PASSWORD_RESTRICTIONS.minLowercase} lowercase letter(s), ${PASSWORD_RESTRICTIONS.minUppercase} uppercase letter(s), ${PASSWORD_RESTRICTIONS.minNumbers} number(s), and ${PASSWORD_RESTRICTIONS.minSymbols} symbol(s).`,
+    message: `Password is too weak. Make sure it has a minimum of ${PASSWORD_RESTRICTIONS.minLength.toString()} characters, including at least ${PASSWORD_RESTRICTIONS.minLowercase.toString()} lowercase letter(s), ${PASSWORD_RESTRICTIONS.minUppercase.toString()} uppercase letter(s), ${PASSWORD_RESTRICTIONS.minNumbers.toString()} number(s), and ${PASSWORD_RESTRICTIONS.minSymbols.toString()} symbol(s).`,
   })
   password!: string;
 }
