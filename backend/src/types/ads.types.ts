@@ -67,11 +67,13 @@ export class AddAdInput {
 @InputType({ description: 'Update ad data' })
 export class UpdateAdInput {
   @Field(() => String, { nullable: true })
-  @Length(5, 50)
+  @Length(5, 50, { message: 'Title must be between 5 and 50 characters' })
   title?: string;
 
   @Field(() => String, { nullable: true })
-  @Length(5, 500)
+  @Length(5, 500, {
+    message: 'Description must be between 5 and 500 characters',
+  })
   description?: string;
 
   @Field(() => String, { nullable: true })
@@ -79,7 +81,7 @@ export class UpdateAdInput {
   owner?: string;
 
   @Field(() => Int, { nullable: true })
-  @IsPositive()
+  @IsPositive({ message: 'Price must be a positive number' })
   price?: number;
 
   @Field(() => String, { nullable: true })
@@ -87,7 +89,7 @@ export class UpdateAdInput {
   picture?: string;
 
   @Field(() => String, { nullable: true })
-  @Length(3, 50)
+  @Length(3, 50, { message: 'Location must be between 3 and 50 characters' })
   location?: string;
 
   @Field(() => IdInput, { nullable: true })

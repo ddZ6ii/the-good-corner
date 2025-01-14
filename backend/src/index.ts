@@ -8,6 +8,7 @@ import { dataSource } from '@/db.config';
 import { CategoriesResolver } from '@/resolvers/Categories.resolver.ts';
 import { AdsResolver } from '@/resolvers/Ads.resolver.ts';
 import { TagsResolver } from '@/resolvers/Tags.resolver';
+import { UsersResolver } from '@/resolvers/Users.resolver';
 
 const API_PORT = parseInt(process.env.API_PORT ?? '3000', 10);
 
@@ -17,8 +18,8 @@ async function initialize(): Promise<void> {
 
   // Build GraphQL schema.
   const schema = await buildSchema({
-    resolvers: [CategoriesResolver, AdsResolver, TagsResolver],
-    validate: true, // Enable 'class-validator' integration
+    resolvers: [CategoriesResolver, AdsResolver, TagsResolver, UsersResolver],
+    validate: true, // Enable 'class-validator' integration: automatically validate all input arguments.
   });
 
   // Create and run GraphQL server.

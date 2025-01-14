@@ -23,7 +23,9 @@ export class GetTagArgs {
 @InputType({ description: 'New tag data' })
 export class AddTagInput {
   @Field(() => String)
-  @Length(3, 50)
+  @Length(3, 50, {
+    message: 'Tag name must be between 3 and 50 characters long.',
+  })
   name!: string;
 }
 
@@ -32,6 +34,8 @@ export class AddTagInput {
 export class UpdateTagInput {
   @Field(() => String, { nullable: true }) // Marks the field as optional in TypeGraphQL schema.
   @IsNotEmpty()
-  @Length(3, 50) // Validation: if provided, it must be a string with a certain length.
+  @Length(3, 50, {
+    message: 'Tag name must be between 3 and 50 characters long.',
+  }) // Validation: if provided, it must be a string with a certain length.
   name?: string;
 }

@@ -23,7 +23,9 @@ export class GetCategoryArgs {
 @InputType({ description: 'New category data' })
 export class AddCategoryInput {
   @Field(() => String)
-  @Length(3, 50)
+  @Length(3, 50, {
+    message: 'Category name must be between 3 and 50 characters long.',
+  })
   name!: string;
 }
 
@@ -31,6 +33,8 @@ export class AddCategoryInput {
 @InputType({ description: 'Update category data' })
 export class UpdateCategoryInput {
   @Field(() => String, { nullable: true }) // Marks the field as optional in TypeGraphQL schema.
-  @Length(3, 50) // Validation: if provided, it must be a string with a certain length.
+  @Length(3, 50, {
+    message: 'Category name must be between 3 and 50 characters long.',
+  }) // Validation: if provided, it must be a string with a certain length.
   name?: string;
 }
