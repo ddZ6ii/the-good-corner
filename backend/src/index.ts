@@ -26,6 +26,11 @@ async function initialize(): Promise<void> {
   const server = new ApolloServer({ schema });
   const { url } = await startStandaloneServer(server, {
     listen: { port: API_PORT },
+    // Provide context to share data between resolvers (JWT token). The `context` function is called for each request. Resolvers can access the context with the `contextValue` object parameter.
+    context: async ({ req, res }) => ({
+      req,
+      res,
+    }),
   });
   console.info(chalk.yellow(`GraphQL server ready and running at ${url}...`));
 }

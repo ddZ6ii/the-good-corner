@@ -1,6 +1,14 @@
-import { argon2id, hash, verify } from 'argon2';
+import { hash, verify } from 'argon2';
+import jwt, { PrivateKey } from 'jsonwebtoken';
 import chalk from 'chalk';
-import { Arg, Args, Mutation, Query, Resolver } from 'type-graphql';
+import Cookies from 'cookies';
+import { Arg, Args, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import {
+  COOKIES_OPTIONS,
+  HASHING_OPTIONS,
+  JWT_OPTIONS,
+  JWT_SECRET_KEY,
+} from '@/config/safety.options';
 import { User } from '@/entities/User';
 import * as usersModel from '@/models/users.model';
 import {
@@ -9,21 +17,6 @@ import {
   GetUsersArgs,
   SignInInput,
 } from '@/types/users.types';
-
-/** OWASP minimum recommendations for argon2id:
- *
- *    - memoryCost (memory size m): 19 MiB (2^14.28)
- *    - timeCost (iteration count t): 2
- *    - parallelism (degree of parallelism p): 1
- *
- * For more information, see: https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#:~:text=To%20sum%20up%20our%20recommendations,and%201%20degree%20of%20parallelism.
- */
-const HASHING_OPTIONS = {
-  type: argon2id,
-  memoryCost: 2 ** 14.28,
-  timeCost: 2,
-  parallelism: 1,
-};
 
 @Resolver()
 export class UsersResolver {
@@ -74,8 +67,10 @@ export class UsersResolver {
   @Mutation(() => User, { nullable: true })
   async signInUser(
     @Arg('data', () => SignInInput) data: SignInInput,
+    @Ctx() context: any,
   ): Promise<User | null> {
     try {
+      // Authenticate user (verify its identity through credentials).
       const user = await usersModel.findOneByEmail(data.email);
       if (!user) {
         return null;
@@ -84,12 +79,22 @@ export class UsersResolver {
       if (!passwordMatch) {
         return null;
       }
-      // !TODO: create jwt token...
-      // !TODO: store jwt token in cookie...
+      // Authorize user (generate JWT token to be stored in the client's browser's cookies, will be sent in all further requests to serve as a proof of the user'identity).
+      const token = jwt.sign(
+        { id: user.id },
+        JWT_SECRET_KEY as PrivateKey,
+        JWT_OPTIONS,
+      );
+      const cookies = new Cookies(context.req, context.res);
+      cookies.set('token', token, COOKIES_OPTIONS);
       return user;
     } catch (error) {
       console.log(chalk.red(error));
-      throw new Error('Failed to sign in!');
+      let errorMessage = 'Failed to sign in!';
+      if (error instanceof Error) {
+        errorMessage += `: ${error.message}`;
+      }
+      throw new Error(errorMessage);
     }
   }
 }
