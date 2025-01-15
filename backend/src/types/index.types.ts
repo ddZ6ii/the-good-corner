@@ -1,9 +1,14 @@
+import jwt from 'jsonwebtoken';
 import { IncomingMessage, ServerResponse } from 'node:http';
 
 export type ContextType = {
   req: IncomingMessage;
   res: ServerResponse;
 };
+
+export interface UserIDJwtPayload extends jwt.JwtPayload {
+  id: number;
+}
 
 /* -------------------------------------------------------------------------- */
 /*                        Utilitary functions                                 */
