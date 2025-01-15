@@ -2,15 +2,7 @@ import { hash, verify } from 'argon2';
 import chalk from 'chalk';
 import Cookies from 'cookies';
 import jwt from 'jsonwebtoken';
-import {
-  Arg,
-  Args,
-  Authorized,
-  Ctx,
-  Mutation,
-  Query,
-  Resolver,
-} from 'type-graphql';
+import { Arg, Args, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import {
   COOKIES_OPTIONS,
   HASHING_OPTIONS,
@@ -26,6 +18,7 @@ import {
 } from '@/schemas/users.schemas';
 import { User } from '@/schemas/entities/User';
 import { ContextType, UserIDJwtPayload } from '@/types/index.types';
+import { getUserFromContext } from '@/middlewares/auth';
 
 @Resolver()
 export class UsersResolver {
@@ -47,16 +40,15 @@ export class UsersResolver {
     return user;
   }
 
-  @Authorized()
+  /** Query the client (frontend) can use to know whether the user is authenticated or not.
+   *
+   * ⚠️ This request should not fail (to avoid dealing with both response data and errors in the frontend)!
+   * It should either return the current User (if authenticated) or either null.
+   *
+   */
   @Query(() => User, { nullable: true })
   async whoAmI(@Ctx() context: ContextType): Promise<User | null> {
-    const cookies = new Cookies(context.req, context.res);
-    const token = cookies.get('token');
-    if (!token) {
-      return null;
-    }
-    const payload = jwt.decode(token) as unknown as UserIDJwtPayload;
-    const user = await usersModel.findOneById(payload.id);
+    const user = await getUserFromContext(context);
     return user;
   }
 
@@ -86,6 +78,7 @@ export class UsersResolver {
     }
   }
 
+  // !TODO: refactor to use a signIn function in auth.ts?
   @Mutation(() => User, { nullable: true })
   async signInUser(
     @Arg('data', () => SignInInput) data: SignInInput,
@@ -101,7 +94,7 @@ export class UsersResolver {
       if (!passwordMatch) {
         return null;
       }
-      // Authorize user (generate JWT token to be stored in the client's browser's cookies, will be sent in all further requests to serve as a proof of the user'identity).
+      // Authorize user (generate JWT to be stored in the client's browser's cookies, will be sent in all further requests to serve as a proof of the user'identity).
       const payload: UserIDJwtPayload = { id: user.id };
       const token = jwt.sign(payload, JWT_SECRET_KEY, JWT_OPTIONS);
       const cookies = new Cookies(context.req, context.res);
@@ -114,6 +107,19 @@ export class UsersResolver {
         errorMessage += `: ${error.message}`;
       }
       throw new Error(errorMessage);
+    }
+  }
+
+  @Mutation(() => Boolean)
+  signOutUser(@Ctx() context: ContextType): boolean {
+    try {
+      const cookies = new Cookies(context.req, context.res);
+      // Remove JWT from the client's browser's cookies (cookie expires instantly (after 0 milliseconds), expired cookies are automatically deleted by the client browser).
+      cookies.set('token', '', { maxAge: 0 });
+      return true;
+    } catch (error: unknown) {
+      console.error(chalk.red(error));
+      return false;
     }
   }
 }

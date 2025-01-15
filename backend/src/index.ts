@@ -9,7 +9,6 @@ import { CategoriesResolver } from '@/resolvers/Categories.resolver.ts';
 import { AdsResolver } from '@/resolvers/Ads.resolver.ts';
 import { TagsResolver } from '@/resolvers/Tags.resolver';
 import { UsersResolver } from '@/resolvers/Users.resolver';
-import { ContextType } from '@/types/index.types';
 
 const API_PORT = parseInt(process.env.API_PORT ?? '3000', 10);
 
@@ -21,15 +20,16 @@ async function initialize(): Promise<void> {
   const schema = await buildSchema({
     resolvers: [CategoriesResolver, AdsResolver, TagsResolver, UsersResolver],
     validate: true, // enable 'class-validator' integration: automatically validate all input arguments
-    authChecker, // register the authorization checker function (💡 set to "null" to temporarily silent auth guards)
+    authChecker, // register the authorization checker function (💡 set to "null" to temporarily silence auth guards)
   });
 
   // Create and run GraphQL server.
   const server = new ApolloServer({ schema });
   const { url } = await startStandaloneServer(server, {
     listen: { port: API_PORT },
-    // Provide context to share data between resolvers (JWT token). The `context` function is called for each request. Resolvers can access the context with the `contextValue` object parameter.
-    context: async ({ req, res }: ContextType): Promise<ContextType> => {
+    // Provide context to share data between resolvers. The `context` function is called for each request. Resolvers can access the context with the `context` object parameter.
+    // eslint-disable-next-line  @typescript-eslint/require-await
+    context: async ({ req, res }) => {
       return {
         req,
         res,

@@ -3,46 +3,76 @@ import Cookies from 'cookies';
 import jwt from 'jsonwebtoken';
 import { AuthChecker } from 'type-graphql';
 import { JWT_SECRET_KEY } from '@/config/safety.options';
-import { ContextType } from '@/types/index.types';
+import * as usersModel from '@/models/users.model';
+import { User } from '@/schemas/entities/User';
+import { ContextType, UserIDJwtPayload } from '@/types/index.types';
+
+/** Retrieve the current user from the context (utilitary function, avoid code duplication)
+ *
+ * @param context - The context object that contains the request and response objects.
+ * @returns The user object if found (authenticated user), otherwise null.
+ *
+ */
+export const getUserFromContext = async (
+  context: ContextType,
+): Promise<User | null> => {
+  try {
+    // Retrieve user's JWT from cookies (request headers).
+    const cookies = new Cookies(context.req, context.res);
+    const token = cookies.get('token');
+    if (!token) {
+      throw new Error('No token provided.');
+    }
+
+    // Check user's authorization (verify both JWT signature validity and expiration) and retrieve user's ID from the decoded payload (if a callback function is not provided, the `verify` method returns the decoded payload).
+    const payload = jwt.verify(
+      token,
+      JWT_SECRET_KEY,
+    ) as unknown as UserIDJwtPayload;
+
+    // Retrieve user's data from the database.
+    const user = await usersModel.findOneById(payload.id);
+
+    return user;
+  } catch (error: unknown) {
+    let errorMessage = 'Access denied:';
+    if (error instanceof jwt.JsonWebTokenError) {
+      errorMessage += ` ${error.message}`;
+      if (error instanceof jwt.TokenExpiredError) {
+        errorMessage += ` at ${new Date(error.expiredAt).toLocaleString()}`;
+      }
+    } else {
+      errorMessage += ` ${JSON.stringify(error)}`;
+    }
+    console.error(chalk.red(errorMessage));
+    return null;
+  }
+};
 
 /** Authorization checker function (similar to a middleware)
  *
  * The order of execution for the GraphQL standalone server is as follows:
  * 1. The `context` function is called for each request.
- * 2. The `authChecker` function is called for each request and determine whether the user can access the requested resource (public = has access, private = restricted access) based on user's authorization token and resource permissions.
- * 3. The `resolver` function related to the requested resource is called for each request (public => all the time, private => only if the user has access).
+ * Next step(s) will depend whether the requested resource is protected or not:
  *
+ * For `public` resources (without the `@Authorized` decorator):
+ *  2. The related `resolver` function is called directly for each request. The `authChecker` function is not called!
+ *
+ * For `private` resources (with the `@Authorized` decorator):
+ *  2. The `authChecker` function is called for each request and determine whether the user is allowed (has permission, is authorized) to access the protected resource. If the user is not allowed, the request is rejected and the `resolver` function is not called. If the user is authorized, the request proceeds to the next step.
+ *  3. Finally, the `resolver` function related to the requested resource is called for each request (public => all the time, private => only if the user has access). *
  */
-export const authChecker: AuthChecker<ContextType> = (
+export const authChecker: AuthChecker<ContextType> = async (
   { context },
   _roles,
-): boolean => {
-  try {
-    // Retrieve user's JWT token from cookies (request headers).
-    const cookies = new Cookies(context.req, context.res);
-    const token = cookies.get('token');
-    if (!token) {
-      console.warn(chalk.yellow('Access denied! No token provided.'));
-      return false; // access dedied
-    }
-    // Verify JWT token.
-    jwt.verify(token, JWT_SECRET_KEY);
+): Promise<boolean> => {
+  // Retrieve the current user from both JWT and the database.
+  const user = await getUserFromContext(context);
 
-    // Optional: check the user's permission against the `roles` argument that comes from the '@Authorized' decorator, eg. ["ADMIN", "MODERATOR"].
+  // Add user to the context object to share data between resolvers.
+  context.user = user;
 
-    return true; // valid token, access granted
-  } catch (error: unknown) {
-    let errorMessage = 'Access denied';
-    if (error instanceof jwt.JsonWebTokenError) {
-      errorMessage += `: ${error.message}`;
-      if (error instanceof jwt.TokenExpiredError) {
-        errorMessage += ` at ${new Date(error.expiredAt).toLocaleString()}.`;
-      }
-      errorMessage += `.`;
-    } else {
-      errorMessage += '!';
-    }
-    console.error(chalk.red(errorMessage));
-    return false; // invalid token, access denied
-  }
+  // OPTIONAL: check the user's permission against the `roles` argument that comes from the '@Authorized' decorator, eg. ["ADMIN", "MODERATOR"].
+
+  return !!user; // cast a "truthy" or "falsy" value to a boleean value: return true if the user is allowed to access the resource (valid token), false otherwise (invalid token or token expired)
 };
