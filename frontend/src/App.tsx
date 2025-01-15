@@ -2,12 +2,13 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import PageLayout from "@layouts/PageLayout";
 import {
-  HomePage,
   AdPage,
   AboutPage,
   CategoryPage,
   EditAdPage,
+  HomePage,
   NewAdPage,
+  SignInPage,
 } from "@/pages";
 import "./App.css";
 
@@ -32,6 +33,8 @@ function App() {
             <Route path="ads/new" Component={NewAdPage} />
             <Route path="ads/:id/edit" Component={EditAdPage} />
             <Route path="about" Component={AboutPage} />
+            {/* !TODO: have a single SignIn / SignUp page depending on current user's authentication state... */}
+            <Route path="signin" Component={SignInPage} />
             <Route path="*" Component={HomePage} />
           </Route>
         </Routes>

@@ -16,9 +16,13 @@ export default function PageLayout() {
         <MainMenu>
           <Logo />
           <SearchBar />
+          {/* !TODO: display `New ad` button only for authenticated users... */}
           <LinkBtn to="/ads/new" $outline>
             <span className="mobile__short">New</span>
             <span className="desktop__long">New ad</span>
+          </LinkBtn>
+          <LinkBtn to="/signin" $outline>
+            <span>Sign In</span>
           </LinkBtn>
         </MainMenu>
         <Suspense fallback={<Loader size="sm" $mt={1.4} $mb={0.35} />}>

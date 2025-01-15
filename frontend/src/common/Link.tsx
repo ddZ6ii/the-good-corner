@@ -5,11 +5,12 @@ import { baseButtonStyle } from "@/themes/styles";
 
 type LinkProps = NavLinkProps & {
   $outline?: boolean;
+  $filled?: boolean;
 };
 
 export const LinkBtn = styled(RouterNavLink)<LinkProps>`
   ${baseButtonStyle}
-  border: none;
+  border: 1px solid transparent;
   border-radius: ${theme.borderRadius.rounded_lg};
   text-decoration: none;
 
@@ -17,10 +18,19 @@ export const LinkBtn = styled(RouterNavLink)<LinkProps>`
     $outline &&
     css`
       border: ${theme.borderRadius.rounded} solid ${theme.color.primary};
-      border-radius: ${theme.borderRadius.rounded_lg};
       &:is(:hover, :focus-visible) {
         background-color: ${theme.color.primary};
         color: ${theme.color.white};
+      }
+    `};
+
+  ${({ $filled }) =>
+    $filled &&
+    css`
+      background-color: ${theme.color.primary};
+      color: ${theme.color.white};
+      &:is(:hover, :focus-visible) {
+        background-color: #e69418;
       }
     `};
 `;
