@@ -43,7 +43,7 @@ export class GetUserArgs {
 }
 
 @InputType({ description: 'New user data' })
-export class AddUserInput {
+export class CreateUserInput {
   @Field(() => String)
   @IsEmail()
   email!: string;
@@ -55,8 +55,8 @@ export class AddUserInput {
   password!: string;
 }
 
-@InputType({ description: 'User sign in credentials' })
-export class SignInInput {
+@InputType({ description: 'User login credentials' })
+export class LogInInput {
   @Field(() => String)
   @IsEmail()
   email!: string;

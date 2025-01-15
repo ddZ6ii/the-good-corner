@@ -1,5 +1,5 @@
 import omit from 'lodash/omit';
-import { AddUserInput, SignInInput } from '@/schemas/users.schemas';
+import { CreateUserInput, LogInInput } from '@/schemas/users.schemas';
 import { User } from '@/schemas/entities/User';
 
 export function findAll(email?: string): Promise<User[]> {
@@ -11,7 +11,7 @@ export function findAll(email?: string): Promise<User[]> {
   });
 }
 
-export function findOne(userCredentials: SignInInput): Promise<User | null> {
+export function findOne(userCredentials: LogInInput): Promise<User | null> {
   const user = new User();
   Object.assign(user, omit(userCredentials, 'password'));
   return User.findOne({
@@ -34,7 +34,7 @@ export function findOneByEmail(email: string): Promise<User | null> {
   });
 }
 
-export function create(newUserContent: AddUserInput): Promise<User> {
+export function create(newUserContent: CreateUserInput): Promise<User> {
   const newUser = new User();
   Object.assign(newUser, omit(newUserContent, 'password'));
   return newUser.save();

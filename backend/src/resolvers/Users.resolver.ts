@@ -11,10 +11,10 @@ import {
 } from '@/config/safety.options';
 import * as usersModel from '@/models/users.model';
 import {
-  AddUserInput,
+  CreateUserInput,
   GetUserArgs,
   GetUsersArgs,
-  SignInInput,
+  LogInInput,
 } from '@/schemas/users.schemas';
 import { User } from '@/schemas/entities/User';
 import { ContextType, UserIDJwtPayload } from '@/types/index.types';
@@ -54,7 +54,7 @@ export class UsersResolver {
 
   @Mutation(() => User)
   async createUser(
-    @Arg('data', () => AddUserInput) data: AddUserInput,
+    @Arg('data', () => CreateUserInput) data: CreateUserInput,
   ): Promise<User> {
     try {
       const match = await usersModel.findOneByEmail(data.email);
@@ -78,10 +78,9 @@ export class UsersResolver {
     }
   }
 
-  // !TODO: refactor to use a signIn function in auth.ts?
   @Mutation(() => User, { nullable: true })
-  async signInUser(
-    @Arg('data', () => SignInInput) data: SignInInput,
+  async logInUser(
+    @Arg('data', () => LogInInput) data: LogInInput,
     @Ctx() context: ContextType,
   ): Promise<User | null> {
     try {
@@ -111,7 +110,7 @@ export class UsersResolver {
   }
 
   @Mutation(() => Boolean)
-  signOutUser(@Ctx() context: ContextType): boolean {
+  logOutUser(@Ctx() context: ContextType): boolean {
     try {
       const cookies = new Cookies(context.req, context.res);
       // Remove JWT from the client's browser's cookies (cookie expires instantly (after 0 milliseconds), expired cookies are automatically deleted by the client browser).
