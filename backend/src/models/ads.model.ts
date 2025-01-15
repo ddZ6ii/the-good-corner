@@ -1,6 +1,6 @@
 import { DeleteResult, Like } from 'typeorm';
-import { Ad } from '@/entities/Ad';
-import { AddAdInput, UpdateAdInput } from '@/types/ads.types.ts';
+import { AddAdInput, UpdateAdInput } from '@/schemas/ads.schemas';
+import { Ad } from '@/schemas/entities/Ad';
 import { merge } from '@/utils/merge';
 
 export function findAll(categoryFilter?: string): Promise<Ad[]> {

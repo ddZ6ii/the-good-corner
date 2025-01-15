@@ -2,8 +2,8 @@ import chalk from 'chalk';
 import Cookies from 'cookies';
 import jwt from 'jsonwebtoken';
 import { AuthChecker } from 'type-graphql';
-import { ContextType } from '@/types/context.types';
 import { JWT_SECRET_KEY } from '@/config/safety.options';
+import { ContextType } from '@/types/index.types';
 
 /** Authorization checker function (similar to a middleware)
  *
@@ -13,7 +13,6 @@ import { JWT_SECRET_KEY } from '@/config/safety.options';
  * 3. The `resolver` function related to the requested resource is called for each request (public => all the time, private => only if the user has access).
  *
  */
-
 export const authChecker: AuthChecker<ContextType> = (
   { context },
   _roles,

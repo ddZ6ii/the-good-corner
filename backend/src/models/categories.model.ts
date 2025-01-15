@@ -1,9 +1,9 @@
 import { DeleteResult, Like } from 'typeorm';
-import { Category } from '@/entities/Category';
 import {
   AddCategoryInput,
   UpdateCategoryInput,
-} from '@/types/categories.types';
+} from '@/schemas/categories.schemas';
+import { Category } from '@/schemas/entities/Category';
 
 export function findAll(categoryName?: string): Promise<Category[]> {
   if (!categoryName) return Category.find({ relations: ['ads', 'ads.tags'] });

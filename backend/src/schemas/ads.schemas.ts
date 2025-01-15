@@ -1,4 +1,3 @@
-import { ArgsType, Field, ID, InputType, Int } from 'type-graphql';
 import {
   IsEmail,
   IsNotEmpty,
@@ -7,13 +6,20 @@ import {
   Length,
   ValidateNested,
 } from 'class-validator';
-import { IdInput } from './utils.types.ts';
+import { ArgsType, Field, ID, InputType, Int } from 'type-graphql';
+import { IdInput } from '@/schemas/utils.schemas';
 
-/**
- * Class validator is used to validate the input data.
+/* -------------------------------------------------------------------------- */
+/* "WRITE" CLASSES (query and mutation arguments)                             */
+/* JS class =>                                                                */
+/*    > interface TS                                                          */
+/*    > GraphQL API schema (typegraphql + class-validator)                    */
+/* -------------------------------------------------------------------------- */
+/** Class validator is used to validate the input data
+ *
  * Note: GraphQL natively checks whether the fields have correct types (String, Int, Float, Boolean, etc.) so we don't have to use the `@IsOptional`, `@Allow`, `@IsString` or the `@IsInt` decorators at all!
+ *
  */
-
 @ArgsType()
 export class GetAdsArgs {
   @Field(() => String, { nullable: true })

@@ -1,9 +1,9 @@
-import { DataSource } from 'typeorm';
 import { resolve } from 'node:path';
+import { DataSource } from 'typeorm';
 
 const env = process.env.NODE_ENV ?? 'development';
 const isDevMode = env.toLowerCase() === 'development';
-const entitiesUrl = resolve(import.meta.dirname, 'entities/*.ts');
+const entitiesUrl = resolve(import.meta.dirname, 'schemas/entities/*.ts');
 
 /** Database connection options.
  *

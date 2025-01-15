@@ -1,6 +1,6 @@
 import { DeleteResult, Like } from 'typeorm';
-import { Tag } from '@/entities/Tag';
-import { AddTagInput, UpdateTagInput } from '@/types/tags.types';
+import { AddTagInput, UpdateTagInput } from '@/schemas/tags.schemas';
+import { Tag } from '@/schemas/entities/Tag';
 
 export function findAll(tagName?: string): Promise<Tag[]> {
   // Add nested `ads.tags` relations to the query to also display all the other tags related to an ad for each tag.

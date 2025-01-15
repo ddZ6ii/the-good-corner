@@ -1,3 +1,5 @@
+import { GraphQLDateTime } from 'graphql-scalars';
+import { Field, ID, Int, ObjectType } from 'type-graphql';
 import {
   Entity,
   BaseEntity,
@@ -8,16 +10,22 @@ import {
   JoinTable,
   BeforeInsert,
 } from 'typeorm';
-import { Field, ID, Int, ObjectType } from 'type-graphql';
-import { GraphQLDateTime } from 'graphql-scalars';
-import { Category } from '@/entities/Category';
-import { Tag } from '@/entities/Tag';
+import { Category } from '@/schemas/entities/Category';
+import { Tag } from '@/schemas/entities/Tag';
 
+/* -------------------------------------------------------------------------- */
+/* "READ" CLASS                                                               */
+/* JS class =>                                                                */
+/*    > interface TS                                                          */
+/*    > database schema or "data model" (typeorm)                             */
+/*    > GraphQL API schema (typegraphql)                                      */
+/* -------------------------------------------------------------------------- */
 /** Active record pattern
- * ----------------------
- * Inheriting from BaseEntity sets Active Record pattern (vs Data Mapper).
+ *
+ * Inheriting from `BaseEntity` sets Active Record pattern (vs Data Mapper).
  * This approach allows to access the database within the models.
  * It gives access to some useful methods like save, remove, etc.
+ *
  */
 @Entity()
 @ObjectType()
@@ -61,10 +69,11 @@ export class Ad extends BaseEntity {
     this.createdAt = new Date().toISOString();
   }
 
-  /** Relation options
-   * ----------------------
+  /** Many-to-One relation options
+   *
    * The option { eager: true } will automatically fetch the related category when fetching an ad, without having to explicitly set the option { relations: ['category'] } when calling Ad.find(), Ad.findBy() or findOneBy().
    * The option { nullable: false } will make sure that a category must be provided when creating an ad.
+   *
    */
   @ManyToOne(() => Category, (category) => category.ads, {
     eager: true,
@@ -73,10 +82,11 @@ export class Ad extends BaseEntity {
   @Field(() => Category)
   category!: Category;
 
-  /** Join table
-   * ----------------------
+  /** Many-to-Many relation options (join table)
+   *
    * JoinTable() is required for ManyToMany relations.
    * JoinTable must be placed on one (owning) side only of the relation.
+   *
    */
   @ManyToMany(() => Tag, (tag) => tag.ads)
   @JoinTable()

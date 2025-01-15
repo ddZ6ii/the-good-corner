@@ -1,12 +1,12 @@
 import { Arg, Args, ID, Mutation, Query, Resolver } from 'type-graphql';
-import { Category } from '@/entities/Category';
 import * as categoriesModel from '@/models/categories.model.ts';
 import {
   AddCategoryInput,
   GetCategoriesArgs,
   GetCategoryArgs,
   UpdateCategoryInput,
-} from '@/types/categories.types';
+} from '@/schemas/categories.schemas';
+import { Category } from '@/schemas/entities/Category';
 
 @Resolver()
 export class CategoriesResolver {

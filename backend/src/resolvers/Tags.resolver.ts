@@ -1,12 +1,12 @@
 import { Arg, Args, ID, Mutation, Query, Resolver } from 'type-graphql';
-import { Tag } from '@/entities/Tag';
 import * as tagsModel from '@/models/tags.model.ts';
 import {
   AddTagInput,
   GetTagArgs,
   GetTagsArgs,
   UpdateTagInput,
-} from '@/types/tags.types';
+} from '@/schemas/tags.schemas';
+import { Tag } from '@/schemas/entities/Tag';
 
 @Resolver()
 export class TagsResolver {

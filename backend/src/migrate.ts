@@ -1,7 +1,7 @@
-import fs from 'fs';
-import pg from 'pg';
 import chalk from 'chalk';
+import fs from 'fs';
 import { resolve } from 'node:path';
+import pg from 'pg';
 import { postgresConfig } from '@/db.config';
 
 const pgConfig = {

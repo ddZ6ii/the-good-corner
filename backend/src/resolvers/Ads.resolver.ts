@@ -7,14 +7,14 @@ import {
   Query,
   Resolver,
 } from 'type-graphql';
-import { Ad } from '@/entities/Ad';
 import * as adsModel from '@/models/ads.model';
 import {
   AddAdInput,
   GetAdArgs,
   GetAdsArgs,
   UpdateAdInput,
-} from '@/types/ads.types';
+} from '@/schemas/ads.schemas';
+import { Ad } from '@/schemas/entities/Ad';
 
 @Resolver()
 export class AdsResolver {

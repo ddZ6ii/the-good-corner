@@ -9,7 +9,7 @@ import { CategoriesResolver } from '@/resolvers/Categories.resolver.ts';
 import { AdsResolver } from '@/resolvers/Ads.resolver.ts';
 import { TagsResolver } from '@/resolvers/Tags.resolver';
 import { UsersResolver } from '@/resolvers/Users.resolver';
-import { ContextType } from '@/types/context.types';
+import { ContextType } from '@/types/index.types';
 
 const API_PORT = parseInt(process.env.API_PORT ?? '3000', 10);
 

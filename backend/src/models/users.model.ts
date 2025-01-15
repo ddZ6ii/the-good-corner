@@ -1,6 +1,6 @@
 import omit from 'lodash/omit';
-import { User } from '@/entities/User';
-import { AddUserInput, SignInInput } from '@/types/users.types';
+import { AddUserInput, SignInInput } from '@/schemas/users.schemas';
+import { User } from '@/schemas/entities/User';
 
 export function findAll(email?: string): Promise<User[]> {
   if (!email) return User.find();

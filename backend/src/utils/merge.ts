@@ -1,4 +1,4 @@
-import { IdInput } from '@/types/utils.types';
+import { IdInput } from '@/schemas/utils.schemas';
 
 /**
  * Merge some payload data on an existing database entity.

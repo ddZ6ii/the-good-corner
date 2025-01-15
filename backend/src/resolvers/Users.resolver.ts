@@ -1,7 +1,7 @@
 import { hash, verify } from 'argon2';
-import jwt from 'jsonwebtoken';
 import chalk from 'chalk';
 import Cookies from 'cookies';
+import jwt from 'jsonwebtoken';
 import { Arg, Args, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import {
   COOKIES_OPTIONS,
@@ -9,15 +9,15 @@ import {
   JWT_OPTIONS,
   JWT_SECRET_KEY,
 } from '@/config/safety.options';
-import { User } from '@/entities/User';
 import * as usersModel from '@/models/users.model';
-import { ContextType } from '@/types/context.types';
 import {
   AddUserInput,
   GetUserArgs,
   GetUsersArgs,
   SignInInput,
-} from '@/types/users.types';
+} from '@/schemas/users.schemas';
+import { User } from '@/schemas/entities/User';
+import { ContextType } from '@/types/index.types';
 
 @Resolver()
 export class UsersResolver {
