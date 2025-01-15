@@ -5,8 +5,11 @@ import {
   Column,
   PrimaryGeneratedColumn,
   OneToMany,
+  ManyToOne,
+  CreateDateColumn,
 } from 'typeorm';
 import { Ad } from '@/schemas/entities/Ad';
+import { User } from '@/schemas/entities/User';
 
 /* -------------------------------------------------------------------------- */
 /* "READ" CLASS                                                               */
@@ -33,7 +36,26 @@ export class Category extends BaseEntity {
   @Field(() => String)
   name!: string;
 
+  @CreateDateColumn()
+  @Field(() => Date)
+  createdAt!: Date;
+
+  // A category can have many ads.
   @OneToMany(() => Ad, (ad) => ad.category)
   @Field(() => [Ad])
   ads!: Ad[];
+
+  /** Keep track of which user created a category
+   *
+   * No mapping needed on the other side (User entity, no need to know which categories a user created when requesting users).
+   *
+   * Many-to-One relation options:
+   *  - { eager: true } will automatically fetch the related user (who created the category) when  fetching a category, without having to explicitly set the option { relations: ['createdBy'] } when calling Category.find(), Category.findBy() or findOneBy().
+   *  - { nullable: false } will make sure that a category must be provided when creating an ad.
+   *
+   */
+  // !TODO: remove {nullable: true} when the dump file will be updated with a user for every category ...
+  @ManyToOne(() => User, { eager: true })
+  @Field(() => User, { nullable: true })
+  createdBy!: User;
 }
