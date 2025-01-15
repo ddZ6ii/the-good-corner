@@ -2,7 +2,15 @@ import { hash, verify } from 'argon2';
 import chalk from 'chalk';
 import Cookies from 'cookies';
 import jwt from 'jsonwebtoken';
-import { Arg, Args, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import {
+  Arg,
+  Args,
+  Authorized,
+  Ctx,
+  Mutation,
+  Query,
+  Resolver,
+} from 'type-graphql';
 import {
   COOKIES_OPTIONS,
   HASHING_OPTIONS,
@@ -17,7 +25,7 @@ import {
   SignInInput,
 } from '@/schemas/users.schemas';
 import { User } from '@/schemas/entities/User';
-import { ContextType } from '@/types/index.types';
+import { ContextType, UserIDJwtPayload } from '@/types/index.types';
 
 @Resolver()
 export class UsersResolver {
@@ -36,6 +44,19 @@ export class UsersResolver {
     @Args(() => GetUserArgs) { id }: GetUserArgs,
   ): Promise<User | null> {
     const user = await usersModel.findOneById(id);
+    return user;
+  }
+
+  @Authorized()
+  @Query(() => User, { nullable: true })
+  async whoAmI(@Ctx() context: ContextType): Promise<User | null> {
+    const cookies = new Cookies(context.req, context.res);
+    const token = cookies.get('token');
+    if (!token) {
+      return null;
+    }
+    const payload = jwt.decode(token) as unknown as UserIDJwtPayload;
+    const user = await usersModel.findOneById(payload.id);
     return user;
   }
 
@@ -81,7 +102,8 @@ export class UsersResolver {
         return null;
       }
       // Authorize user (generate JWT token to be stored in the client's browser's cookies, will be sent in all further requests to serve as a proof of the user'identity).
-      const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, JWT_OPTIONS);
+      const payload: UserIDJwtPayload = { id: user.id };
+      const token = jwt.sign(payload, JWT_SECRET_KEY, JWT_OPTIONS);
       const cookies = new Cookies(context.req, context.res);
       cookies.set('token', token, COOKIES_OPTIONS);
       return user;
