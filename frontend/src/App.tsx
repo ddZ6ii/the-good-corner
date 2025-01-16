@@ -9,6 +9,7 @@ import {
   HomePage,
   NewAdPage,
   SignInPage,
+  SignUpPage,
 } from "@/pages";
 import "./App.css";
 
@@ -38,6 +39,7 @@ function App() {
             <Route path="about" Component={AboutPage} />
             {/* !TODO: have a single SignIn / SignUp page depending on current user's authentication state... */}
             <Route path="signin" Component={SignInPage} />
+            <Route path="signup" Component={SignUpPage} />
             <Route path="*" Component={HomePage} />
           </Route>
         </Routes>
