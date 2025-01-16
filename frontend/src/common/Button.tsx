@@ -22,8 +22,7 @@ export const Button = styled.button<ButtonProps>`
       background-color: ${theme.color.primary};
       color: ${theme.color.white};
       &:is(:hover, :focus-visible) {
-        background-color: ${theme.color.white};
-        color: ${theme.color.primary};
+        background-color: #e69418;
       }
     `};
 

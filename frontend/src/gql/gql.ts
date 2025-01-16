@@ -23,6 +23,7 @@ const documents = {
     "\n  mutation createTag($data: AddTagInput!) {\n    createTag(data: $data) {\n      id\n      name\n    }\n  }\n": types.CreateTagDocument,
     "\n  mutation deleteAd($id: ID!) {\n    deleteAd(id: $id)\n  }\n": types.DeleteAdDocument,
     "\n  mutation LogInUser($data: LogInInput!) {\n    logInUser(data: $data) {\n      id\n    }\n  }\n": types.LogInUserDocument,
+    "\n  mutation LogOutUser {\n    logOutUser\n  }\n": types.LogOutUserDocument,
     "\n  mutation createUser($data: CreateUserInput!) {\n    createUser(data: $data) {\n      id\n    }\n  }\n": types.CreateUserDocument,
     "\n  query tags {\n    tags {\n      id\n      name\n    }\n  }\n": types.TagsDocument,
     "\n  mutation updateAd($data: UpdateAdInput!, $id: ID!) {\n    updateAd(data: $data, id: $id) {\n      id\n    }\n  }\n": types.UpdateAdDocument,
@@ -78,6 +79,10 @@ export function gql(source: "\n  mutation deleteAd($id: ID!) {\n    deleteAd(id:
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation LogInUser($data: LogInInput!) {\n    logInUser(data: $data) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation LogInUser($data: LogInInput!) {\n    logInUser(data: $data) {\n      id\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation LogOutUser {\n    logOutUser\n  }\n"): (typeof documents)["\n  mutation LogOutUser {\n    logOutUser\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

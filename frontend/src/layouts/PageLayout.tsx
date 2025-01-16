@@ -1,15 +1,39 @@
 import styled from "styled-components";
 import { Suspense } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { useMutation } from "@apollo/client";
+import { Button } from "@/common/Button";
 import { LinkBtn } from "@/common/Link";
 import Loader from "@/common/Loader";
 import Logo from "@components/Logo";
 import Navbar from "@components/Navbar";
 import SearchBar from "@components/SearchBar";
+import { LOG_OUT } from "@/graphql/logOut";
 import { theme } from "@/themes/theme";
 
 export default function PageLayout() {
+  const [logOut] = useMutation(LOG_OUT);
+  const navigate = useNavigate();
+
+  const handleLogOut = async (_e: React.MouseEvent<HTMLButtonElement>) => {
+    try {
+      // !TODO: logout user only if user is authenticated...
+      console.log("login out...");
+      const { data, errors } = await logOut();
+      console.log("errors", errors);
+
+      if (errors !== undefined || !data?.logOutUser) {
+        if (errors) console.error("Failed to sign out:", errors);
+        throw new Error("Failed to sign out!");
+      }
+      // !TODO: display logout notification (See you soon & Have nice day 👋...
+      navigate("/sigin");
+    } catch (error: unknown) {
+      console.error(error);
+    }
+  };
+
   return (
     <Container>
       <NavigationHeader>
@@ -27,6 +51,9 @@ export default function PageLayout() {
           <LinkBtn to="/signup" $filled>
             <span>Sign Up</span>
           </LinkBtn>
+          <Button $primary onClick={handleLogOut}>
+            <span>Sign Out</span>
+          </Button>
         </MainMenu>
         <Suspense fallback={<Loader size="sm" $mt={1.4} $mb={0.35} />}>
           <Navbar />
