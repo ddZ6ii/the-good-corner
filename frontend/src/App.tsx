@@ -10,6 +10,7 @@ import {
   NewAdPage,
   SignInPage,
   SignUpPage,
+  SignOutPage,
 } from "@/pages";
 import "./App.css";
 
@@ -40,6 +41,7 @@ function App() {
             {/* !TODO: have a single SignIn / SignUp page depending on current user's authentication state... */}
             <Route path="signin" Component={SignInPage} />
             <Route path="signup" Component={SignUpPage} />
+            <Route path="signout" Component={SignOutPage} />
             <Route path="*" Component={HomePage} />
           </Route>
         </Routes>
