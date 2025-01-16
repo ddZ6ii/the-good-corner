@@ -55,7 +55,7 @@ const variant = {
 };
 
 const Container = styled.div<ContainerProps>`
-  align-self: start;
+  align-self: center;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { Button } from "@/common/Button";
 import { LOG_IN } from "@/graphql/logIn";
+import { WHO_AM_I } from "@/graphql/whoAmI";
 import PageContent from "@/layouts/PageContent";
 
 type FormState = {
@@ -50,6 +51,7 @@ export default function SignInPage() {
       console.log("submitting...");
       const { data, errors } = await logIn({
         variables: { data: formState.data },
+        refetchQueries: [{ query: WHO_AM_I }],
       });
       if (errors !== undefined || !data?.logInUser) {
         if (errors) console.error("Failed to sign in:", errors);

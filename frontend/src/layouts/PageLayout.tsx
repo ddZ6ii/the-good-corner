@@ -1,59 +1,21 @@
 import styled from "styled-components";
 import { Suspense } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { useMutation } from "@apollo/client";
-import { Button } from "@/common/Button";
-import { LinkBtn } from "@/common/Link";
 import Loader from "@/common/Loader";
-import Logo from "@components/Logo";
-import Navbar from "@components/Navbar";
-import SearchBar from "@components/SearchBar";
-import { LOG_OUT } from "@/graphql/logOut";
+import { Logo, NavActions, Navbar, SearchBar } from "@/components/navbar";
 import { theme } from "@/themes/theme";
 
 export default function PageLayout() {
-  const [logOut] = useMutation(LOG_OUT);
-  const navigate = useNavigate();
-
-  const handleLogOut = async (_e: React.MouseEvent<HTMLButtonElement>) => {
-    try {
-      // !TODO: logout user only if user is authenticated...
-      console.log("login out...");
-      const { data, errors } = await logOut();
-      console.log("errors", errors);
-
-      if (errors !== undefined || !data?.logOutUser) {
-        if (errors) console.error("Failed to sign out:", errors);
-        throw new Error("Failed to sign out!");
-      }
-      // !TODO: display logout notification (See you soon & Have nice day 👋...
-      navigate("/sigin");
-    } catch (error: unknown) {
-      console.error(error);
-    }
-  };
-
   return (
     <Container>
       <NavigationHeader>
         <MainMenu>
           <Logo />
           <SearchBar />
-          {/* !TODO: dynamicall handle the buttons display based on user authentication status... */}
-          <LinkBtn to="/ads/new" $outline>
-            <span className="mobile__short">New</span>
-            <span className="desktop__long">New ad</span>
-          </LinkBtn>
-          <LinkBtn to="/signin" $outline>
-            <span>Sign In</span>
-          </LinkBtn>
-          <LinkBtn to="/signup" $filled>
-            <span>Sign Up</span>
-          </LinkBtn>
-          <Button $primary onClick={handleLogOut}>
-            <span>Sign Out</span>
-          </Button>
+          <Suspense fallback={<Loader $mr={0.5} />}>
+            <NavActions />
+          </Suspense>
         </MainMenu>
         <Suspense fallback={<Loader size="sm" $mt={1.4} $mb={0.35} />}>
           <Navbar />
