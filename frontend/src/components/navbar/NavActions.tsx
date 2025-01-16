@@ -16,6 +16,7 @@ export default function NavActions() {
       if (!user) return;
       const { data, errors } = await logOut({
         refetchQueries: [{ query: WHO_AM_I }],
+        awaitRefetchQueries: true, // make sure refetchQueries are completed before resolving the promise (mutation considered complete). Mandatory for the upcoming navigation which relies on the updated user authentication status for redirection.
       });
 
       if (errors !== undefined || !data?.logOutUser) {

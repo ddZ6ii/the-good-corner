@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import PageLayout from "@layouts/PageLayout";
+import ProtectedRoute from "@/layouts/ProtectedRoute";
 import {
   AdPage,
   AboutPage,
@@ -26,23 +27,44 @@ const client = new ApolloClient({
   credentials: "same-origin",
 });
 
+/** Public and protected routes
+ * Public routes (no authentication required): HomePage, AboutPage, 404 page
+ * Protected routes:
+ * - authentication required: AdPage, CategoryPage, NewAdPage, EditAdPage
+ * - no authentication required: SignInPage, SignUpPage, SignOutPage
+ *
+ */
 function App() {
   return (
     <ApolloProvider client={client}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" Component={PageLayout}>
-            <Route index Component={HomePage} />
-            <Route path="ads/:id" Component={AdPage} />
-            <Route path="categories/:id" Component={CategoryPage} />
-            <Route path="ads/new" Component={NewAdPage} />
-            <Route path="ads/:id/edit" Component={EditAdPage} />
-            <Route path="about" Component={AboutPage} />
-            {/* !TODO: have a single SignIn / SignUp page depending on current user's authentication state... */}
-            <Route path="signin" Component={SignInPage} />
-            <Route path="signup" Component={SignUpPage} />
-            <Route path="signout" Component={SignOutPage} />
-            <Route path="*" Component={HomePage} />
+          <Route path="/" element={<PageLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="about" element={<AboutPage />} />
+            <Route path="ads/:id" element={<AdPage />} />
+            <Route path="categories/:id" element={<CategoryPage />} />
+            <Route
+              element={<ProtectedRoute authStates={["unauthenticated"]} />}
+            >
+              <Route path="signin" element={<SignInPage />} />
+              <Route path="signup" element={<SignUpPage />} />
+              <Route path="signout" element={<SignOutPage />} />
+            </Route>
+
+            <Route
+              element={
+                <ProtectedRoute
+                  authStates={["authenticated"]}
+                  redirectPath="/signin"
+                />
+              }
+            >
+              <Route path="ads/new" element={<NewAdPage />} />
+              <Route path="ads/:id/edit" element={<EditAdPage />} />
+            </Route>
+
+            <Route path="*" element={<HomePage />} />
           </Route>
         </Routes>
       </BrowserRouter>
