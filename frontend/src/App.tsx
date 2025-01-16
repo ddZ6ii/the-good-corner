@@ -13,12 +13,15 @@ import {
 import "./App.css";
 
 const client = new ApolloClient({
-  uri: import.meta.env.VITE_BACKEND_URL,
+  // Use the `proxy` url defined in vite.config.ts to avoid CORS policy issue (backend server is on a different domain that the frontend server (different port))
+  uri: "/api",
   cache: new InMemoryCache(),
   // Dev mode only (Apollo dev tools with Firefox): do not use in production.
   devtools: {
     enabled: true,
   },
+  // Send the cookies along with every request (user authentication). Set the "credentials" option to "same-origin" if the backend server is in the same domain.
+  credentials: "same-origin",
 });
 
 function App() {
