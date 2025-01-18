@@ -168,11 +168,11 @@ const AddCategoryButton = styled(Button)`
   border-radius: ${theme.borderRadius.pill};
   font-size: 1.5rem;
   & > svg {
-    fill: ${theme.color.primary};
+    fill: ${theme.color.primary.main};
     z-index: 999;
   }
   &:is(:hover, :focus-visible) {
-    background-color: ${theme.color.primary};
+    background-color: ${theme.color.primary.main};
     & > svg {
       fill: ${theme.color.white};
     }

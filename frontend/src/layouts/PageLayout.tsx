@@ -58,7 +58,7 @@ const MainMenu = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  color: ${theme.color.primary};
+  color: ${theme.color.primary.main};
 
   & .mobile__short {
     @media screen and (min-width: 720px) {

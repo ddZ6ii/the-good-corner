@@ -130,7 +130,7 @@ const Fieldset = styled.fieldset`
     color: color-mix(in srgb, ${theme.color.neutral.light} 50%, transparent);
   }
   &:focus-visible {
-    outline-color: ${theme.color.primary};
+    outline-color: ${theme.color.primary.main};
   }
 `;
 
@@ -154,10 +154,10 @@ const AddTagButton = styled(Button)`
   border-radius: ${theme.borderRadius.pill};
   font-size: 1.5rem;
   & > svg {
-    fill: ${theme.color.primary};
+    fill: ${theme.color.primary.main};
   }
   &:is(:hover, :focus-visible) {
-    background-color: ${theme.color.primary};
+    background-color: ${theme.color.primary.main};
     & > svg {
       fill: ${theme.color.white};
     }

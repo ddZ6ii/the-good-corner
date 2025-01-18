@@ -103,7 +103,7 @@ const ActionButton = styled(Button)`
   box-shadow: ${theme.shadow.md};
 
   &:is(:hover, :focus-visible) {
-    background-color: ${theme.color.primary};
+    background-color: ${theme.color.primary.main};
     color: ${theme.color.white};
     animation: tilt-shaking 0.2s infinite;
   }

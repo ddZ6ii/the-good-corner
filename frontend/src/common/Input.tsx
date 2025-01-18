@@ -9,7 +9,7 @@ export const Input = styled.input`
   max-width: 360px;
   flex-grow: 1;
   background-color: ${theme.color.white};
-  border: ${theme.borderRadius.rounded} solid ${theme.color.primary};
+  border: ${theme.borderRadius.rounded} solid ${theme.color.primary.main};
   border-radius: ${theme.borderRadius.rounded_lg};
   font-family: inherit;
   font-size: 12px;
