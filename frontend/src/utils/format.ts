@@ -22,3 +22,7 @@ export function formatPrice(priceInCents: number): string {
 export function formatPriceWithCurrency(priceInCents: number): string {
   return `${formatPrice(priceInCents)} $`;
 }
+
+export function pluralize(word: string, count: number): string {
+  return count === 1 ? word : `${word}s`;
+}

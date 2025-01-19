@@ -1,4 +1,9 @@
 /* -------------------------------------------------------------------------- */
+/*                        Utilitary types                                     */
+/* -------------------------------------------------------------------------- */
+export type Nullish<T> = T | null | undefined;
+
+/* -------------------------------------------------------------------------- */
 /*                        Utilitary functions                                 */
 /* -------------------------------------------------------------------------- */
 export function isEmpty(obj: unknown) {
@@ -15,4 +20,9 @@ export function getOjectKeys<Obj extends object>(obj: Obj): (keyof Obj)[] {
   return Object.keys(obj) as (keyof Obj)[];
 }
 
-export type Nullish<T> = T | null | undefined;
+export function isKey<T extends object>(
+  obj: T,
+  key: PropertyKey,
+): key is keyof T {
+  return key in obj;
+}

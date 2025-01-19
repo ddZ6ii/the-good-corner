@@ -1,8 +1,14 @@
-import { IsEmail, IsNotEmpty, IsStrongPassword } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsStrongPassword,
+  MaxLength,
+} from 'class-validator';
 import { ArgsType, Field, ID, InputType } from 'type-graphql';
 
 const PASSWORD_RESTRICTIONS = {
   minLength: 12,
+  maxLength: 40,
   minLowercase: 1,
   minUppercase: 1,
   minNumbers: 1,
@@ -45,12 +51,15 @@ export class GetUserArgs {
 @InputType({ description: 'New user data' })
 export class CreateUserInput {
   @Field(() => String)
-  @IsEmail()
+  @IsEmail({}, { message: 'Invalid email address' })
   email!: string;
 
   @Field(() => String)
+  @MaxLength(PASSWORD_RESTRICTIONS.maxLength, {
+    message: `Password must be less than ${PASSWORD_RESTRICTIONS.maxLength.toString()} characters long`,
+  })
   @IsStrongPassword(PASSWORD_OPTIONS, {
-    message: `Password is too weak. Make sure it has a minimum of ${PASSWORD_RESTRICTIONS.minLength.toString()} characters, including at least ${PASSWORD_RESTRICTIONS.minLowercase.toString()} lowercase letter(s), ${PASSWORD_RESTRICTIONS.minUppercase.toString()} uppercase letter(s), ${PASSWORD_RESTRICTIONS.minNumbers.toString()} number(s), and ${PASSWORD_RESTRICTIONS.minSymbols.toString()} symbol(s).`,
+    message: `Please make sure your password meet the strength requirements: between ${PASSWORD_RESTRICTIONS.minLength.toString()} and ${PASSWORD_RESTRICTIONS.maxLength.toString()} long, including at least ${PASSWORD_RESTRICTIONS.minLowercase.toString()} lowercase letter, ${PASSWORD_RESTRICTIONS.minUppercase.toString()} uppercase letter, ${PASSWORD_RESTRICTIONS.minNumbers.toString()} number, and ${PASSWORD_RESTRICTIONS.minSymbols.toString()} symbol.`,
   })
   password!: string;
 }
