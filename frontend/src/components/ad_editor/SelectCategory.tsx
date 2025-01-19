@@ -16,7 +16,7 @@ import { notifySuccess } from "@/utils/notify";
 
 type SelectCategoryProps = {
   value: string;
-  error: string;
+  errors: string[];
   disabled: boolean;
   onCategoryChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onCategoryBlur: (e: React.FocusEvent<HTMLSelectElement>) => void;
@@ -25,7 +25,7 @@ type SelectCategoryProps = {
 
 export default function SelectCategory({
   value,
-  error,
+  errors,
   disabled,
   onCategoryChange,
   onCategoryBlur,
@@ -106,7 +106,7 @@ export default function SelectCategory({
           </Select>
           <IoChevronDown />
         </Container>
-        {error && <Text>Please select a category</Text>}
+        {errors.length > 0 && <Text>Please select a category</Text>}
       </Field>
 
       {/* Pass the "portal" prop to avoid nested forms (prevents inner form submission to trigger parent form submission). */}

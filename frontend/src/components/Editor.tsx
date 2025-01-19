@@ -28,7 +28,7 @@ export function Editor<T extends Data[]>({
   const formRef = useRef<HTMLFormElement>(null);
   const [name, setName] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState<string[]>([]);
 
   const focusInput = () => {
     if (!formRef.current) return;
@@ -40,17 +40,17 @@ export function Editor<T extends Data[]>({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setError("");
+    setErrors([]);
     setName(e.target.value);
   };
   const handleBlur = (_e: React.FocusEvent<HTMLInputElement>) => {
     try {
-      setError("");
+      setErrors([]);
       validationSchema.parse({ name });
     } catch (error: unknown) {
       if (error instanceof ZodError) {
-        const { name: zodError = [] } = error.formErrors.fieldErrors;
-        setError(zodError[0]);
+        const { name: zodErrors = [] } = error.formErrors.fieldErrors;
+        setErrors(zodErrors);
       } else {
         console.error("error");
       }
@@ -64,14 +64,14 @@ export function Editor<T extends Data[]>({
       // Update form status.
       setSubmitting(true);
       // Check form validity.
-      if (error) {
+      if (errors.length > 0) {
         focusInput();
         return;
       }
       // Check for already existing name.
       if (alreadyExists(name)) {
         focusInput();
-        setError(`${capitalize(label)} already exists!`);
+        setErrors((prev) => [...prev, `${capitalize(label)} already exists!`]);
         return;
       }
       // Add new name to database and update parent form current selection.
@@ -95,7 +95,7 @@ export function Editor<T extends Data[]>({
         placeholder={`Enter a new ${label} name...`}
         value={name}
         disabled={submitting}
-        error={error}
+        errors={errors}
         onChange={handleChange}
         onBlur={handleBlur}
       />

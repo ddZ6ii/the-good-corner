@@ -15,7 +15,7 @@ import { notifySuccess } from "@/utils/notify";
 
 type SelectTagsProps = {
   selectedTags: IdInput[];
-  error: string;
+  errors: string[];
   disabled: boolean;
   onTagChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onTagAdd: (newTagId: string) => void;
@@ -24,7 +24,7 @@ type SelectTagsProps = {
 export default function SelectTags({
   disabled,
   selectedTags,
-  error,
+  errors,
   onTagChange,
   onTagAdd,
 }: SelectTagsProps) {
@@ -95,7 +95,7 @@ export default function SelectTags({
             </Field>
           ))}
         </Wrapper>
-        {error && <Text>{error}</Text>}
+        {errors.length > 0 && <Text>{errors.join(". ")}</Text>}
       </Fieldset>
 
       {/* Pass the "portal" prop to avoid nested forms (prevents inner form submission to trigger parent form submission). */}

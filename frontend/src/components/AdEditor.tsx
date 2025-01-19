@@ -44,7 +44,7 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
 
     const focusFirstFieldWithError = (error: AdFormError): void => {
       const keys = getOjectKeys(error);
-      const firstInputWithError = keys.find((key) => error[key] !== "");
+      const firstInputWithError = keys.find((key) => error[key].length > 0);
       if (!ref.current || !firstInputWithError) return;
       const target = ref.current.elements.namedItem(firstInputWithError);
       if (target instanceof HTMLElement) target.focus();
@@ -121,7 +121,7 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
           placeholder="What's your ad's title?"
           value={formState.data.title}
           disabled={formState.isSubmitting}
-          error={formState.error.title}
+          errors={formState.error.title}
           onChange={handleChange}
           onBlur={handleBlur}
           autoFocus
@@ -133,7 +133,7 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
           placeholder="Try your best to describe your item to other customers..."
           value={formState.data.description}
           disabled={formState.isSubmitting}
-          error={formState.error.description}
+          errors={formState.error.description}
           onChange={handleChange}
           onBlur={handleBlur}
         />
@@ -143,7 +143,7 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
           placeholder="Enter your email adress..."
           value={formState.data.owner}
           disabled={formState.isSubmitting}
-          error={formState.error.owner}
+          errors={formState.error.owner}
           onChange={handleChange}
           onBlur={handleBlur}
           required
@@ -154,7 +154,7 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
           name="price"
           placeholder="Estimate the value of your item..."
           value={formatPrice(formState.data.price)}
-          error={formState.error.price}
+          errors={formState.error.price}
           disabled={formState.isSubmitting}
           onChange={(e) => {
             const priceInCents = convertPriceToCents(e.target.value);
@@ -171,7 +171,7 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
           placeholder="Add a url picture of your item..."
           value={formState.data.picture}
           disabled={formState.isSubmitting}
-          error={formState.error.picture}
+          errors={formState.error.picture}
           onChange={handleChange}
           onBlur={handleBlur}
           required
@@ -181,7 +181,7 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
           placeholder="Enter your city..."
           value={formState.data.location}
           disabled={formState.isSubmitting}
-          error={formState.error.location}
+          errors={formState.error.location}
           onChange={handleChange}
           onBlur={handleBlur}
           required
@@ -190,7 +190,7 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
           <SelectCategory
             value={formState.data.category?.id ?? "none"}
             disabled={formState.isSubmitting}
-            error={formState.error.category}
+            errors={formState.error.category}
             onCategoryChange={(e) => {
               handleChange(e, { id: e.target.value });
             }}
@@ -212,7 +212,7 @@ export const AdEditor = forwardRef<HTMLFormElement, AdEditorProps>(
           <SelectTags
             selectedTags={formState.data.tags}
             disabled={formState.isSubmitting}
-            error={formState.error.tags}
+            errors={formState.error.tags}
             onTagChange={(e) => {
               handleChange(e, Number(e.target.value), e.target.checked);
             }}

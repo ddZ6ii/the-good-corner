@@ -13,7 +13,7 @@ export type AdFormData = {
 
 export type AdFormError = {
   // Type mapping (retrieve dynamically all keys from AdFormData) to avoid code duplication.
-  [K in keyof AdFormData]: string;
+  [K in keyof AdFormData]: string[];
 };
 
 export type AdFormState = {

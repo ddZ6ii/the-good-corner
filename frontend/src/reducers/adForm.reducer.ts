@@ -35,14 +35,14 @@ const initialFormData: AdFormData = {
 };
 
 const initialFormError: AdFormError = {
-  title: "",
-  description: "",
-  owner: "",
-  price: "",
-  picture: "",
-  location: "",
-  category: "",
-  tags: "",
+  title: [],
+  description: [],
+  owner: [],
+  price: [],
+  picture: [],
+  location: [],
+  category: [],
+  tags: [],
 };
 
 export const initialFormState: AdFormState = {
@@ -60,7 +60,7 @@ export function adFormReducer(
       const { name, nextValue, checked } = action.payload;
 
       // Clear current field error (if any).
-      const nextFormError = { ...formState.error, [name]: "" };
+      const nextFormError = { ...formState.error, [name]: [] };
 
       // Update state from current field value.
       let nextStateValue = nextValue;

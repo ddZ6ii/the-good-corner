@@ -7,7 +7,7 @@ import { capitalize } from "@/utils/format";
 interface InputFieldProps extends HTMLProps<HTMLInputElement> {
   label: string;
   value: string;
-  error: string;
+  errors: string[];
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
@@ -15,7 +15,7 @@ interface InputFieldProps extends HTMLProps<HTMLInputElement> {
 export default function InputField({
   label,
   value,
-  error,
+  errors,
   onChange,
   onBlur,
   ...restProps
@@ -34,7 +34,7 @@ export default function InputField({
         onBlur={onBlur}
         {...restProps}
       />
-      {error && <Text>{error}</Text>}
+      {errors.length > 0 && <Text>{errors.join(". ")}</Text>}
     </Field>
   );
 }
