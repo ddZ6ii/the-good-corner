@@ -7,9 +7,9 @@ import { CREATE_AD } from "@/graphql/createAd";
 import { AddAdInput } from "@/gql/graphql";
 import MainContent from "@/layouts/PageContent";
 import { initialFormState } from "@/reducers/adForm.reducer";
-import { AdContentSchema } from "@/schemas";
-import { notifySuccess } from "@/utils/notify";
+import { AdContentSchema } from "@/schemas/ad.validation";
 import { AdFormData } from "@/types/adForm.types";
+import { notifySuccess } from "@/utils/notify";
 
 export default function NewAdPage() {
   const formRef = useRef<HTMLFormElement>(null);

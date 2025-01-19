@@ -6,7 +6,7 @@ import AdList from "@/components/AdList";
 import { GET_CATEGORY } from "@/graphql/category";
 import { IdInput } from "@/gql/graphql";
 import PageContent from "@/layouts/PageContent";
-import { IdParamSchema } from "@/schemas";
+import { IdParamSchema } from "@/schemas/id.validation";
 import { capitalize } from "@/utils/format";
 import { sortAdsByCreationDate } from "@/utils/sort";
 

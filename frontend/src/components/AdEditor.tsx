@@ -21,7 +21,7 @@ import { theme } from "@/themes/theme";
 import { getOjectKeys } from "@/types/utils.types";
 import { AdFormData, AdFormError, AdFormState } from "@/types/adForm.types";
 import { convertPriceToCents, formatPrice } from "@/utils/format";
-import { mapZodError } from "@/utils/mapZodErrors";
+import { mapZodError } from "@/utils/formatErrors";
 import { notifyError } from "@/utils/notify";
 
 type AdEditorProps = {

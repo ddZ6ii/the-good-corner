@@ -9,7 +9,7 @@ import { Modal } from "@/common/Modal";
 import { Field, Info, Label, Text } from "@/components/ad_editor";
 import { GET_CATEGORIES } from "@/graphql/categories";
 import { CREATE_CATEGORY } from "@/graphql/createCategory";
-import { CategoryContentSchema } from "@/schemas";
+import { CategoryContentSchema } from "@/schemas/category.validation";
 import { baseInputStyle } from "@/themes/styles";
 import { theme } from "@/themes/theme";
 import { notifySuccess } from "@/utils/notify";

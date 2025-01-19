@@ -1,5 +1,5 @@
 import { AdQuery } from "@/gql/graphql";
-import { AdSchema } from "@/schemas";
+import { AdSchema } from "@/schemas/ad.validation";
 import { AdFormData } from "@/types/adForm.types";
 
 export function mapAdToFormData(ad: AdQuery["ad"]): AdFormData {

@@ -1,12 +1,12 @@
 import { ZodError } from "zod";
-import { AdContentSchema } from "@/schemas";
+import { AdContentSchema } from "@/schemas/ad.validation";
 import {
   AdFormAction,
   AdFormData,
   AdFormError,
   AdFormState,
 } from "@/types/adForm.types";
-import { mapZodError } from "@/utils/mapZodErrors";
+import { mapZodError } from "@/utils/formatErrors";
 
 /** Test config.
  * ----------------------

@@ -9,7 +9,7 @@ import { Field, Input, Label, Text } from "@/components/ad_editor";
 import { CREATE_TAG } from "@/graphql/createTag";
 import { GET_TAGS } from "@/graphql/tags";
 import { IdInput } from "@/gql/graphql";
-import { TagContentSchema } from "@/schemas";
+import { TagContentSchema } from "@/schemas/tag.validation";
 import { theme } from "@/themes/theme";
 import { notifySuccess } from "@/utils/notify";
 

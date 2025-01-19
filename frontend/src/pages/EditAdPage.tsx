@@ -8,10 +8,11 @@ import { UPDATE_AD } from "@/graphql/updateAd";
 import { IdInput, UpdateAdInput } from "@/gql/graphql";
 import MainContent from "@/layouts/PageContent";
 import { initialFormState } from "@/reducers/adForm.reducer";
-import { AdPartialContentSchema, IdParamSchema } from "@/schemas";
+import { AdPartialContentSchema } from "@/schemas/ad.validation";
+import { IdParamSchema } from "@/schemas/id.validation";
+import { AdFormData } from "@/types/adForm.types";
 import { mapAdToFormData } from "@/utils/mapAdtoFormData";
 import { notifySuccess } from "@/utils/notify";
-import { AdFormData } from "@/types/adForm.types";
 
 export default function EditAdPage() {
   const navigate = useNavigate();
