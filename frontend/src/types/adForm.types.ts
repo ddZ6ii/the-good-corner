@@ -16,15 +16,17 @@ export type AdFormError = {
   [K in keyof AdFormData]: string[];
 };
 
+export type AdFormStatus = "typing" | "submitting" | "error" | "success";
+
 export type AdFormState = {
   data: AdFormData;
   error: AdFormError;
-  isSubmitting: boolean;
+  status: AdFormStatus;
 };
 
 type Action =
   | "update_input"
-  | "update_submit_status"
+  | "update_status"
   | "validate_field"
   | "validate_form"
   | "reset_form_error"
@@ -43,10 +45,10 @@ interface UpdateInput extends ActionType {
   };
 }
 
-interface UpdateSubmitStatus extends ActionType {
-  type: "update_submit_status";
+interface UpdateStatus extends ActionType {
+  type: "update_status";
   payload: {
-    isSubmitting: boolean;
+    nextStatus: AdFormStatus;
   };
 }
 
@@ -77,6 +79,6 @@ export type AdFormAction =
   | UpdateInput
   | ValidateField
   | ValidateForm
-  | UpdateSubmitStatus
+  | UpdateStatus
   | ResetFormError
   | ResetFormState;

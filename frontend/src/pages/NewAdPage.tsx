@@ -1,8 +1,7 @@
-import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { gql, Reference, useMutation } from "@apollo/client";
 import "react-toastify/dist/ReactToastify.css";
-import { AdEditor } from "@/components/AdEditor";
+import AdEditor from "@/components/AdEditor";
 import { CREATE_AD } from "@/graphql/createAd";
 import { AddAdInput } from "@/gql/graphql";
 import MainContent from "@/layouts/PageContent";
@@ -12,7 +11,6 @@ import { AdFormData } from "@/types/adForm.types";
 import { notifySuccess } from "@/utils/notify";
 
 export default function NewAdPage() {
-  const formRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
   const [createAd] = useMutation(CREATE_AD);
 
@@ -79,11 +77,7 @@ export default function NewAdPage() {
 
   return (
     <MainContent title="Post your ad">
-      <AdEditor
-        initialFormState={initialFormState}
-        ref={formRef}
-        onSubmit={postNewAd}
-      />
+      <AdEditor initialFormState={initialFormState} onSubmit={postNewAd} />
     </MainContent>
   );
 }

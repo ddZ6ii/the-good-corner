@@ -1,8 +1,7 @@
-import { useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import Loader from "@/common/Loader";
-import { AdEditor } from "@/components/AdEditor";
+import AdEditor from "@/components/AdEditor";
 import { GET_AD } from "@/graphql/ad";
 import { UPDATE_AD } from "@/graphql/updateAd";
 import { IdInput, UpdateAdInput } from "@/gql/graphql";
@@ -17,7 +16,6 @@ import { notifySuccess } from "@/utils/notify";
 export default function EditAdPage() {
   const navigate = useNavigate();
   const params = useParams<IdInput>();
-  const formRef = useRef<HTMLFormElement>(null);
   const { id } = IdParamSchema.parse(params);
   const {
     data: { ad } = {},
@@ -72,12 +70,7 @@ export default function EditAdPage() {
 
   return (
     <MainContent title="Edit your ad">
-      <AdEditor
-        edit
-        initialFormState={initialForm}
-        ref={formRef}
-        onSubmit={editAd}
-      />
+      <AdEditor edit initialFormState={initialForm} onSubmit={editAd} />
     </MainContent>
   );
 }

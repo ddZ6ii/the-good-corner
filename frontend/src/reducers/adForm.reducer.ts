@@ -48,7 +48,7 @@ const initialFormError: AdFormError = {
 export const initialFormState: AdFormState = {
   data: initialFormData,
   error: initialFormError,
-  isSubmitting: false,
+  status: "typing",
 };
 
 export function adFormReducer(
@@ -79,8 +79,8 @@ export function adFormReducer(
       };
     }
 
-    case "update_submit_status": {
-      return { ...formState, isSubmitting: action.payload.isSubmitting };
+    case "update_status": {
+      return { ...formState, status: action.payload.nextStatus };
     }
 
     case "validate_field": {
