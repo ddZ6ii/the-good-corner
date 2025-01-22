@@ -6,7 +6,7 @@ export default function SearchBar() {
   return (
     <Form>
       <Input type="search" />
-      <Button $primary>
+      <Button>
         <svg
           aria-hidden="true"
           width="16"

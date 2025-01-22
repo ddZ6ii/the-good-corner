@@ -238,7 +238,7 @@ export default function AdForm({
       </Suspense>
       <Button
         type="submit"
-        $primary
+        color="primary"
         disabled={formState.status === "submitting"}
       >
         {edit ? "Update" : "Create"} ad

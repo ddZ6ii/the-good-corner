@@ -72,7 +72,7 @@ export default function SelectTags({
           type="button"
           title="Add new tag(s)"
           aria-label="Add new tag(s)"
-          $primary
+          color="primary"
           onClick={() => {
             setIsModalOpen(true);
           }}

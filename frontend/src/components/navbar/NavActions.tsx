@@ -46,10 +46,10 @@ export default function NavActions() {
   if (user === null) {
     return (
       <>
-        <LinkBtn to="/signin">
+        <LinkBtn to="/signin" color="primary" variant="outline">
           <span>Sign In</span>
         </LinkBtn>
-        <LinkBtn $secondary to="/signup" $filled>
+        <LinkBtn to="/signup" variant="filled" color="secondary">
           <span>Sign Up</span>
         </LinkBtn>
       </>
@@ -57,11 +57,11 @@ export default function NavActions() {
   }
   return (
     <>
-      <LinkBtn to="/ads/new">
+      <LinkBtn to="/ads/new" variant="outline" color="primary">
         <span className="mobile__short">New</span>
         <span className="desktop__long">New ad</span>
       </LinkBtn>
-      <Button $secondary onClick={handleLogOut}>
+      <Button color="secondary" onClick={handleLogOut}>
         <span>Sign Out</span>
       </Button>
     </>

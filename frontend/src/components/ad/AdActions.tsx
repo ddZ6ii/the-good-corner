@@ -58,7 +58,7 @@ export default function AdActions({ id }: AdActionsProps) {
             type="button"
             title={action.title}
             aria-label={action.title}
-            $primary
+            color="primary"
             disabled={loading || disabled}
             onClick={async (_e) => {
               if (action.title.toLowerCase() === "edit") {

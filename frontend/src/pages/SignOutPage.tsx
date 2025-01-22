@@ -11,7 +11,7 @@ export default function SignOutPage() {
           Sign back in anytime to get access to our most recents ads and your
           saved searches on your account.
         </Text>
-        <LinkBtn to="/signin" replace $filled>
+        <LinkBtn to="/signin" replace variant="filled" color="primary">
           Sign back in
         </LinkBtn>
       </Container>

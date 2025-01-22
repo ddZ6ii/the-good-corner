@@ -21,7 +21,7 @@ type FormError = Record<keyof FormData, string[]>;
 
 type FormState = {
   data: FormData;
-  status: "typing" | "submitting" | "success";
+  status: "typing" | "submitting" | "success" | "error";
   error: FormError;
 };
 
@@ -48,6 +48,7 @@ export default function SignUpPage() {
   const hasFieldError = (fieldName: keyof FormData): boolean =>
     !!formState.error[fieldName].length;
 
+  // !TODO: fix not working focusin first input with error (cf AdEditor...)
   const focusFirstFieldWithError = (error: FormError): void => {
     const keys = getOjectKeys(error);
     const firstInputWithError = keys.find((key) => error[key].length > 0);
@@ -125,7 +126,7 @@ export default function SignUpPage() {
           </p>
           <br />
           <p>
-            <NavLink $secondary to="/signin">
+            <NavLink to="/signin" color="secondary">
               Sign In
             </NavLink>
             to start using our services.
@@ -200,7 +201,11 @@ export default function SignUpPage() {
             <p style={{ color: "red" }}>{formState.error.confirmPassword[0]}</p>
           )}
         </div>
-        <Button type="submit" disabled={formState.status === "submitting"}>
+        <Button
+          type="submit"
+          color="primary"
+          disabled={formState.status === "submitting"}
+        >
           Sign Up
         </Button>
         <Text>

@@ -77,7 +77,7 @@ export default function SelectCategory({
           type="button"
           title="Add new category"
           aria-label="Add new category"
-          $primary
+          color="primary"
           onClick={() => {
             setIsModalOpen(true);
           }}

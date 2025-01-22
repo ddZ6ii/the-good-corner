@@ -4,70 +4,89 @@ import { theme } from "@themes/theme";
 import { baseButtonStyle } from "@/themes/styles";
 
 // Props can only accept either $outline or $filled, not both.
-type ConditionalProps =
-  | {
-      $outline?: true;
-      $filled?: never;
-      $secondary?: boolean;
-    }
-  | {
-      $outline?: never;
-      $filled?: true;
-      $secondary?: boolean;
-    };
+type LinkVariantProps = {
+  variant?: "filled" | "outline";
+  color?: "primary" | "secondary";
+};
 
-type LinkProps = NavLinkProps & ConditionalProps;
+type LinkProps = NavLinkProps & LinkVariantProps;
 
 export const LinkBtn = styled(RouterNavLink)<LinkProps>`
   ${baseButtonStyle}
-  border: 1px solid transparent;
+  border: ${theme.borderRadius.rounded_sm} solid transparent;
   border-radius: ${theme.borderRadius.rounded_lg};
+  color: ${theme.color.neutral.darkest};
   text-decoration: none;
   &:is(:hover, :focus-visible) {
+    background-color: transparent;
+    color: unset;
     outline: none;
   }
 
-  ${({ $outline }) =>
-    $outline &&
+  ${({ color }) =>
+    color === "primary" &&
     css`
-      border: ${theme.borderRadius.rounded} solid ${theme.color.primary.main};
-      &:is(:hover, :focus-visible) {
-        background-color: ${theme.color.primary.main};
+      color: ${theme.color.primary.main};
+    `}
+
+  ${({ variant, color }) => {
+    if (variant === "filled") {
+      const baseStyle = css`
         color: ${theme.color.white};
+      `;
+      if (color === "secondary") {
+        return css`
+          ${baseStyle}
+          background-color: ${theme.color.secondary.main};
+          &:is(:hover, :focus-visible) {
+            background-color: ${theme.color.white};
+            border-color: ${theme.color.secondary.main};
+            color: ${theme.color.secondary.main};
+          }
+        `;
+      } else if (color === "primary") {
+        return css`
+          ${baseStyle}
+          background-color: ${theme.color.primary.main};
+          &:is(:hover, :focus-visible) {
+            background-color: transparent;
+            border-color: ${theme.color.primary.main};
+            color: ${theme.color.primary.main};
+          }
+        `;
+      } else {
+        return baseStyle;
       }
-    `};
-
-  ${({ $outline, $secondary }) =>
-    $outline &&
-    $secondary &&
-    css`
-      border-color: ${theme.color.secondary.main};
-      &:is(:hover, :focus-visible) {
-        background-color: ${theme.color.secondary.main};
+    } else if (variant === "outline") {
+      const baseStyle = css`
+        &:is(:hover, :focus-visible) {
+          background-color: ${theme.color.primary.main};
+          color: ${theme.color.white};
+        }
+      `;
+      if (color === "secondary") {
+        return css`
+          ${baseStyle}
+          border-color: ${theme.color.secondary.main};
+          &:is(:hover, :focus-visible) {
+            background-color: ${theme.color.secondary.main};
+          }
+        `;
+      } else if (color === "primary") {
+        return css`
+          ${baseStyle}
+          border-color: ${theme.color.primary.main};
+          &:is(:hover, :focus-visible) {
+            background-color: ${theme.color.primary.main};
+          }
+        `;
+      } else {
+        return baseStyle;
       }
-    `};
-
-  ${({ $filled }) =>
-    $filled &&
-    css`
-      background-color: ${theme.color.primary.main};
-      color: ${theme.color.white};
-      &:is(:hover, :focus-visible) {
-        background-color: ${theme.color.primary.dark};
-      }
-    `};
-
-  ${({ $filled, $secondary }) =>
-    $filled &&
-    $secondary &&
-    css`
-      background-color: ${theme.color.secondary.main};
-      &:is(:hover, :focus-visible) {
-        background-color: ${theme.color.white};
-        border-color: ${theme.color.secondary.main};
-        color: ${theme.color.secondary.main};
-      }
-    `};
+    } else {
+      return css``;
+    }
+  }}
 `;
 
 export const NavLink = styled(RouterNavLink)<LinkProps>`
@@ -87,19 +106,37 @@ export const NavLink = styled(RouterNavLink)<LinkProps>`
     color: ${theme.color.primary.main};
   }
 
-  ${({ $secondary }) =>
-    $secondary &&
-    css`
-      color: ${theme.color.secondary.main};
-      &:visited {
+  ${({ color }) => {
+    if (color === "secondary") {
+      return css`
         color: ${theme.color.secondary.main};
-      }
-      &:is(:hover, :focus-visible) {
-        color: ${theme.color.secondary.dark};
-        text-decoration: underline;
-      }
-      &:active {
+        &:visited {
+          color: ${theme.color.secondary.main};
+        }
+        &:is(:hover, :focus-visible) {
+          color: ${theme.color.secondary.dark};
+          text-decoration: underline;
+        }
+        &:active {
+          color: ${theme.color.primary.main};
+        }
+      `;
+    } else if (color === "primary") {
+      return css`
         color: ${theme.color.primary.main};
-      }
-    `}
+        &:visited {
+          color: ${theme.color.primary.main};
+        }
+        &:is(:hover, :focus-visible) {
+          color: ${theme.color.primary.dark};
+          text-decoration: underline;
+        }
+        &:active {
+          color: ${theme.color.secondary.main};
+        }
+      `;
+    } else {
+      return css``;
+    }
+  }}
 `;
