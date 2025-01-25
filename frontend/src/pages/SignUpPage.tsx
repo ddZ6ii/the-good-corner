@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ZodError } from "zod";
 import { ApolloError, useMutation } from "@apollo/client";
 import { Button } from "@/common/Button";
@@ -41,40 +41,43 @@ const initialFormState: FormState = {
 
 export default function SignUpPage() {
   const [formState, setFormState] = useState<FormState>(initialFormState);
-  const [serverError, setServerError] = useState<string | null>(null);
+  const [serverError, setServerError] = useState("");
   const [signUp] = useMutation(SIGN_UP);
   const formRef = useRef<HTMLFormElement>(null);
 
   const hasFieldError = (fieldName: keyof FormData): boolean =>
     !!formState.error[fieldName].length;
 
-  // !TODO: fix not working focusin first input with error (cf AdEditor...)
   const focusFirstFieldWithError = (error: FormError): void => {
     const keys = getOjectKeys(error);
     const firstInputWithError = keys.find((key) => error[key].length > 0);
     if (!formRef.current || !firstInputWithError) return;
-    const target = formRef.current.elements.namedItem(firstInputWithError);
+    const shouldFocusOnPassword = firstInputWithError === "confirmPassword";
+    const target = formRef.current.elements.namedItem(
+      shouldFocusOnPassword ? "password" : firstInputWithError,
+    );
     if (target instanceof HTMLElement) target.focus();
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const nexState = {
-      ...formState,
+    setFormState((prevState) => ({
       data: { ...formState.data, [name]: value },
-    };
-    setFormState(nexState);
+      status: "typing",
+      error: { ...prevState.error, [name]: [] },
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       // Reset form error and status state
-      setFormState((prev) => ({
-        ...prev,
+      setFormState((prevState) => ({
+        ...prevState,
         status: "submitting",
         error: initialFormState.error,
       }));
+      setServerError("");
 
       const parsedBody = SignUpSchema.parse(formState.data);
 
@@ -86,32 +89,47 @@ export default function SignUpPage() {
         if (errors) console.error("Failed to sign up:", errors);
         throw new Error("Failed to sign up!");
       }
-      setFormState((prev) => ({
-        ...prev,
+      setFormState((prevState) => ({
+        ...prevState,
         data: initialFormState.data,
         status: "success",
       }));
     } catch (error: unknown) {
       if (error instanceof ZodError) {
         const nextFormError = mapZodError(error, formState.error);
-        setFormState((prev) => ({
-          ...prev,
+        setFormState((prevState) => ({
+          ...prevState,
           error: nextFormError,
         }));
-        focusFirstFieldWithError(nextFormError);
       }
       if (error instanceof ApolloError) {
         if (error.message.toLowerCase().includes("already exists")) {
           setServerError("An account with this email already exists.");
         }
       }
-      // Update form status to typing.
-      setFormState((prev) => ({
-        ...prev,
-        status: "typing",
+      setFormState((prevState) => ({
+        ...prevState,
+        status: "error",
       }));
     }
   };
+
+  useEffect(() => {
+    if (formState.status !== "error") return;
+
+    const hasFormError = getOjectKeys(formState.error).some(
+      (key) => formState.error[key].length > 0,
+    );
+    if (hasFormError) {
+      focusFirstFieldWithError(formState.error);
+      return;
+    }
+    if (serverError) {
+      if (!formRef.current) return;
+      const target = formRef.current.elements.namedItem("email");
+      if (target instanceof HTMLElement) target.focus();
+    }
+  }, [formState.status, formState.error]);
 
   if (formState.status === "success") {
     return (
@@ -140,6 +158,7 @@ export default function SignUpPage() {
     <PageContent title="Sign Up">
       <form
         action=""
+        noValidate
         ref={formRef}
         onSubmit={handleSubmit}
         style={{ display: "grid", justifyItems: "center", gap: "1rem" }}

@@ -1,14 +1,19 @@
 import { z } from "zod";
 import { isRobust } from "@/utils/robustPassword";
+import { SiZabka } from "react-icons/si";
 
 export const SignInSchema = z.object({
   email: z.string().trim().email(),
-  password: z.string().superRefine(isRobust),
+  password: z.string().trim().min(1, { message: "Password is required" }),
 });
 
-export const SignUpSchema = SignInSchema.extend({
-  confirmPassword: z.string(),
-}).refine(({ password, confirmPassword }) => password === confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
-});
+export const SignUpSchema = z
+  .object({
+    email: z.string().trim().email(),
+    password: z.string().superRefine(isRobust),
+    confirmPassword: z.string(),
+  })
+  .refine(({ password, confirmPassword }) => password === confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
