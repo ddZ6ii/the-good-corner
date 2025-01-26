@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import { Suspense, useEffect, useReducer, useRef } from "react";
 import { ZodError } from "zod";
 import { Button } from "@/common/Button";
@@ -7,11 +6,11 @@ import {
   SelectTags,
   SelectCategory,
   TextareaField,
-} from "@/components/ad_editor";
+  Form,
+} from "@/components/form";
 import Loader from "@/common/Loader";
 import { IdInput } from "@/gql/graphql";
 import { adFormReducer } from "@/reducers/adForm.reducer";
-import { theme } from "@/themes/theme";
 import { getOjectKeys } from "@/types/utils.types";
 import { AdFormData, AdFormError, AdFormState } from "@/types/adForm.types";
 import { convertPriceToCents, formatPrice } from "@/utils/format";
@@ -246,14 +245,3 @@ export default function AdForm({
     </Form>
   );
 }
-
-const Form = styled.form`
-  margin: 0 auto;
-  padding: 16px 32px;
-  width: min(100%, 640px);
-  display: grid;
-  gap: 16px;
-  background-color: ${theme.color.white};
-  border: ${theme.borderRadius.rounded_sm} solid ${theme.color.neutral.lightest};
-  border-radius: ${theme.borderRadius.rounded_lg};
-`;

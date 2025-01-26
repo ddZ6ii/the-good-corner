@@ -1,5 +1,5 @@
 import { HTMLProps } from "react";
-import { Label, Field, Info, Text, TextArea } from "@/components/ad_editor";
+import { Label, Field, Info, Text, TextArea } from "@/components/form";
 import { capitalize } from "@/utils/format";
 
 interface TextareaFieldProps extends HTMLProps<HTMLTextAreaElement> {

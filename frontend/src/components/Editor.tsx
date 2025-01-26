@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useRef, useState } from "react";
 import { z, ZodError } from "zod";
 import { Button } from "@/common/Button";
-import { InputField } from "@/components/ad_editor";
+import { InputField } from "@/components/form";
 import { IdInput } from "@/gql/graphql";
 import { capitalize } from "@/utils/format";
 import { notifyError } from "@/utils/notify";

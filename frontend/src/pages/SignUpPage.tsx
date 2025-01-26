@@ -1,54 +1,29 @@
 import styled from "styled-components";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { ZodError } from "zod";
 import { ApolloError, useMutation } from "@apollo/client";
 import { Button } from "@/common/Button";
 import { NavLink } from "@/common/Link";
+import { Form as BaseForm, InputField } from "@/components/form";
 import { SIGN_UP } from "@/graphql/signUp";
 import PageContent from "@/layouts/PageContent";
+import {
+  signUpFormReducer,
+  initialFormState,
+} from "@/reducers/signUpForm.reducer";
 import { SignUpSchema } from "@/schemas/signForm.validation";
 import { theme } from "@/themes/theme";
+import { SignUpFormError } from "@/types/signUpForm.types";
 import { getOjectKeys } from "@/types/utils.types";
-import { formatFormErrors, mapZodError } from "@/utils/formatErrors";
-
-type FormData = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
-
-type FormError = Record<keyof FormData, string[]>;
-
-type FormState = {
-  data: FormData;
-  status: "typing" | "submitting" | "success" | "error";
-  error: FormError;
-};
-
-const initialFormState: FormState = {
-  data: {
-    email: "test@email.com",
-    password: "My-Super-Password-123",
-    confirmPassword: "My-Super-Password-123",
-  },
-  status: "typing",
-  error: {
-    email: [],
-    password: [],
-    confirmPassword: [],
-  },
-};
+import { mapZodError } from "@/utils/formatErrors";
 
 export default function SignUpPage() {
-  const [formState, setFormState] = useState<FormState>(initialFormState);
+  const [formState, dispatch] = useReducer(signUpFormReducer, initialFormState);
   const [serverError, setServerError] = useState("");
   const [signUp] = useMutation(SIGN_UP);
   const formRef = useRef<HTMLFormElement>(null);
 
-  const hasFieldError = (fieldName: keyof FormData): boolean =>
-    !!formState.error[fieldName].length;
-
-  const focusFirstFieldWithError = (error: FormError): void => {
+  const focusFirstFieldWithError = (error: SignUpFormError): void => {
     const keys = getOjectKeys(error);
     const firstInputWithError = keys.find((key) => error[key].length > 0);
     if (!formRef.current || !firstInputWithError) return;
@@ -61,22 +36,19 @@ export default function SignUpPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormState((prevState) => ({
-      data: { ...formState.data, [name]: value },
-      status: "typing",
-      error: { ...prevState.error, [name]: [] },
-    }));
+    dispatch({ type: "update_input", payload: { name, nextValue: value } });
+    dispatch({ type: "update_error", payload: { name, nextError: [] } });
+    dispatch({ type: "update_status", payload: { nextStatus: "typing" } });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      // Reset form error and status state
-      setFormState((prevState) => ({
-        ...prevState,
-        status: "submitting",
-        error: initialFormState.error,
-      }));
+      dispatch({ type: "reset_form_error" });
+      dispatch({
+        type: "update_status",
+        payload: { nextStatus: "submitting" },
+      });
       setServerError("");
 
       const parsedBody = SignUpSchema.parse(formState.data);
@@ -89,28 +61,24 @@ export default function SignUpPage() {
         if (errors) console.error("Failed to sign up:", errors);
         throw new Error("Failed to sign up!");
       }
-      setFormState((prevState) => ({
-        ...prevState,
-        data: initialFormState.data,
-        status: "success",
-      }));
+      dispatch({
+        type: "update_status",
+        payload: { nextStatus: "success" },
+      });
+      dispatch({
+        type: "reset_form_data",
+      });
     } catch (error: unknown) {
       if (error instanceof ZodError) {
         const nextFormError = mapZodError(error, formState.error);
-        setFormState((prevState) => ({
-          ...prevState,
-          error: nextFormError,
-        }));
+        dispatch({ type: "validate_form", payload: { nextFormError } });
       }
       if (error instanceof ApolloError) {
         if (error.message.toLowerCase().includes("already exists")) {
           setServerError("An account with this email already exists.");
         }
       }
-      setFormState((prevState) => ({
-        ...prevState,
-        status: "error",
-      }));
+      dispatch({ type: "update_status", payload: { nextStatus: "error" } });
     }
   };
 
@@ -129,7 +97,7 @@ export default function SignUpPage() {
       const target = formRef.current.elements.namedItem("email");
       if (target instanceof HTMLElement) target.focus();
     }
-  }, [formState.status, formState.error]);
+  }, [formState.status, formState.error, serverError]);
 
   if (formState.status === "success") {
     return (
@@ -156,70 +124,42 @@ export default function SignUpPage() {
 
   return (
     <PageContent title="Sign Up">
-      <form
-        action=""
-        noValidate
-        ref={formRef}
-        onSubmit={handleSubmit}
-        style={{ display: "grid", justifyItems: "center", gap: "1rem" }}
-      >
-        {serverError && <p style={{ color: "red" }}>{serverError}</p>}
-
-        <div style={{ display: "grid", gap: "0.5rem", justifyItems: "start" }}>
-          <label htmlFor="email">Email*</label>
-          <input
-            autoFocus
-            type="email"
-            name="email"
-            id="email"
-            autoComplete="email"
-            value={formState.data.email}
-            onChange={handleChange}
-            disabled={formState.status === "submitting"}
-          />
-          {hasFieldError("email") && (
-            <p style={{ color: "red" }}>{formState.error.email[0]}</p>
-          )}
-        </div>
-
-        <div style={{ display: "grid", gap: "0.5rem", justifyItems: "start" }}>
-          <label htmlFor="password">Password*</label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            autoComplete="new-password"
-            value={formState.data.password}
-            onChange={handleChange}
-            disabled={formState.status === "submitting"}
-          />
-          {hasFieldError("password") && (
-            <ul style={{ color: "red" }}>
-              {formatFormErrors(formState.error, "password").slice(0, 1)}
-              {formatFormErrors(formState.error, "password")
-                .slice(1)
-                .map((error) => (
-                  <li key={error}>{error}</li>
-                ))}
-            </ul>
-          )}
-        </div>
-
-        <div style={{ display: "grid", gap: "0.5rem", justifyItems: "start" }}>
-          <label htmlFor="confirm-password">Confirm Password*</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            id="confirm-password"
-            autoComplete="new-password"
-            value={formState.data.confirmPassword}
-            onChange={handleChange}
-            disabled={formState.status === "submitting"}
-          />
-          {hasFieldError("confirmPassword") && (
-            <p style={{ color: "red" }}>{formState.error.confirmPassword[0]}</p>
-          )}
-        </div>
+      <Form ref={formRef} onSubmit={handleSubmit} noValidate>
+        {serverError && <ErrorText>{serverError}</ErrorText>}
+        <InputField
+          type="email"
+          label="Email"
+          placeholder="Your email address"
+          autoComplete="email"
+          value={formState.data.email}
+          disabled={formState.status === "submitting"}
+          errors={formState.error.email}
+          onChange={handleChange}
+          autoFocus
+          required
+        />
+        <InputField
+          type="password"
+          label="Password"
+          placeholder="Your password"
+          autoComplete="new-password"
+          value={formState.data.password}
+          disabled={formState.status === "submitting"}
+          errors={formState.error.password}
+          onChange={handleChange}
+          required
+        />
+        <InputField
+          type="password"
+          label="Confirm Password"
+          placeholder="Confirm your password"
+          autoComplete="new-password"
+          value={formState.data.confirmPassword}
+          disabled={formState.status === "submitting"}
+          errors={formState.error.confirmPassword}
+          onChange={handleChange}
+          required
+        />
         <Button
           type="submit"
           color="primary"
@@ -230,10 +170,19 @@ export default function SignUpPage() {
         <Text>
           Already have an account? <NavLink to="/signin">Sign In</NavLink>
         </Text>
-      </form>
+      </Form>
     </PageContent>
   );
 }
+
+const Form = styled(BaseForm)`
+  width: min(100%, 340px);
+`;
+
+const ErrorText = styled.p`
+  color: ${theme.color.status.danger};
+  font-size: 12px;
+`;
 
 const Text = styled.p`
   color: ${theme.color.neutral.light};

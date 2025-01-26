@@ -1,8 +1,9 @@
 import styled, { css } from "styled-components";
 import { HTMLProps } from "react";
-import { Label, Field, Info, Text } from "@/components/ad_editor";
+import { Label, Field, Info, Text } from "@/components/form";
 import { baseInputStyle } from "@/themes/styles";
-import { capitalize } from "@/utils/format";
+import { theme } from "@/themes/theme";
+import { capitalize, toCamelCase } from "@/utils/format";
 
 interface InputFieldProps extends HTMLProps<HTMLInputElement> {
   label: string;
@@ -20,6 +21,24 @@ export default function InputField({
   onBlur,
   ...restProps
 }: InputFieldProps) {
+  const formatErrorMessage = () => {
+    const inputType = restProps.type ?? "text";
+    const shouldDisplayErrorsAsList =
+      inputType === "password" &&
+      label.toLowerCase() === "password" &&
+      errors.length > 1;
+    if (shouldDisplayErrorsAsList) {
+      return (
+        <ErrorList>
+          Your password does not meet password policy requirements:
+          {errors.map((error) => (
+            <li key={error}>{error}</li>
+          ))}
+        </ErrorList>
+      );
+    }
+    return <Text>{errors.join(". ")}</Text>;
+  };
   return (
     <Field>
       <Label htmlFor={restProps.name ?? label.toLowerCase()}>
@@ -27,14 +46,14 @@ export default function InputField({
       </Label>
       <Input
         type={restProps.type ?? "text"}
-        name={label.toLowerCase()}
-        id={restProps.name ?? label.toLowerCase()}
+        name={toCamelCase(restProps.name ?? label)}
+        id={toCamelCase(restProps.name ?? label)}
         value={value}
         onChange={onChange}
         onBlur={onBlur}
         {...restProps}
       />
-      {errors.length > 0 && <Text>{errors.join(". ")}</Text>}
+      {errors.length > 0 && formatErrorMessage()}
     </Field>
   );
 }
@@ -49,4 +68,11 @@ export const Input = styled.input`
   &[disabled] {
     cursor: not-allowed;
   }
+`;
+
+const ErrorList = styled.ul`
+  color: ${theme.color.status.danger};
+  font-size: 12px;
+  list-style-type: circle;
+  list-style-position: inside;
 `;

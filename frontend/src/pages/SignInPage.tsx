@@ -1,55 +1,34 @@
 import styled from "styled-components";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ZodError } from "zod";
-import { ApolloError, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { Button } from "@/common/Button";
 import { NavLink } from "@/common/Link";
+import { Form as BaseForm } from "@/components/form";
+import { InputField } from "@/components/form";
 import { LOG_IN } from "@/graphql/logIn";
 import { WHO_AM_I } from "@/graphql/whoAmI";
 import PageContent from "@/layouts/PageContent";
+import {
+  initialFormState,
+  signInFormReducer,
+} from "@/reducers/signInForm.reducer";
 import { SignInSchema } from "@/schemas/signForm.validation";
 import { theme } from "@/themes/theme";
+import { SignInFormError } from "@/types/signInForm.types";
 import { getOjectKeys } from "@/types/utils.types";
 import { mapZodError } from "@/utils/formatErrors";
 import { notifySuccess } from "@/utils/notify";
 
-type FormData = {
-  email: string;
-  password: string;
-};
-
-type FormError = Record<keyof FormData, string[]>;
-
-type FormState = {
-  data: FormData;
-  status: "typing" | "submitting" | "success" | "error";
-  error: FormError;
-};
-
-const initialFormState: FormState = {
-  data: {
-    email: "test@email.com",
-    password: "My-Super-Password-123",
-  },
-  status: "typing",
-  error: {
-    email: [],
-    password: [],
-  },
-};
-
 export default function SignInPage() {
-  const [formState, setFormState] = useState<FormState>(initialFormState);
+  const [formState, dispatch] = useReducer(signInFormReducer, initialFormState);
   const [serverError, setServerError] = useState("");
   const [logIn] = useMutation(LOG_IN);
   const formRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
 
-  const hasFieldError = (fieldName: keyof FormData): boolean =>
-    !!formState.error[fieldName].length;
-
-  const focusFirstFieldWithError = (error: FormError): void => {
+  const focusFirstFieldWithError = (error: SignInFormError): void => {
     const keys = getOjectKeys(error);
     const firstInputWithError = keys.find((key) => error[key].length > 0);
     if (!formRef.current || !firstInputWithError) return;
@@ -59,22 +38,19 @@ export default function SignInPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormState((prevState) => ({
-      data: { ...formState.data, [name]: value },
-      status: "typing",
-      error: { ...prevState.error, [name]: [] },
-    }));
+    dispatch({ type: "update_input", payload: { name, nextValue: value } });
+    dispatch({ type: "update_error", payload: { name, nextError: [] } });
+    dispatch({ type: "update_status", payload: { nextStatus: "typing" } });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      // Reset form error and status state
-      setFormState((prevState) => ({
-        ...prevState,
-        status: "submitting",
-        error: initialFormState.error,
-      }));
+      dispatch({ type: "reset_form_error" });
+      dispatch({
+        type: "update_status",
+        payload: { nextStatus: "submitting" },
+      });
       setServerError("");
 
       const parsedBody = SignInSchema.parse(formState.data);
@@ -87,35 +63,25 @@ export default function SignInPage() {
         console.error("Failed to sign in:", errors);
         throw new Error("Failed to sign in!");
       }
-      setFormState((prevState) => ({
-        ...prevState,
-        data: initialFormState.data,
-        status: "success",
-      }));
+      dispatch({
+        type: "update_status",
+        payload: { nextStatus: "success" },
+      });
+      dispatch({
+        type: "reset_form_data",
+      });
       notifySuccess("Glad to have you back 👋");
       setTimeout(() => {
         navigate("/", { replace: true });
       }, 3000);
     } catch (error: unknown) {
       if (error instanceof ZodError) {
-        console.log("ZodError");
         const nextFormError = mapZodError(error, formState.error);
-        setFormState((prevState) => ({
-          ...prevState,
-          error: nextFormError,
-          status: "error",
-        }));
-        return;
+        dispatch({ type: "validate_form", payload: { nextFormError } });
+      } else {
+        setServerError("Invalid credentials");
       }
-      if (error instanceof ApolloError || error instanceof Error) {
-        console.log("Apollo Error or Error");
-        setServerError("Invalid credentials.");
-        setFormState((prevState) => ({
-          ...prevState,
-          status: "error",
-        }));
-        return;
-      }
+      dispatch({ type: "update_status", payload: { nextStatus: "error" } });
     }
   };
 
@@ -140,46 +106,33 @@ export default function SignInPage() {
 
   return (
     <PageContent title="Sign In">
-      <form
-        action=""
-        noValidate
-        ref={formRef}
-        onSubmit={handleSubmit}
-        style={{ display: "grid", justifyItems: "center", gap: "1rem" }}
-      >
-        {serverError && <p style={{ color: "red" }}>{serverError}</p>}
+      <Form ref={formRef} onSubmit={handleSubmit} noValidate>
+        {serverError && <ErrorText>{serverError}</ErrorText>}
 
-        <div style={{ display: "grid", gap: "0.5rem", justifyItems: "start" }}>
-          <label htmlFor="email">Email*</label>
-          <input
-            type="email"
-            name="email"
-            id="email"
-            autoComplete="email"
-            value={formState.data.email}
-            onChange={handleChange}
-            disabled={formState.status === "submitting"}
-          />
-          {hasFieldError("email") && (
-            <p style={{ color: "red" }}>{formState.error.email[0]}</p>
-          )}
-        </div>
+        <InputField
+          type="email"
+          label="Email"
+          placeholder="Your email address"
+          autoComplete="email"
+          value={formState.data.email}
+          disabled={formState.status === "submitting"}
+          errors={formState.error.email}
+          onChange={handleChange}
+          autoFocus
+          required
+        />
 
-        <div style={{ display: "grid", gap: "0.5rem", justifyItems: "start" }}>
-          <label htmlFor="password">Password*</label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            autoComplete="current-password"
-            value={formState.data.password}
-            onChange={handleChange}
-            disabled={formState.status === "submitting"}
-          />
-          {hasFieldError("password") && (
-            <p style={{ color: "red" }}>{formState.error.password[0]}</p>
-          )}
-        </div>
+        <InputField
+          type="password"
+          label="Password"
+          placeholder="Your password"
+          autoComplete="current-password"
+          value={formState.data.password}
+          disabled={formState.status === "submitting"}
+          errors={formState.error.password}
+          onChange={handleChange}
+          required
+        />
 
         <Button
           type="submit"
@@ -195,13 +148,23 @@ export default function SignInPage() {
             Sign Up
           </NavLink>
         </Text>
-      </form>
+      </Form>
     </PageContent>
   );
 }
 
+const Form = styled(BaseForm)`
+  width: min(100%, 340px);
+`;
+
+const ErrorText = styled.p`
+  color: ${theme.color.status.danger};
+  font-size: 12px;
+`;
+
 const Text = styled.p`
   color: ${theme.color.neutral.light};
+  font-size: 12px;
   & a {
     color: ${theme.color.secondary.main};
     text-decoration: none;

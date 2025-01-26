@@ -26,3 +26,10 @@ export function formatPriceWithCurrency(priceInCents: number): string {
 export function pluralize(word: string, count: number): string {
   return count === 1 ? word : `${word}s`;
 }
+
+export function toCamelCase(str: string): string {
+  return (
+    str.split(" ").slice(0, 1).join("").toLowerCase() +
+    str.split(" ").slice(1).map(capitalizeWord).join("")
+  );
+}

@@ -5,7 +5,7 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import { Button } from "@/common/Button";
 import { Editor } from "@/components/Editor";
 import { Modal } from "@/common/Modal";
-import { Field, Input, Label, Text } from "@/components/ad_editor";
+import { Field, Input, Label, Text } from "@/components/form";
 import { CREATE_TAG } from "@/graphql/createTag";
 import { GET_TAGS } from "@/graphql/tags";
 import { IdInput } from "@/gql/graphql";

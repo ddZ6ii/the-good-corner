@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { isRobust } from "@/utils/robustPassword";
-import { SiZabka } from "react-icons/si";
 
 export const SignInSchema = z.object({
   email: z.string().trim().email(),

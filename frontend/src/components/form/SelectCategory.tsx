@@ -6,7 +6,7 @@ import { useMutation, useSuspenseQuery } from "@apollo/client";
 import { Button } from "@/common/Button";
 import { Editor } from "@/components/Editor";
 import { Modal } from "@/common/Modal";
-import { Field, Info, Label, Text } from "@/components/ad_editor";
+import { Field, Info, Label, Text } from "@/components/form";
 import { GET_CATEGORIES } from "@/graphql/categories";
 import { CREATE_CATEGORY } from "@/graphql/createCategory";
 import { CategoryContentSchema } from "@/schemas/category.validation";
