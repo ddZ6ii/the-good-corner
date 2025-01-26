@@ -1,19 +1,25 @@
-export type SignFormStatus = "typing" | "submitting" | "success" | "error";
+import { Optional } from "@/types/utils.types";
 
 export type SignInFormData = {
   email: string;
   password: string;
 };
 
-type FormError<T> = {
+export type SignUpFormData = SignInFormData & {
+  confirmPassword: string;
+};
+
+export type SignFormData = Optional<SignUpFormData, "confirmPassword">;
+
+export type SignFormError<T extends SignFormData> = {
   [K in keyof T]: string[];
 };
 
-export type SignInFormError = FormError<SignInFormData>;
+export type SignFormStatus = "typing" | "submitting" | "success" | "error";
 
-export type SignInFormState = {
-  data: SignInFormData;
-  error: SignInFormError;
+export type SignFormState = {
+  data: SignFormData;
+  error: SignFormError<SignFormData>;
   status: SignFormStatus;
 };
 
@@ -56,23 +62,34 @@ interface UpdateError extends ActionType {
 interface ValidateForm extends ActionType {
   type: "validate_form";
   payload: {
-    nextFormError: SignInFormState["error"];
+    nextFormError: SignFormError<SignFormData>;
   };
 }
 
 interface ResetFormData extends ActionType {
   type: "reset_form_data";
+  payload: {
+    initialFormData: SignFormData;
+  };
 }
 
 interface ResetFormError extends ActionType {
   type: "reset_form_error";
+  payload: {
+    initialFormError: SignFormError<SignFormData>;
+  };
 }
 
 interface ResetFormState extends ActionType {
   type: "reset_form_state";
+  payload: {
+    initialFormData: SignFormData;
+    initialFormError: SignFormError<SignFormData>;
+    initialFormStatus: SignFormStatus;
+  };
 }
 
-export type SignInFormAction =
+export type SignFormAction =
   | UpdateInput
   | UpdateError
   | UpdateStatus

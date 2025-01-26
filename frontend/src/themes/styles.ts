@@ -35,7 +35,7 @@ export const baseInputStyle = css`
   &:focus-visible {
     outline-color: ${theme.color.primary.main};
   }
-  &:has(+ p) {
+  &:is(:has(+ p), :has(+ ul)) {
     border-color: ${theme.color.status.danger};
     &:focus-visible {
       outline-color: ${theme.color.status.danger};

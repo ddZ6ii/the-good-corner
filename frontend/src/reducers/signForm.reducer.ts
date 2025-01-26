@@ -1,46 +1,9 @@
-import {
-  SignUpFormAction,
-  SignUpFormData,
-  SignUpFormError,
-  SignUpFormState,
-} from "@/types/signUpForm.types";
+import { SignFormAction, SignFormState } from "@/types/signForm.types";
 
-/** Test config.
- * ----------------------
-const initialFormData: SignUpFormData = {
-  email: "test@email.com",
-  password: "My-Super-Password-123",
-  confirmPassword: "My-Super-Password-123",
-};
- */
-
-// const initialFormData: SignUpFormData = {
-//   email: "",
-//   password: "",
-//   confirmPassword: "",
-// };
-const initialFormData: SignUpFormData = {
-  email: "test@email.com",
-  password: "My-Super-Password-123",
-  confirmPassword: "My-Super-Password-123",
-};
-
-const initialFormError: SignUpFormError = {
-  email: [],
-  password: [],
-  confirmPassword: [],
-};
-
-export const initialFormState: SignUpFormState = {
-  data: initialFormData,
-  error: initialFormError,
-  status: "typing",
-};
-
-export function signUpFormReducer(
-  formState: SignUpFormState = initialFormState,
-  action: SignUpFormAction,
-): SignUpFormState {
+export function signFormReducer(
+  formState: SignFormState,
+  action: SignFormAction,
+): SignFormState {
   switch (action.type) {
     case "update_input": {
       const { name, nextValue } = action.payload;
@@ -74,15 +37,24 @@ export function signUpFormReducer(
     }
 
     case "reset_form_data": {
+      const { initialFormData } = action.payload;
       return { ...formState, data: initialFormData };
     }
 
     case "reset_form_error": {
+      const { initialFormError } = action.payload;
       return { ...formState, error: initialFormError };
     }
 
     case "reset_form_state": {
-      return { ...initialFormState };
+      const { initialFormData, initialFormError, initialFormStatus } =
+        action.payload;
+
+      return {
+        data: initialFormData,
+        error: initialFormError,
+        status: initialFormStatus,
+      };
     }
   }
 }
