@@ -5,17 +5,17 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import { Button } from "@/common/Button";
 import { Editor } from "@/components/Editor";
 import { Modal } from "@/common/Modal";
-import { Field, Input, Label, Text } from "@/components/ad_editor";
+import { Field, Input, Label, Text } from "@/components/form";
 import { CREATE_TAG } from "@/graphql/createTag";
 import { GET_TAGS } from "@/graphql/tags";
 import { IdInput } from "@/gql/graphql";
-import { TagContentSchema } from "@/schemas";
+import { TagContentSchema } from "@/schemas/tag.validation";
 import { theme } from "@/themes/theme";
 import { notifySuccess } from "@/utils/notify";
 
 type SelectTagsProps = {
   selectedTags: IdInput[];
-  error: string;
+  errors: string[];
   disabled: boolean;
   onTagChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onTagAdd: (newTagId: string) => void;
@@ -24,7 +24,7 @@ type SelectTagsProps = {
 export default function SelectTags({
   disabled,
   selectedTags,
-  error,
+  errors,
   onTagChange,
   onTagAdd,
 }: SelectTagsProps) {
@@ -72,7 +72,7 @@ export default function SelectTags({
           type="button"
           title="Add new tag(s)"
           aria-label="Add new tag(s)"
-          $primary
+          color="primary"
           onClick={() => {
             setIsModalOpen(true);
           }}
@@ -95,7 +95,7 @@ export default function SelectTags({
             </Field>
           ))}
         </Wrapper>
-        {error && <Text>{error}</Text>}
+        {errors.length > 0 && <Text>{errors.join(". ")}</Text>}
       </Fieldset>
 
       {/* Pass the "portal" prop to avoid nested forms (prevents inner form submission to trigger parent form submission). */}
@@ -130,7 +130,7 @@ const Fieldset = styled.fieldset`
     color: color-mix(in srgb, ${theme.color.neutral.light} 50%, transparent);
   }
   &:focus-visible {
-    outline-color: ${theme.color.primary};
+    outline-color: ${theme.color.primary.main};
   }
 `;
 
@@ -154,10 +154,10 @@ const AddTagButton = styled(Button)`
   border-radius: ${theme.borderRadius.pill};
   font-size: 1.5rem;
   & > svg {
-    fill: ${theme.color.primary};
+    fill: ${theme.color.primary.main};
   }
   &:is(:hover, :focus-visible) {
-    background-color: ${theme.color.primary};
+    background-color: ${theme.color.primary.main};
     & > svg {
       fill: ${theme.color.white};
     }

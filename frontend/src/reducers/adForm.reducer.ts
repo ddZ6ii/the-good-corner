@@ -1,12 +1,12 @@
 import { ZodError } from "zod";
-import { AdContentSchema } from "@/schemas";
+import { AdContentSchema } from "@/schemas/ad.validation";
 import {
   AdFormAction,
   AdFormData,
   AdFormError,
   AdFormState,
 } from "@/types/adForm.types";
-import { mapZodError } from "@/utils/mapZodErrors";
+import { mapZodError } from "@/utils/formatErrors";
 
 /** Test config.
  * ----------------------
@@ -35,20 +35,20 @@ const initialFormData: AdFormData = {
 };
 
 const initialFormError: AdFormError = {
-  title: "",
-  description: "",
-  owner: "",
-  price: "",
-  picture: "",
-  location: "",
-  category: "",
-  tags: "",
+  title: [],
+  description: [],
+  owner: [],
+  price: [],
+  picture: [],
+  location: [],
+  category: [],
+  tags: [],
 };
 
 export const initialFormState: AdFormState = {
   data: initialFormData,
   error: initialFormError,
-  isSubmitting: false,
+  status: "typing",
 };
 
 export function adFormReducer(
@@ -60,7 +60,7 @@ export function adFormReducer(
       const { name, nextValue, checked } = action.payload;
 
       // Clear current field error (if any).
-      const nextFormError = { ...formState.error, [name]: "" };
+      const nextFormError = { ...formState.error, [name]: [] };
 
       // Update state from current field value.
       let nextStateValue = nextValue;
@@ -79,8 +79,8 @@ export function adFormReducer(
       };
     }
 
-    case "update_submit_status": {
-      return { ...formState, isSubmitting: action.payload.isSubmitting };
+    case "update_status": {
+      return { ...formState, status: action.payload.nextStatus };
     }
 
     case "validate_field": {

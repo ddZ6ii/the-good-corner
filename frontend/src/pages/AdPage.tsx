@@ -14,7 +14,7 @@ import AdTags from "@/components/ad/AdTags";
 import { GET_AD } from "@/graphql/ad";
 import { IdInput } from "@/gql/graphql";
 import PageContent from "@/layouts/PageContent";
-import { IdParamSchema } from "@/schemas";
+import { IdParamSchema } from "@/schemas/id.validation";
 import { theme } from "@/themes/theme";
 import { basePillStyle } from "@/themes/styles";
 import { capitalize, formatPriceWithCurrency } from "@/utils/format";

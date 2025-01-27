@@ -1,4 +1,11 @@
 /* -------------------------------------------------------------------------- */
+/*                        Utilitary types                                     */
+/* -------------------------------------------------------------------------- */
+export type Nullish<T> = T | null | undefined;
+
+export type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>;
+
+/* -------------------------------------------------------------------------- */
 /*                        Utilitary functions                                 */
 /* -------------------------------------------------------------------------- */
 export function isEmpty(obj: unknown) {
@@ -14,4 +21,10 @@ export function isEmpty(obj: unknown) {
 export function getOjectKeys<Obj extends object>(obj: Obj): (keyof Obj)[] {
   return Object.keys(obj) as (keyof Obj)[];
 }
-/* -------------------------------------------------------------------------- */
+
+export function isKey<T extends object>(
+  obj: T,
+  key: PropertyKey,
+): key is keyof T {
+  return key in obj;
+}

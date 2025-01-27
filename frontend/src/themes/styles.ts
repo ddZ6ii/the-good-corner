@@ -13,14 +13,14 @@ export const baseButtonStyle = css`
 
   background-color: ${theme.color.white};
 
-  color: ${theme.color.primary};
+  color: ${theme.color.primary.main};
   cursor: pointer;
   font-size: 12px;
   font-weight: bold;
   transition: all 0.3s ease-in-out;
 
   &:is(:hover, :focus-visible) {
-    background-color: ${theme.color.primary};
+    background-color: ${theme.color.primary.main};
     color: ${theme.color.white};
   }
 `;
@@ -33,9 +33,9 @@ export const baseInputStyle = css`
     color: color-mix(in srgb, ${theme.color.neutral.light} 50%, transparent);
   }
   &:focus-visible {
-    outline-color: ${theme.color.primary};
+    outline-color: ${theme.color.primary.main};
   }
-  &:has(+ p) {
+  &:is(:has(+ p), :has(+ ul)) {
     border-color: ${theme.color.status.danger};
     &:focus-visible {
       outline-color: ${theme.color.status.danger};

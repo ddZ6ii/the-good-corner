@@ -29,6 +29,8 @@ export type Scalars = {
   Float: { input: number; output: number };
   /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
   DateTime: { input: any; output: any };
+  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.This scalar is serialized to a string in ISO 8601 format and parsed from a string in ISO 8601 format. */
+  DateTimeISO: { input: any; output: any };
 };
 
 export type Ad = {
@@ -70,12 +72,26 @@ export type AddTagInput = {
 export type Category = {
   __typename?: "Category";
   ads: Array<Ad>;
+  createdAt: Scalars["DateTimeISO"]["output"];
+  createdBy?: Maybe<User>;
   id: Scalars["ID"]["output"];
   name: Scalars["String"]["output"];
 };
 
+/** New user data */
+export type CreateUserInput = {
+  email: Scalars["String"]["input"];
+  password: Scalars["String"]["input"];
+};
+
 export type IdInput = {
   id: Scalars["ID"]["input"];
+};
+
+/** User login credentials */
+export type LogInInput = {
+  email: Scalars["String"]["input"];
+  password: Scalars["String"]["input"];
 };
 
 export type Mutation = {
@@ -83,9 +99,12 @@ export type Mutation = {
   createAd: Ad;
   createCategory: Category;
   createTag: Tag;
+  createUser: User;
   deleteAd?: Maybe<Scalars["ID"]["output"]>;
   deleteCategory?: Maybe<Scalars["ID"]["output"]>;
   deleteTag?: Maybe<Scalars["ID"]["output"]>;
+  logInUser?: Maybe<User>;
+  logOutUser: Scalars["Boolean"]["output"];
   updateAd?: Maybe<Ad>;
   updateCategory?: Maybe<Category>;
   updateTag?: Maybe<Tag>;
@@ -103,6 +122,10 @@ export type MutationCreateTagArgs = {
   data: AddTagInput;
 };
 
+export type MutationCreateUserArgs = {
+  data: CreateUserInput;
+};
+
 export type MutationDeleteAdArgs = {
   id: Scalars["ID"]["input"];
 };
@@ -113,6 +136,10 @@ export type MutationDeleteCategoryArgs = {
 
 export type MutationDeleteTagArgs = {
   id: Scalars["ID"]["input"];
+};
+
+export type MutationLogInUserArgs = {
+  data: LogInInput;
 };
 
 export type MutationUpdateAdArgs = {
@@ -138,6 +165,9 @@ export type Query = {
   category?: Maybe<Category>;
   tag?: Maybe<Tag>;
   tags: Array<Tag>;
+  user?: Maybe<User>;
+  users: Array<User>;
+  whoAmI?: Maybe<User>;
 };
 
 export type QueryAdArgs = {
@@ -162,6 +192,14 @@ export type QueryTagArgs = {
 
 export type QueryTagsArgs = {
   name?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type QueryUserArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryUsersArgs = {
+  email?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type Tag = {
@@ -191,6 +229,12 @@ export type UpdateCategoryInput = {
 /** Update tag data */
 export type UpdateTagInput = {
   name?: InputMaybe<Scalars["String"]["input"]>;
+};
+
+export type User = {
+  __typename?: "User";
+  email: Scalars["String"]["output"];
+  id: Scalars["ID"]["output"];
 };
 
 export type AdQueryVariables = Exact<{
@@ -298,6 +342,31 @@ export type DeleteAdMutation = {
   deleteAd?: string | null;
 };
 
+export type LogInUserMutationVariables = Exact<{
+  data: LogInInput;
+}>;
+
+export type LogInUserMutation = {
+  __typename?: "Mutation";
+  logInUser?: { __typename?: "User"; id: string } | null;
+};
+
+export type LogOutUserMutationVariables = Exact<{ [key: string]: never }>;
+
+export type LogOutUserMutation = {
+  __typename?: "Mutation";
+  logOutUser: boolean;
+};
+
+export type CreateUserMutationVariables = Exact<{
+  data: CreateUserInput;
+}>;
+
+export type CreateUserMutation = {
+  __typename?: "Mutation";
+  createUser: { __typename?: "User"; id: string };
+};
+
 export type TagsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type TagsQuery = {
@@ -313,6 +382,13 @@ export type UpdateAdMutationVariables = Exact<{
 export type UpdateAdMutation = {
   __typename?: "Mutation";
   updateAd?: { __typename?: "Ad"; id: string } | null;
+};
+
+export type WhoAmIQueryVariables = Exact<{ [key: string]: never }>;
+
+export type WhoAmIQuery = {
+  __typename?: "Query";
+  whoAmI?: { __typename?: "User"; id: string; email: string } | null;
 };
 
 export const AdDocument = {
@@ -701,6 +777,118 @@ export const DeleteAdDocument = {
     },
   ],
 } as unknown as DocumentNode<DeleteAdMutation, DeleteAdMutationVariables>;
+export const LogInUserDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "LogInUser" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "data" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "LogInInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "logInUser" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "data" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "data" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<LogInUserMutation, LogInUserMutationVariables>;
+export const LogOutUserDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "LogOutUser" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          { kind: "Field", name: { kind: "Name", value: "logOutUser" } },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<LogOutUserMutation, LogOutUserMutationVariables>;
+export const CreateUserDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "createUser" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "data" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "CreateUserInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "createUser" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "data" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "data" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<CreateUserMutation, CreateUserMutationVariables>;
 export const TagsDocument = {
   kind: "Document",
   definitions: [
@@ -791,3 +979,29 @@ export const UpdateAdDocument = {
     },
   ],
 } as unknown as DocumentNode<UpdateAdMutation, UpdateAdMutationVariables>;
+export const WhoAmIDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "WhoAmI" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "whoAmI" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "email" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<WhoAmIQuery, WhoAmIQueryVariables>;

@@ -3,29 +3,53 @@ import { ButtonHTMLAttributes } from "react";
 import { baseButtonStyle } from "@/themes/styles";
 import { theme } from "@themes/theme";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  $primary?: boolean;
-}
+// Props can only accept either $primary or $secondary, not both.
+type ButtonVariantProps = {
+  color?: "primary" | "secondary";
+};
+
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & ButtonVariantProps;
 
 export const Button = styled.button<ButtonProps>`
   ${baseButtonStyle}
-  border: ${theme.borderRadius.rounded} solid ${theme.color.primary};
+  background-color: ${theme.color.neutral.dark};
+  border: ${theme.borderRadius.rounded_sm} solid transparent;
   border-radius: ${theme.borderRadius.rounded_lg};
-  &:is(:hover, :focus-visible) {
-    background-color: ${theme.color.primary};
-    color: ${theme.color.white};
+  color: ${theme.color.neutral.lightest};
+  &:hover {
+    background-color: ${theme.color.neutral.light};
+  }
+  &:focus-visible {
+    background-color: transparent;
+    border-color: ${theme.color.secondary.main};
+    color: ${theme.color.secondary.main};
   }
 
-  ${({ $primary }) =>
-    $primary &&
-    css`
-      background-color: ${theme.color.primary};
-      color: ${theme.color.white};
-      &:is(:hover, :focus-visible) {
-        background-color: ${theme.color.white};
-        color: ${theme.color.primary};
-      }
-    `};
+  ${({ color }) => {
+    if (color === "secondary") {
+      return css`
+        background-color: ${theme.color.secondary.main};
+        border-color: ${theme.color.secondary.main};
+        color: ${theme.color.white};
+        &:is(:hover, :focus-visible) {
+          background-color: ${theme.color.white};
+          border-color: ${theme.color.secondary.main};
+          color: ${theme.color.secondary.main};
+        }
+      `;
+    } else if (color === "primary") {
+      return css`
+        background-color: ${theme.color.primary.main};
+        color: ${theme.color.white};
+        &:is(:hover, :focus-visible) {
+          background-color: transparent;
+          border-color: ${theme.color.primary.main};
+          color: ${theme.color.primary.main};
+        }
+      `;
+    }
+    return css``;
+  }};
 
   &[disabled] {
     background-color: color-mix(

@@ -2,11 +2,8 @@ import styled from "styled-components";
 import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { LinkBtn } from "@/common/Link";
 import Loader from "@/common/Loader";
-import Logo from "@components/Logo";
-import Navbar from "@components/Navbar";
-import SearchBar from "@components/SearchBar";
+import { Logo, NavActions, Navbar, SearchBar } from "@/components/navbar";
 import { theme } from "@/themes/theme";
 
 export default function PageLayout() {
@@ -16,10 +13,9 @@ export default function PageLayout() {
         <MainMenu>
           <Logo />
           <SearchBar />
-          <LinkBtn to="/ads/new" $outline>
-            <span className="mobile__short">New</span>
-            <span className="desktop__long">New ad</span>
-          </LinkBtn>
+          <Suspense fallback={<Loader $mr={0.5} />}>
+            <NavActions />
+          </Suspense>
         </MainMenu>
         <Suspense fallback={<Loader size="sm" $mt={1.4} $mb={0.35} />}>
           <Navbar />
@@ -62,7 +58,7 @@ const MainMenu = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  color: ${theme.color.primary};
+  color: ${theme.color.primary.main};
 
   & .mobile__short {
     @media screen and (min-width: 720px) {

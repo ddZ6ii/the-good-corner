@@ -55,7 +55,7 @@ const variant = {
 };
 
 const Container = styled.div<ContainerProps>`
-  align-self: start;
+  align-self: center;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -103,9 +103,9 @@ const Spinner = styled.div<SpinnerProps>`
   aspect-ratio: 1;
   border-radius: 50%;
   background:
-    radial-gradient(farthest-side, ${theme.color.primary} 94%, #0000)
+    radial-gradient(farthest-side, ${theme.color.primary.main} 94%, #0000)
       top/var(--offset) var(--offset) no-repeat,
-    conic-gradient(#0000 30%, ${theme.color.primary});
+    conic-gradient(#0000 30%, ${theme.color.primary.main});
   mask: radial-gradient(
     farthest-side,
     #0000 calc(100% - var(--offset)),

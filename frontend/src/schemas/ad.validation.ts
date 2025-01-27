@@ -1,6 +1,8 @@
 import { z } from "zod";
+import { CATEGORY_CONSTRAINTS } from "@/schemas/category.validation";
+import { TAG_CONSTRAINTS } from "@/schemas/tag.validation";
 
-export const AD_CONSTRAINTS = {
+const AD_CONSTRAINTS = {
   title: {
     minLength: 5,
     maxLength: 50,
@@ -10,20 +12,6 @@ export const AD_CONSTRAINTS = {
     maxLength: 500,
   },
   location: {
-    minLength: 3,
-    maxLength: 50,
-  },
-};
-
-export const CATEGORY_CONSTRAINTS = {
-  name: {
-    minLength: 3,
-    maxLength: 50,
-  },
-};
-
-export const TAG_CONSTRAINTS = {
-  name: {
     minLength: 3,
     maxLength: 50,
   },
@@ -104,24 +92,4 @@ export const AdSchema = AdContentSchema.extend({
     )
     .array()
     .optional(),
-});
-
-export const CategoryContentSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(CATEGORY_CONSTRAINTS.name.minLength)
-    .max(CATEGORY_CONSTRAINTS.name.maxLength),
-});
-
-export const IdParamSchema = z.object({
-  id: z.string(),
-});
-
-export const TagContentSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(TAG_CONSTRAINTS.name.minLength)
-    .max(TAG_CONSTRAINTS.name.maxLength),
 });

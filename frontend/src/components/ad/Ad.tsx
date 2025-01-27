@@ -24,6 +24,6 @@ const AdCard = styled.div`
   overflow: hidden;
   &:has(> a:is(:hover, :focus-visible)) {
     box-shadow: ${theme.shadow.md};
-    outline: 1px solid ${theme.color.primary};
+    outline: 1px solid ${theme.color.primary.main};
   }
 `;

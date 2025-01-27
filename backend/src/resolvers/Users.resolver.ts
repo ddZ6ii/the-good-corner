@@ -59,7 +59,7 @@ export class UsersResolver {
     try {
       const match = await usersModel.findOneByEmail(data.email);
       if (match !== null) {
-        throw new Error('User already exists.');
+        throw new Error('Account already exists.');
       }
       const hashedPassword = await hash(data.password, HASHING_OPTIONS);
       const newUserContent = Object.assign(data, {
@@ -70,11 +70,10 @@ export class UsersResolver {
       return createdUser;
     } catch (error) {
       console.error(chalk.red(error));
-      let errorMessage = 'Failed to create user!';
       if (error instanceof Error) {
-        errorMessage += ` ${error.message}`;
+        throw Error(error.message);
       }
-      throw new Error(errorMessage);
+      throw new Error('Server error: failed to create user.');
     }
   }
 

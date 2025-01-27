@@ -11,11 +11,15 @@ export const theme = {
   },
   color: {
     white: "#ffffff",
-    primary: "#ffa41b",
+    primary: {
+      main: "#ffa41b",
+      dark: "#e69418",
+      light: "#ffad31",
+    },
     secondary: {
       main: "#005fcc",
-      light: "#ccdff4",
-      dark: "#0055b7",
+      dark: "#0056b8",
+      light: "#1a6fd1",
     },
     status: {
       success: "#00C851",
@@ -25,6 +29,7 @@ export const theme = {
     neutral: {
       lightest: "#D3D3D3",
       light: "#666",
+      dark: "#3f3f3f",
       darkest: "#2A2A2A",
     },
     pills: [

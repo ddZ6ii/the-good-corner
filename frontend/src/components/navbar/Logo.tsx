@@ -4,7 +4,7 @@ import { LinkBtn } from "@/common/Link";
 export default function Logo() {
   return (
     <Heading>
-      <LinkBtn to="/">
+      <LinkBtn to="/" color="primary">
         <span className="mobile__short">TGC</span>
         <span className="desktop__long">THE GOOD CORNER</span>
       </LinkBtn>

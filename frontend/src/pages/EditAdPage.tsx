@@ -1,22 +1,21 @@
-import { useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import Loader from "@/common/Loader";
-import { AdEditor } from "@/components/AdEditor";
+import AdEditor from "@/components/AdEditor";
 import { GET_AD } from "@/graphql/ad";
 import { UPDATE_AD } from "@/graphql/updateAd";
 import { IdInput, UpdateAdInput } from "@/gql/graphql";
 import MainContent from "@/layouts/PageContent";
 import { initialFormState } from "@/reducers/adForm.reducer";
-import { AdPartialContentSchema, IdParamSchema } from "@/schemas";
+import { AdPartialContentSchema } from "@/schemas/ad.validation";
+import { IdParamSchema } from "@/schemas/id.validation";
+import { AdFormData } from "@/types/adForm.types";
 import { mapAdToFormData } from "@/utils/mapAdtoFormData";
 import { notifySuccess } from "@/utils/notify";
-import { AdFormData } from "@/types/adForm.types";
 
 export default function EditAdPage() {
   const navigate = useNavigate();
   const params = useParams<IdInput>();
-  const formRef = useRef<HTMLFormElement>(null);
   const { id } = IdParamSchema.parse(params);
   const {
     data: { ad } = {},
@@ -71,12 +70,7 @@ export default function EditAdPage() {
 
   return (
     <MainContent title="Edit your ad">
-      <AdEditor
-        edit
-        initialFormState={initialForm}
-        ref={formRef}
-        onSubmit={editAd}
-      />
+      <AdEditor edit initialFormState={initialForm} onSubmit={editAd} />
     </MainContent>
   );
 }

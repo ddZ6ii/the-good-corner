@@ -6,17 +6,17 @@ import { useMutation, useSuspenseQuery } from "@apollo/client";
 import { Button } from "@/common/Button";
 import { Editor } from "@/components/Editor";
 import { Modal } from "@/common/Modal";
-import { Field, Info, Label, Text } from "@/components/ad_editor";
+import { Field, Info, Label, Text } from "@/components/form";
 import { GET_CATEGORIES } from "@/graphql/categories";
 import { CREATE_CATEGORY } from "@/graphql/createCategory";
-import { CategoryContentSchema } from "@/schemas";
+import { CategoryContentSchema } from "@/schemas/category.validation";
 import { baseInputStyle } from "@/themes/styles";
 import { theme } from "@/themes/theme";
 import { notifySuccess } from "@/utils/notify";
 
 type SelectCategoryProps = {
   value: string;
-  error: string;
+  errors: string[];
   disabled: boolean;
   onCategoryChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onCategoryBlur: (e: React.FocusEvent<HTMLSelectElement>) => void;
@@ -25,7 +25,7 @@ type SelectCategoryProps = {
 
 export default function SelectCategory({
   value,
-  error,
+  errors,
   disabled,
   onCategoryChange,
   onCategoryBlur,
@@ -77,7 +77,7 @@ export default function SelectCategory({
           type="button"
           title="Add new category"
           aria-label="Add new category"
-          $primary
+          color="primary"
           onClick={() => {
             setIsModalOpen(true);
           }}
@@ -106,7 +106,7 @@ export default function SelectCategory({
           </Select>
           <IoChevronDown />
         </Container>
-        {error && <Text>Please select a category</Text>}
+        {errors.length > 0 && <Text>Please select a category</Text>}
       </Field>
 
       {/* Pass the "portal" prop to avoid nested forms (prevents inner form submission to trigger parent form submission). */}
@@ -168,11 +168,11 @@ const AddCategoryButton = styled(Button)`
   border-radius: ${theme.borderRadius.pill};
   font-size: 1.5rem;
   & > svg {
-    fill: ${theme.color.primary};
+    fill: ${theme.color.primary.main};
     z-index: 999;
   }
   &:is(:hover, :focus-visible) {
-    background-color: ${theme.color.primary};
+    background-color: ${theme.color.primary.main};
     & > svg {
       fill: ${theme.color.white};
     }

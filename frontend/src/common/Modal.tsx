@@ -1,18 +1,32 @@
-import styled from "styled-components";
-import { useEffect, useRef } from "react";
+import styled, { css } from "styled-components";
+import { DialogHTMLAttributes, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { IoMdClose } from "react-icons/io";
 import { Button } from "@/common/Button";
 import { theme } from "@themes/theme";
 
-type ModalProps = {
+interface ModalProps extends DialogHTMLAttributes<HTMLDialogElement> {
   open: boolean;
   portal?: boolean;
+  hideCloseButton?: boolean;
+  closeOnEscape?: boolean;
+  $transparent?: boolean;
   onClose?: () => void;
-  children?: React.ReactNode;
+}
+
+type StyledModalProps = DialogHTMLAttributes<HTMLDialogElement> & {
+  $transparent?: boolean;
 };
 
-export function Modal({ open, portal = false, onClose, children }: ModalProps) {
+export function Modal({
+  open,
+  onClose,
+  portal = false,
+  hideCloseButton = false,
+  closeOnEscape = true,
+  $transparent = false,
+  children,
+}: ModalProps) {
   const modalRef = useRef<HTMLDialogElement | null>(null);
 
   const closeModal = (): void => {
@@ -25,8 +39,9 @@ export function Modal({ open, portal = false, onClose, children }: ModalProps) {
   };
 
   // Close modal on Escape key press
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDialogElement>) => {
-    if (event.key === "Escape") {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDialogElement>) => {
+    if (e.key === "Escape" && closeOnEscape) {
+      e.preventDefault();
       closeModal();
     }
   };
@@ -43,16 +58,22 @@ export function Modal({ open, portal = false, onClose, children }: ModalProps) {
   }, [open]);
 
   const modal = (
-    <Dialog ref={modalRef} onKeyDown={handleKeyDown}>
-      <CloseButton
-        type="button"
-        aria-label="Close modal"
-        onClick={(_e) => {
-          closeModal();
-        }}
-      >
-        <IoMdClose />
-      </CloseButton>
+    <Dialog
+      ref={modalRef}
+      onKeyDown={handleKeyDown}
+      $transparent={$transparent}
+    >
+      {!hideCloseButton && (
+        <CloseButton
+          type="button"
+          aria-label="Close modal"
+          onClick={(_e) => {
+            closeModal();
+          }}
+        >
+          <IoMdClose />
+        </CloseButton>
+      )}
       {children}
     </Dialog>
   );
@@ -64,7 +85,7 @@ export function Modal({ open, portal = false, onClose, children }: ModalProps) {
   return modal;
 }
 
-const Dialog = styled.dialog`
+const Dialog = styled.dialog<StyledModalProps>`
   top: 50%;
   left: 50%;
   translate: -50% -50%;
@@ -72,11 +93,22 @@ const Dialog = styled.dialog`
   padding: 1rem;
   border: 1px solid ${theme.color.neutral.lightest};
   border-radius: ${theme.borderRadius.rounded_lg};
-
   &::backdrop {
     background-color: ${theme.color.neutral.darkest};
     opacity: 0.95;
   }
+  ${({ $transparent }) =>
+    $transparent &&
+    css`
+      border: none;
+      background-color: transparent;
+      &:is(:focus-visible) {
+        outline: none;
+      }
+      &::backdrop {
+        opacity: 0.2;
+      }
+    `};
 `;
 
 const CloseButton = styled(Button)`
