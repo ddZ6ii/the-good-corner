@@ -1,6 +1,8 @@
 import { DeleteResult, Like } from 'typeorm';
 import { AddAdInput, UpdateAdInput } from '@/schemas/ads.schemas';
 import { Ad } from '@/schemas/entities/Ad';
+import { User } from '@/schemas/entities/User';
+import { Nullable } from '@/types/index.types';
 import { merge } from '@/utils/merge';
 
 export function findAll(categoryFilter?: string): Promise<Ad[]> {
@@ -23,22 +25,29 @@ export function findOneBy(adId: number): Promise<Ad | null> {
   });
 }
 
-export function create(newAdContent: AddAdInput): Promise<Ad> {
+export function create(
+  newAdContent: AddAdInput,
+  author: Nullable<User>,
+): Promise<Ad> {
   const newAd = new Ad();
-  Object.assign(newAd, newAdContent);
+  Object.assign(newAd, newAdContent, { createdBy: author });
   return newAd.save();
 }
 
-export async function remove(adId: number): Promise<DeleteResult> {
-  return Ad.delete({ id: adId });
+export async function remove(
+  adId: number,
+  author: Nullable<User>,
+): Promise<DeleteResult> {
+  return Ad.delete({ id: adId, createdBy: { id: author?.id } });
 }
 
 export async function patch(
   adId: number,
   updatedAdContent: UpdateAdInput,
+  author: Nullable<User>,
 ): Promise<Ad | null> {
   const ad = await Ad.findOne({
-    where: { id: adId },
+    where: { id: adId, createdBy: { id: author?.id } },
     relations: ['tags'],
   });
   if (ad === null) return null;

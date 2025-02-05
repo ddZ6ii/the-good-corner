@@ -2,6 +2,7 @@ import {
   Arg,
   Args,
   Authorized,
+  Ctx,
   ID,
   Mutation,
   Query,
@@ -15,11 +16,11 @@ import {
   UpdateAdInput,
 } from '@/schemas/ads.schemas';
 import { Ad } from '@/schemas/entities/Ad';
+import { ContextType } from '@/types/index.types';
 
 @Resolver()
 export class AdsResolver {
-  // Make this query private to allow only authenticated users to access it (all non @Authorized queries are public).
-  @Authorized()
+  /** Public queries */
   @Query(() => [Ad])
   async ads(
     // Allow to pass optional categoryName parameter to filter ads by category's name.
@@ -36,25 +37,36 @@ export class AdsResolver {
     return ad;
   }
 
+  /** Private queries */
+  @Authorized()
   @Mutation(() => Ad)
-  async createAd(@Arg('data', () => AddAdInput) data: AddAdInput): Promise<Ad> {
-    const createdAd = await adsModel.create(data);
+  async createAd(
+    @Arg('data', () => AddAdInput) data: AddAdInput,
+    @Ctx() context: ContextType,
+  ): Promise<Ad> {
+    const createdAd = await adsModel.create(data, context.user);
     return createdAd;
   }
 
+  @Authorized()
   @Mutation(() => Ad, { nullable: true })
   async updateAd(
     @Arg('id', () => ID) id: number,
     @Arg('data', () => UpdateAdInput)
     data: UpdateAdInput,
+    @Ctx() context: ContextType,
   ): Promise<Ad | null> {
-    const updatedAd = await adsModel.patch(id, data);
+    const updatedAd = await adsModel.patch(id, data, context.user);
     return updatedAd;
   }
 
+  @Authorized()
   @Mutation(() => ID, { nullable: true })
-  async deleteAd(@Arg('id', () => ID) id: number): Promise<number | null> {
-    const result = await adsModel.remove(id);
+  async deleteAd(
+    @Arg('id', () => ID) id: number,
+    @Ctx() context: ContextType,
+  ): Promise<number | null> {
+    const result = await adsModel.remove(id, context.user);
     if (result.affected === 0) {
       return null;
     }

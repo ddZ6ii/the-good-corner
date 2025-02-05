@@ -8,10 +8,13 @@ import {
   ManyToOne,
   ManyToMany,
   JoinTable,
-  BeforeInsert,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Category } from '@/schemas/entities/Category';
 import { Tag } from '@/schemas/entities/Tag';
+import { User } from '@/schemas/entities/User';
 
 /* -------------------------------------------------------------------------- */
 /* "READ" CLASS                                                               */
@@ -42,10 +45,6 @@ export class Ad extends BaseEntity {
   @Field(() => String)
   description!: string;
 
-  @Column({ type: 'text' })
-  @Field(() => String)
-  owner!: string;
-
   // Price is in cents to avoid floating point arithmetic issues.
   @Column({ type: 'integer', unsigned: true })
   @Field(() => Int)
@@ -59,15 +58,29 @@ export class Ad extends BaseEntity {
   @Field(() => String)
   location!: string;
 
-  @Column({ type: 'text' })
+  /**
+   * Special column that is automatically set to the entity's insertion time.
+   * You don't need to write a value into this column - it will be automatically set.
+   */
+  @CreateDateColumn()
   @Field(() => GraphQLDateTime)
-  createdAt!: string;
+  createdAt!: Date;
 
-  // The updateDates() method is called before creating a new ad.
-  @BeforeInsert()
-  updateDates() {
-    this.createdAt = new Date().toISOString();
-  }
+  /**
+   * Special column that is automatically set to the entity's update time each time you call save from entity manager or repository.
+   * You don't need to write a value into this column - it will be automatically set.
+   */
+  @UpdateDateColumn()
+  @Field(() => GraphQLDateTime)
+  updatedAt!: Date;
+
+  /**
+   * Special column that is automatically set to the entity's update time each time you call save from entity manager or repository.
+   * You don't need to write a value into this column - it will be automatically set.
+   */
+  @DeleteDateColumn()
+  @Field(() => GraphQLDateTime, { nullable: true })
+  deletedAt!: Date;
 
   /** Many-to-One relation options
    *
@@ -81,6 +94,11 @@ export class Ad extends BaseEntity {
   })
   @Field(() => Category)
   category!: Category;
+
+  // !TODO: remove {nullable: true} when the dump file will be updated with a user for every category ...
+  @ManyToOne(() => User, { eager: true })
+  @Field(() => User, { nullable: true })
+  createdBy!: User;
 
   /** Many-to-Many relation options (join table)
    *
