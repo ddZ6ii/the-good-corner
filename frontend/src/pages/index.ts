@@ -1,4 +1,5 @@
 export { default as AboutPage } from "./AboutPage";
+export { default as AdminPage } from "./AdminPage";
 export { default as AdPage } from "./AdPage";
 export { default as CategoryPage } from "./CategoryPage";
 export { default as EditAdPage } from "./EditAdPage";

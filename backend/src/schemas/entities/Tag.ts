@@ -1,3 +1,4 @@
+import { GraphQLDateTime } from 'graphql-scalars';
 import { Field, ID, ObjectType } from 'type-graphql';
 import {
   Entity,
@@ -5,8 +6,13 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToMany,
+  CreateDateColumn,
+  DeleteDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 import { Ad } from '@/schemas/entities/Ad';
+import { User } from '@/schemas/entities/User';
 
 /* -------------------------------------------------------------------------- */
 /* "READ" CLASS                                                               */
@@ -33,6 +39,30 @@ export class Tag extends BaseEntity {
   @Field(() => String)
   name!: string;
 
+  /**
+   * Special column that is automatically set to the entity's insertion time.
+   * You don't need to write a value into this column - it will be automatically set.
+   */
+  @CreateDateColumn()
+  @Field(() => GraphQLDateTime)
+  createdAt!: Date;
+
+  /**
+   * Special column that is automatically set to the entity's update time each time you call save from entity manager or repository.
+   * You don't need to write a value into this column - it will be automatically set.
+   */
+  @UpdateDateColumn()
+  @Field(() => GraphQLDateTime)
+  updatedAt!: Date;
+
+  /**
+   * Special column that is automatically set to the entity's delete time each time you call save from entity manager or repository.
+   * You don't need to write a value into this column - it will be automatically set.
+   */
+  @DeleteDateColumn()
+  @Field(() => GraphQLDateTime, { nullable: true })
+  deletedAt!: Date;
+
   /** Many-to-Many relation options (join table)
    *
    * The option { onDelete: 'CASCADE' } will automatically delete the relation between an ad and a tag when deleting an ad.
@@ -44,4 +74,18 @@ export class Tag extends BaseEntity {
   })
   @Field(() => [Ad])
   ads!: Ad[];
+
+  /** Keep track of which user created a tag
+   *
+   * No mapping needed on the other side (User entity, no need to know which tags a user created when requesting users).
+   *
+   * Many-to-One relation options:
+   *  - { eager: true } will automatically fetch the related user (who created the tag) when  fetching a tag, without having to explicitly set the option { relations: ['createdBy'] } when calling Tag.find(), Tag.findBy() or findOneBy().
+   *
+   *  - { nullable: false } will make sure that a user must be provided when creating a tag.
+   */
+  // !TODO: remove {nullable: true} when the dump file will be updated with a user for every category ...
+  @ManyToOne(() => User, { eager: true })
+  @Field(() => User, { nullable: true })
+  createdBy!: User;
 }

@@ -5,6 +5,7 @@ export const CREATE_CATEGORY = gql(/* GraphQL */ `
     createCategory(data: $data) {
       id
       name
+      createdAt
     }
   }
 `);

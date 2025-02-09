@@ -6,6 +6,7 @@ import { InputField } from "@/components/form";
 import { IdInput } from "@/gql/graphql";
 import { capitalize } from "@/utils/format";
 import { notifyError } from "@/utils/notify";
+import { theme } from "@/themes/theme";
 
 type Data = {
   id: IdInput["id"];
@@ -116,4 +117,13 @@ const Form = styled.form`
 const SubmitButton = styled(Button)`
   margin-left: auto;
   width: fit-content;
+  background-color: ${theme.color.primary.main};
+  color: ${theme.color.white};
+  &:is(:hover) {
+    background-color: ${theme.color.primary.dark};
+  }
+  &:is(:focus-visible) {
+    background-color: ${theme.color.primary.main};
+    color: ${theme.color.white};
+  }
 `;

@@ -12,6 +12,11 @@ export const GET_CATEGORY = gql(/* GraphQL */ `
         price
         createdAt
       }
+      createdAt
+      createdBy {
+        id
+        email
+      }
     }
   }
 `);

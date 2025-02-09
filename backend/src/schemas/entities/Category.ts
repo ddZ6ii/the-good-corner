@@ -1,3 +1,4 @@
+import { GraphQLDateTime } from 'graphql-scalars';
 import { Field, ID, ObjectType } from 'type-graphql';
 import {
   Entity,
@@ -7,6 +8,8 @@ import {
   OneToMany,
   ManyToOne,
   CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Ad } from '@/schemas/entities/Ad';
 import { User } from '@/schemas/entities/User';
@@ -36,9 +39,29 @@ export class Category extends BaseEntity {
   @Field(() => String)
   name!: string;
 
+  /**
+   * Special column that is automatically set to the entity's insertion time.
+   * You don't need to write a value into this column - it will be automatically set.
+   */
   @CreateDateColumn()
-  @Field(() => Date)
+  @Field(() => GraphQLDateTime)
   createdAt!: Date;
+
+  /**
+   * Special column that is automatically set to the entity's update time each time you call save from entity manager or repository.
+   * You don't need to write a value into this column - it will be automatically set.
+   */
+  @UpdateDateColumn()
+  @Field(() => GraphQLDateTime)
+  updatedAt!: Date;
+
+  /**
+   * Special column that is automatically set to the entity's delete time each time you call save from entity manager or repository.
+   * You don't need to write a value into this column - it will be automatically set.
+   */
+  @DeleteDateColumn()
+  @Field(() => GraphQLDateTime, { nullable: true })
+  deletedAt!: Date;
 
   // A category can have many ads.
   @OneToMany(() => Ad, (ad) => ad.category)
@@ -51,7 +74,8 @@ export class Category extends BaseEntity {
    *
    * Many-to-One relation options:
    *  - { eager: true } will automatically fetch the related user (who created the category) when  fetching a category, without having to explicitly set the option { relations: ['createdBy'] } when calling Category.find(), Category.findBy() or findOneBy().
-   *  - { nullable: false } will make sure that a category must be provided when creating an ad.
+   *
+   *  - { nullable: false } will make sure that a user must be provided when creating a category.
    *
    */
   // !TODO: remove {nullable: true} when the dump file will be updated with a user for every category ...

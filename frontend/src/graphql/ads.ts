@@ -8,6 +8,10 @@ export const GET_ADS = gql(/* GraphQL */ `
       picture
       price
       createdAt
+      createdBy {
+        id
+        email
+      }
     }
   }
 `);

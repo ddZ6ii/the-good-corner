@@ -2,7 +2,6 @@ import { IdInput } from "@/gql/graphql";
 
 export type AdFormData = {
   title: string;
-  owner: string;
   price: number;
   picture: string;
   description: string;

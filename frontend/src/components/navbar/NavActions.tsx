@@ -4,6 +4,7 @@ import { WHO_AM_I } from "@/graphql/whoAmI";
 import { Button } from "@/common/Button";
 import { LinkBtn } from "@/common/Link";
 import { LOG_OUT } from "@/graphql/logOut";
+import { UserRole } from "@/gql/graphql";
 
 export default function NavActions() {
   const { data: { whoAmI: user } = {}, error } = useSuspenseQuery(WHO_AM_I);
@@ -57,6 +58,11 @@ export default function NavActions() {
   }
   return (
     <>
+      {user?.role === UserRole.Admin && (
+        <LinkBtn to="/admin" color="neutral" variant="outline">
+          <span>Admin</span>
+        </LinkBtn>
+      )}
       <LinkBtn to="/ads/new" variant="outline" color="primary">
         <span className="mobile__short">New</span>
         <span className="desktop__long">New ad</span>

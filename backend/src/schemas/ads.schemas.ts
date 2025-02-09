@@ -1,5 +1,4 @@
 import {
-  IsEmail,
   IsNotEmpty,
   IsPositive,
   IsUrl,
@@ -44,10 +43,6 @@ export class AddAdInput {
   @Length(5, 500)
   description!: string;
 
-  @Field(() => String)
-  @IsEmail()
-  owner!: string;
-
   @Field(() => Int)
   @IsPositive()
   price!: number;
@@ -81,10 +76,6 @@ export class UpdateAdInput {
     message: 'Description must be between 5 and 500 characters',
   })
   description?: string;
-
-  @Field(() => String, { nullable: true })
-  @IsEmail()
-  owner?: string;
 
   @Field(() => Int, { nullable: true })
   @IsPositive({ message: 'Price must be a positive number' })

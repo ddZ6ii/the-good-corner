@@ -9,6 +9,8 @@ import { Modal } from "@/common/Modal";
 import { Field, Info, Label, Text } from "@/components/form";
 import { GET_CATEGORIES } from "@/graphql/categories";
 import { CREATE_CATEGORY } from "@/graphql/createCategory";
+import { WHO_AM_I } from "@/graphql/whoAmI";
+import { UserRole } from "@/gql/graphql";
 import { CategoryContentSchema } from "@/schemas/category.validation";
 import { baseInputStyle } from "@/themes/styles";
 import { theme } from "@/themes/theme";
@@ -33,15 +35,15 @@ export default function SelectCategory({
 }: SelectCategoryProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { data: { whoAmI: user } = {}, error: errorUser } =
+    useSuspenseQuery(WHO_AM_I);
   const { data: { categories = [] } = {}, error: errorCategories } =
     useSuspenseQuery(GET_CATEGORIES);
-
   const [createCategory] = useMutation(CREATE_CATEGORY);
 
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
   const handleAddCategory = async (newCategoryName: string) => {
     // Add new category to database.
     const createdCategory = await createCategory({
@@ -66,6 +68,11 @@ export default function SelectCategory({
     return <p>Could not retrieve categories...</p>;
   }
 
+  if (errorUser || !user) {
+    if (errorUser) console.error(errorUser);
+    return <p>Cannot retrieve user!</p>;
+  }
+
   return (
     <>
       <Field>
@@ -73,17 +80,19 @@ export default function SelectCategory({
           Category <Info>*</Info>
         </Label>
 
-        <AddCategoryButton
-          type="button"
-          title="Add new category"
-          aria-label="Add new category"
-          color="primary"
-          onClick={() => {
-            setIsModalOpen(true);
-          }}
-        >
-          <IoMdAddCircleOutline />
-        </AddCategoryButton>
+        {user.role === UserRole.Admin && (
+          <AddCategoryButton
+            type="button"
+            title="Add new category"
+            aria-label="Add new category"
+            color="primary"
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+          >
+            <IoMdAddCircleOutline />
+          </AddCategoryButton>
+        )}
 
         <Container>
           <Select

@@ -64,15 +64,19 @@ export const getUserFromContext = async (
  */
 export const authChecker: AuthChecker<ContextType> = async (
   { context },
-  _roles,
+  roles,
 ): Promise<boolean> => {
+  // Least privileged by default: if not roles are provided within the `@Authorized` decorator of a protected route, the user must have the `admin` role to access the resource.
+  if (!roles.length) {
+    roles.push('admin');
+  }
+
   // Retrieve the current user from both JWT and the database.
   const user = await getUserFromContext(context);
 
   // Add user to the context object to share data between resolvers.
   context.user = user;
 
-  // OPTIONAL: check the user's permission against the `roles` argument that comes from the '@Authorized' decorator, eg. ["ADMIN", "MODERATOR"].
-
-  return !!user; // cast a "truthy" or "falsy" value to a boleean value: return true if the user is allowed to access the resource (valid token), false otherwise (invalid token or token expired)
+  // Proceed to resolver's function only if user is authenticated and authorized for the request ressource (check user's permission against the privilege level required for the requested ressource)
+  return !!(user && roles.includes(user.role)); // cast a "truthy" or "falsy" value to a boleean value: return true if the user is allowed to access the resource (valid token), false otherwise (invalid token or token expired)
 };

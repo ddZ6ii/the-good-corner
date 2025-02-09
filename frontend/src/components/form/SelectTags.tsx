@@ -8,7 +8,8 @@ import { Modal } from "@/common/Modal";
 import { Field, Input, Label, Text } from "@/components/form";
 import { CREATE_TAG } from "@/graphql/createTag";
 import { GET_TAGS } from "@/graphql/tags";
-import { IdInput } from "@/gql/graphql";
+import { WHO_AM_I } from "@/graphql/whoAmI";
+import { IdInput, UserRole } from "@/gql/graphql";
 import { TagContentSchema } from "@/schemas/tag.validation";
 import { theme } from "@/themes/theme";
 import { notifySuccess } from "@/utils/notify";
@@ -30,15 +31,15 @@ export default function SelectTags({
 }: SelectTagsProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { data: { whoAmI: user } = {}, error: errorUser } =
+    useSuspenseQuery(WHO_AM_I);
   const { data: { tags = [] } = {}, error: errorTags } =
     useSuspenseQuery(GET_TAGS);
-
   const [createTag] = useMutation(CREATE_TAG);
 
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
   const handleAddTag = async (newTagName: string) => {
     // Add new tag to database.
     const createdTag = await createTag({
@@ -63,22 +64,29 @@ export default function SelectTags({
     return <p>Could not retrieve tags...</p>;
   }
 
+  if (errorUser || !user) {
+    if (errorUser) console.error(errorUser);
+    return <p>Cannot retrieve user!</p>;
+  }
+
   return (
     <>
       <Fieldset disabled={disabled}>
         <Legend>Tag(s)</Legend>
 
-        <AddTagButton
-          type="button"
-          title="Add new tag(s)"
-          aria-label="Add new tag(s)"
-          color="primary"
-          onClick={() => {
-            setIsModalOpen(true);
-          }}
-        >
-          <IoMdAddCircleOutline />
-        </AddTagButton>
+        {user.role === UserRole.Admin && (
+          <AddTagButton
+            type="button"
+            title="Add new tag(s)"
+            aria-label="Add new tag(s)"
+            color="primary"
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+          >
+            <IoMdAddCircleOutline />
+          </AddTagButton>
+        )}
 
         <Wrapper>
           {tags.map((tag) => (

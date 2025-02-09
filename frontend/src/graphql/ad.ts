@@ -9,7 +9,6 @@ export const GET_AD = gql(/* GraphQL */ `
       price
       description
       location
-      owner
       category {
         id
         name
@@ -17,6 +16,11 @@ export const GET_AD = gql(/* GraphQL */ `
       tags {
         id
         name
+      }
+      createdAt
+      createdBy {
+        id
+        email
       }
     }
   }

@@ -5,7 +5,7 @@ import { basePillStyle } from "@/themes/styles";
 import { mapColor } from "@/themes/theme";
 
 type AdTagsProps = {
-  tags: Omit<Tag, "ads">[];
+  tags: Pick<Tag, "id" | "name">[];
 };
 
 export default function AdTags({ tags }: AdTagsProps) {

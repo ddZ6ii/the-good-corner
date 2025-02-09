@@ -2,6 +2,7 @@ import {
   Arg,
   Args,
   Authorized,
+  Ctx,
   ID,
   Mutation,
   Query,
@@ -15,11 +16,11 @@ import {
   UpdateAdInput,
 } from '@/schemas/ads.schemas';
 import { Ad } from '@/schemas/entities/Ad';
+import { AuthContextType, UserRole } from '@/types/index.types';
 
 @Resolver()
 export class AdsResolver {
-  // Make this query private to allow only authenticated users to access it (all non @Authorized queries are public).
-  @Authorized()
+  /** Public queries */
   @Query(() => [Ad])
   async ads(
     // Allow to pass optional categoryName parameter to filter ads by category's name.
@@ -36,28 +37,36 @@ export class AdsResolver {
     return ad;
   }
 
+  /** Private queries */
+  @Authorized(UserRole.ADMIN, UserRole.USER)
   @Mutation(() => Ad)
-  async createAd(@Arg('data', () => AddAdInput) data: AddAdInput): Promise<Ad> {
-    const createdAd = await adsModel.create(data);
+  async createAd(
+    @Arg('data', () => AddAdInput) data: AddAdInput,
+    @Ctx() context: AuthContextType,
+  ): Promise<Ad> {
+    const createdAd = await adsModel.create(data, context.user);
     return createdAd;
   }
 
+  @Authorized(UserRole.ADMIN, UserRole.USER)
   @Mutation(() => Ad, { nullable: true })
   async updateAd(
     @Arg('id', () => ID) id: number,
     @Arg('data', () => UpdateAdInput)
     data: UpdateAdInput,
+    @Ctx() context: AuthContextType,
   ): Promise<Ad | null> {
-    const updatedAd = await adsModel.patch(id, data);
+    const updatedAd = await adsModel.patch(id, data, context.user);
     return updatedAd;
   }
 
-  @Mutation(() => ID, { nullable: true })
-  async deleteAd(@Arg('id', () => ID) id: number): Promise<number | null> {
-    const result = await adsModel.remove(id);
-    if (result.affected === 0) {
-      return null;
-    }
-    return id;
+  @Authorized(UserRole.ADMIN, UserRole.USER)
+  @Mutation(() => Ad, { nullable: true })
+  async deleteAd(
+    @Arg('id', () => ID) id: number,
+    @Ctx() context: AuthContextType,
+  ): Promise<Ad | null> {
+    const deletedAd = await adsModel.remove(id, context.user);
+    return deletedAd;
   }
 }

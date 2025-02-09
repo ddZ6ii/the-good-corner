@@ -118,11 +118,14 @@ const CloseButton = styled(Button)`
   padding: 0;
   min-width: initial;
   height: unset;
+  background-color: ${theme.color.neutral.light};
   border: none;
   border-radius: ${theme.borderRadius.pill};
   font-size: 1.5rem;
-  color: ${theme.color.neutral.light};
-  &:is(:focus-visible) {
+  color: ${theme.color.white};
+  &:is(:focus-visible, :hover) {
     outline-offset: 2px;
+    background-color: ${theme.color.primary.main};
+    color: ${theme.color.white};
   }
 `;
