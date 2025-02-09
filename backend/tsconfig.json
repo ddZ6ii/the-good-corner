@@ -26,6 +26,7 @@
     "paths": {
       "@/*": ["src/*"],
       "@entities/*": ["src/entities/*"],
+      "@middlewares/*": ["src/middlewares/*"],
       "@models/*": ["src/models/*"],
       "@resolvers/*": ["src/resolvers/*"],
       "@types/*": ["src/types/*"],

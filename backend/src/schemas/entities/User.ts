@@ -1,12 +1,22 @@
 import { GraphQLDateTime } from 'graphql-scalars';
-import { Field, ID, ObjectType } from 'type-graphql';
+import { IsUser } from '@/middlewares/IsUser';
+import {
+  Field,
+  ID,
+  ObjectType,
+  registerEnumType,
+  UseMiddleware,
+} from 'type-graphql';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
+import { UserRole } from '@/types/index.types';
 
 /* -------------------------------------------------------------------------- */
 /* "READ" CLASS                                                               */
@@ -29,24 +39,58 @@ export class User extends BaseEntity {
   @Field(() => ID)
   id!: number;
 
-  //!TODO: this field should be nullable because only admins + self user may see this, null otherwise (see using a custom middleware)...
   @Column({ type: 'text', unique: true })
   @Field(() => String)
+  /**
+   * Restrict field access via a middleware.
+   * This field should only be accessible to admins or self user.
+   */
+  @UseMiddleware(IsUser)
   email!: string;
 
   @Column({ type: 'text' })
   hashedPassword!: string;
 
-  // @Column({ enum: ['user', 'admin'], default: 'user' })
-  // @Field(() => String)
-  // role!: string; // "user" | "admin"
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
+  @Field(() => UserRole)
+  role!: UserRole; // "user" | "admin"
 
+  /**
+   * Special column that is automatically set to the entity's insertion time.
+   * You don't need to write a value into this column - it will be automatically set.
+   */
   @CreateDateColumn()
   @Field(() => GraphQLDateTime)
   createdAt!: string;
+
+  /**
+   * Special column that is automatically set to the entity's update time each time you call save from entity manager or repository.
+   * You don't need to write a value into this column - it will be automatically set.
+   */
+  @UpdateDateColumn()
+  @Field(() => GraphQLDateTime)
+  updatedAt!: Date;
+
+  /**
+   * Special column that is automatically set to the entity's delete time each time you call save from entity manager or repository.
+   * You don't need to write a value into this column - it will be automatically set.
+   */
+  @DeleteDateColumn()
+  @Field(() => GraphQLDateTime, { nullable: true })
+  deletedAt!: Date;
 
   //  May be needed if user can create other users...
   // @ManyToOne(() => User)
   // @Field(() => User)
   // createdBy!: User;
 }
+
+/**
+ * Make TypeGraphQL aware of the enum `UserRole`.
+ *
+ * To tell TypeGraphQL about our enum, we would ideally mark the enums with the @EnumType() decorator. However, TypeScript decorators only work with classes, so we need to make TypeGraphQL aware of the enums manually by calling the registerEnumType function and providing the enum name for GraphQ
+ */
+registerEnumType(UserRole, {
+  name: 'UserRole', // Mandatory
+  description: 'User possible roles', // Optional
+});

@@ -3,6 +3,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import Loader from "@/common/Loader";
 import { Modal } from "@/common/Modal";
+import { UserRole } from "@/gql/graphql";
 import { WHO_AM_I } from "@/graphql/whoAmI";
 import { AuthStatus } from "@/types/auth.types";
 
@@ -37,8 +38,11 @@ export default function ProtectedRoute({
   }
 
   const isAllowed =
-    (user === null && authStates.includes("unauthenticated")) ||
-    (!!user && authStates.includes("authenticated"));
+    (user === null && authStates.includes(AuthStatus.UNAUTHENTICATED)) ||
+    (!!user && authStates.includes(AuthStatus.USER)) ||
+    (!!user &&
+      user.role === UserRole.Admin &&
+      authStates.includes(AuthStatus.ADMIN));
 
   if (isAllowed) {
     return children ? children : <Outlet />;

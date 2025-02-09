@@ -5,6 +5,7 @@ export const WHO_AM_I = gql(/* GraphQL */ `
     whoAmI {
       id
       email
+      role
     }
   }
 `);

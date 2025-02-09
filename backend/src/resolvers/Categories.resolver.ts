@@ -1,4 +1,3 @@
-import { GraphQLError } from 'graphql';
 import {
   Arg,
   Args,
@@ -17,7 +16,7 @@ import {
   UpdateCategoryInput,
 } from '@/schemas/categories.schemas';
 import { Category } from '@/schemas/entities/Category';
-import { AuthContextType } from '@/types/index.types';
+import { AuthContextType, UserRole } from '@/types/index.types';
 
 @Resolver()
 export class CategoriesResolver {
@@ -39,7 +38,7 @@ export class CategoriesResolver {
     return category;
   }
 
-  @Authorized()
+  @Authorized(UserRole.ADMIN)
   @Mutation(() => Category)
   async createCategory(
     @Arg('data', () => AddCategoryInput) data: AddCategoryInput,
@@ -49,7 +48,7 @@ export class CategoriesResolver {
     return createdCategory;
   }
 
-  @Authorized()
+  @Authorized(UserRole.ADMIN)
   @Mutation(() => Category, { nullable: true })
   async updateCategory(
     @Arg('id', () => ID) id: number,
@@ -57,38 +56,17 @@ export class CategoriesResolver {
     data: UpdateCategoryInput,
     @Ctx() context: AuthContextType,
   ): Promise<Category | null> {
-    const category = await categoriesModel.findOneBy(id);
-    if (!category) {
-      return null;
-    }
-    if (category.createdBy.id !== context.user.id) {
-      throw new GraphQLError('You are not authorized to perform this action.', {
-        extensions: { code: 'UNAUTHORIZED' },
-      });
-    }
-    const updatedCategory = await categoriesModel.patch(id, data);
+    const updatedCategory = await categoriesModel.patch(id, data, context.user);
     return updatedCategory;
   }
 
-  @Authorized()
-  @Mutation(() => ID, { nullable: true })
+  @Authorized(UserRole.ADMIN)
+  @Mutation(() => Category, { nullable: true })
   async deleteCategory(
     @Arg('id', () => ID) id: number,
     @Ctx() context: AuthContextType,
-  ): Promise<number | null> {
-    const category = await categoriesModel.findOneBy(id);
-    if (!category) {
-      return null;
-    }
-    if (category.createdBy.id !== context.user.id) {
-      throw new GraphQLError('You are not authorized to perform this action.', {
-        extensions: { code: 'UNAUTHORIZED' },
-      });
-    }
-    const result = await categoriesModel.remove(id);
-    if (result.affected === 0) {
-      return null;
-    }
-    return id;
+  ): Promise<Category | null> {
+    const deletedCategory = await categoriesModel.remove(id, context.user);
+    return deletedCategory;
   }
 }

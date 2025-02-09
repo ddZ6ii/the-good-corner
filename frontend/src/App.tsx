@@ -3,6 +3,7 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import PageLayout from "@layouts/PageLayout";
 import ProtectedRoute from "@/layouts/ProtectedRoute";
 import {
+  AdminPage,
   AdPage,
   AboutPage,
   CategoryPage,
@@ -14,6 +15,7 @@ import {
   SignOutPage,
 } from "@/pages";
 import "./App.css";
+import { AuthStatus } from "@/types/auth.types";
 
 const client = new ApolloClient({
   // Use the `proxy` url defined in vite.config.ts to avoid CORS policy issue (backend server is on a different domain that the frontend server (different port))
@@ -40,22 +42,33 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<PageLayout />}>
+            {/* Public pages */}
             <Route index element={<HomePage />} />
             <Route path="about" element={<AboutPage />} />
             <Route path="ads/:id" element={<AdPage />} />
             <Route path="categories/:id" element={<CategoryPage />} />
+
+            {/* Guest pages */}
             <Route
-              element={<ProtectedRoute authStates={["unauthenticated"]} />}
+              element={
+                <ProtectedRoute authStates={[AuthStatus.UNAUTHENTICATED]} />
+              }
             >
               <Route path="signin" element={<SignInPage />} />
               <Route path="signup" element={<SignUpPage />} />
               <Route path="signout" element={<SignOutPage />} />
             </Route>
 
+            {/* Admin pages */}
+            <Route element={<ProtectedRoute authStates={[AuthStatus.ADMIN]} />}>
+              <Route path="admin" element={<AdminPage />} />
+            </Route>
+
+            {/* User & admin pages */}
             <Route
               element={
                 <ProtectedRoute
-                  authStates={["authenticated"]}
+                  authStates={[AuthStatus.USER, AuthStatus.ADMIN]}
                   redirectPath="/signin"
                 />
               }
@@ -64,6 +77,7 @@ function App() {
               <Route path="ads/:id/edit" element={<EditAdPage />} />
             </Route>
 
+            {/* Public 404 page */}
             <Route path="*" element={<HomePage />} />
           </Route>
         </Routes>

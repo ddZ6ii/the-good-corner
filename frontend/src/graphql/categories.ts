@@ -5,6 +5,11 @@ export const GET_CATEGORIES = gql(/* GraphQL */ `
     categories {
       id
       name
+      createdAt
+      createdBy {
+        id
+        email
+      }
     }
   }
 `);

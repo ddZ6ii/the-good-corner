@@ -28,8 +28,8 @@ export default function AdForm({
   initialFormState,
   onSubmit,
 }: AdEditorProps) {
-  const [formState, dispatch] = useReducer(adFormReducer, initialFormState);
   const ref = useRef<HTMLFormElement>(null);
+  const [formState, dispatch] = useReducer(adFormReducer, initialFormState);
 
   const focusFirstFieldWithError = (error: AdFormError): void => {
     const keys = getOjectKeys(error);
@@ -143,17 +143,6 @@ export default function AdForm({
         errors={formState.error.description}
         onChange={handleChange}
         onBlur={handleBlur}
-      />
-      <InputField
-        label="Owner"
-        type="email"
-        placeholder="Enter your email adress..."
-        value={formState.data.owner}
-        disabled={formState.status === "submitting"}
-        errors={formState.error.owner}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        required
       />
       <InputField
         label="Price($)"

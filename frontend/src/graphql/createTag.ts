@@ -5,6 +5,7 @@ export const CREATE_TAG = gql(/* GraphQL */ `
     createTag(data: $data) {
       id
       name
+      createdAt
     }
   }
 `);

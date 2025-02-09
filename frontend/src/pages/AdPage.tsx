@@ -50,7 +50,8 @@ export default function AdPage() {
           <AdTitle title={ad.title}>{ad.title}</AdTitle>
           <AdPrice>{formatPriceWithCurrency(ad.price)}</AdPrice>
           <AdDescription>{ad.description}</AdDescription>
-          <AdTags tags={ad.tags ?? []} />
+          {ad.tags != null && <AdTags tags={ad.tags ?? []} />}
+          <AdAuthor>Created by: {ad.createdBy?.email}</AdAuthor>
         </AdContent>
       </Ad>
     </PageContent>
@@ -61,7 +62,11 @@ const AdCategory = styled.p`
   ${basePillStyle}
 `;
 
-const AdDescription = styled.p`
+const BaseText = styled.p`
   color: ${theme.color.neutral.light};
   font-size: 16px;
 `;
+
+const AdDescription = styled(BaseText)``;
+
+const AdAuthor = styled(BaseText)``;

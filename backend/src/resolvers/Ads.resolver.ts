@@ -16,7 +16,7 @@ import {
   UpdateAdInput,
 } from '@/schemas/ads.schemas';
 import { Ad } from '@/schemas/entities/Ad';
-import { ContextType } from '@/types/index.types';
+import { AuthContextType, UserRole } from '@/types/index.types';
 
 @Resolver()
 export class AdsResolver {
@@ -38,38 +38,35 @@ export class AdsResolver {
   }
 
   /** Private queries */
-  @Authorized()
+  @Authorized(UserRole.ADMIN, UserRole.USER)
   @Mutation(() => Ad)
   async createAd(
     @Arg('data', () => AddAdInput) data: AddAdInput,
-    @Ctx() context: ContextType,
+    @Ctx() context: AuthContextType,
   ): Promise<Ad> {
     const createdAd = await adsModel.create(data, context.user);
     return createdAd;
   }
 
-  @Authorized()
+  @Authorized(UserRole.ADMIN, UserRole.USER)
   @Mutation(() => Ad, { nullable: true })
   async updateAd(
     @Arg('id', () => ID) id: number,
     @Arg('data', () => UpdateAdInput)
     data: UpdateAdInput,
-    @Ctx() context: ContextType,
+    @Ctx() context: AuthContextType,
   ): Promise<Ad | null> {
     const updatedAd = await adsModel.patch(id, data, context.user);
     return updatedAd;
   }
 
-  @Authorized()
-  @Mutation(() => ID, { nullable: true })
+  @Authorized(UserRole.ADMIN, UserRole.USER)
+  @Mutation(() => Ad, { nullable: true })
   async deleteAd(
     @Arg('id', () => ID) id: number,
-    @Ctx() context: ContextType,
-  ): Promise<number | null> {
-    const result = await adsModel.remove(id, context.user);
-    if (result.affected === 0) {
-      return null;
-    }
-    return id;
+    @Ctx() context: AuthContextType,
+  ): Promise<Ad | null> {
+    const deletedAd = await adsModel.remove(id, context.user);
+    return deletedAd;
   }
 }

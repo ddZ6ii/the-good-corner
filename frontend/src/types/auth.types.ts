@@ -12,4 +12,8 @@ import { Nullish } from "@/types/utils.types";
  */
 export type AuthUser = Nullish<User>;
 
-export type AuthStatus = "authenticated" | "unauthenticated";
+export enum AuthStatus {
+  ADMIN = "admin",
+  UNAUTHENTICATED = "unauthenticated",
+  USER = "user",
+}

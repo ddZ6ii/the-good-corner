@@ -1,4 +1,4 @@
-import { DeleteResult, Like } from 'typeorm';
+import { Like } from 'typeorm';
 import {
   AddCategoryInput,
   UpdateCategoryInput,
@@ -47,16 +47,29 @@ export function create(
   return newCategory.save();
 }
 
-export async function remove(categoryId: number): Promise<DeleteResult> {
-  return Category.delete({ id: categoryId });
-}
-
 export async function patch(
   categoryId: number,
   updatedCategoryContent: UpdateCategoryInput,
+  user: User,
 ): Promise<Category | null> {
-  const category = await Category.findOneBy({ id: categoryId });
+  const category = await Category.findOneBy({
+    id: categoryId,
+    createdBy: { id: user.id },
+  });
   if (category === null) return null;
   Object.assign(category, updatedCategoryContent);
   return category.save();
+}
+
+export async function remove(
+  categoryId: number,
+  user: User,
+): Promise<Category | null> {
+  const category = await Category.findOneBy({
+    id: categoryId,
+    createdBy: { id: user.id },
+  });
+  if (category === null) return null;
+  await category.remove();
+  return Object.assign(category, { id: categoryId });
 }

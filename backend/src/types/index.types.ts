@@ -17,6 +17,11 @@ export type UserIDJwtPayload = {
   id: number;
 } & jwt.JwtPayload;
 
+export enum UserRole {
+  ADMIN = 'admin',
+  USER = 'user',
+}
+
 /* -------------------------------------------------------------------------- */
 /*                        Utilitary functions                                 */
 /* -------------------------------------------------------------------------- */

@@ -6,7 +6,7 @@ import { baseButtonStyle } from "@/themes/styles";
 // Props can only accept either $outline or $filled, not both.
 type LinkVariantProps = {
   variant?: "filled" | "outline";
-  color?: "primary" | "secondary";
+  color?: "primary" | "secondary" | "neutral";
 };
 
 type LinkProps = NavLinkProps & LinkVariantProps;
@@ -78,6 +78,16 @@ export const LinkBtn = styled(RouterNavLink)<LinkProps>`
           border-color: ${theme.color.primary.main};
           &:is(:hover, :focus-visible) {
             background-color: ${theme.color.primary.main};
+          }
+        `;
+      } else if (color === "neutral") {
+        return css`
+          ${baseStyle}
+          border-color: ${theme.color.neutral.light};
+          color: ${theme.color.neutral.light};
+          &:is(:hover, :focus-visible) {
+            background-color: ${theme.color.neutral.darkest};
+            color: ${theme.color.neutral.lightest};
           }
         `;
       } else {

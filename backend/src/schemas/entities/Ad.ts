@@ -75,7 +75,7 @@ export class Ad extends BaseEntity {
   updatedAt!: Date;
 
   /**
-   * Special column that is automatically set to the entity's update time each time you call save from entity manager or repository.
+   * Special column that is automatically set to the entity's delete time each time you call save from entity manager or repository.
    * You don't need to write a value into this column - it will be automatically set.
    */
   @DeleteDateColumn()
@@ -85,6 +85,7 @@ export class Ad extends BaseEntity {
   /** Many-to-One relation options
    *
    * The option { eager: true } will automatically fetch the related category when fetching an ad, without having to explicitly set the option { relations: ['category'] } when calling Ad.find(), Ad.findBy() or findOneBy().
+   *
    * The option { nullable: false } will make sure that a category must be provided when creating an ad.
    *
    */

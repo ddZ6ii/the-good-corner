@@ -29,22 +29,22 @@ export type Scalars = {
   Float: { input: number; output: number };
   /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
   DateTime: { input: any; output: any };
-  /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.This scalar is serialized to a string in ISO 8601 format and parsed from a string in ISO 8601 format. */
-  DateTimeISO: { input: any; output: any };
 };
 
 export type Ad = {
   __typename?: "Ad";
   category: Category;
   createdAt: Scalars["DateTime"]["output"];
+  createdBy?: Maybe<User>;
+  deletedAt?: Maybe<Scalars["DateTime"]["output"]>;
   description: Scalars["String"]["output"];
   id: Scalars["ID"]["output"];
   location: Scalars["String"]["output"];
-  owner: Scalars["String"]["output"];
   picture: Scalars["String"]["output"];
   price: Scalars["Int"]["output"];
   tags?: Maybe<Array<Tag>>;
   title: Scalars["String"]["output"];
+  updatedAt: Scalars["DateTime"]["output"];
 };
 
 /** New ad data */
@@ -52,7 +52,6 @@ export type AddAdInput = {
   category: IdInput;
   description: Scalars["String"]["input"];
   location: Scalars["String"]["input"];
-  owner: Scalars["String"]["input"];
   picture: Scalars["String"]["input"];
   price: Scalars["Int"]["input"];
   tags?: InputMaybe<Array<IdInput>>;
@@ -72,10 +71,12 @@ export type AddTagInput = {
 export type Category = {
   __typename?: "Category";
   ads: Array<Ad>;
-  createdAt: Scalars["DateTimeISO"]["output"];
+  createdAt: Scalars["DateTime"]["output"];
   createdBy?: Maybe<User>;
+  deletedAt?: Maybe<Scalars["DateTime"]["output"]>;
   id: Scalars["ID"]["output"];
   name: Scalars["String"]["output"];
+  updatedAt: Scalars["DateTime"]["output"];
 };
 
 /** New user data */
@@ -100,9 +101,9 @@ export type Mutation = {
   createCategory: Category;
   createTag: Tag;
   createUser: User;
-  deleteAd?: Maybe<Scalars["ID"]["output"]>;
-  deleteCategory?: Maybe<Scalars["ID"]["output"]>;
-  deleteTag?: Maybe<Scalars["ID"]["output"]>;
+  deleteAd?: Maybe<Ad>;
+  deleteCategory?: Maybe<Category>;
+  deleteTag?: Maybe<Tag>;
   logInUser?: Maybe<User>;
   logOutUser: Scalars["Boolean"]["output"];
   updateAd?: Maybe<Ad>;
@@ -205,8 +206,12 @@ export type QueryUsersArgs = {
 export type Tag = {
   __typename?: "Tag";
   ads: Array<Ad>;
+  createdAt: Scalars["DateTime"]["output"];
+  createdBy?: Maybe<User>;
+  deletedAt?: Maybe<Scalars["DateTime"]["output"]>;
   id: Scalars["ID"]["output"];
   name: Scalars["String"]["output"];
+  updatedAt: Scalars["DateTime"]["output"];
 };
 
 /** Update ad data */
@@ -214,7 +219,6 @@ export type UpdateAdInput = {
   category?: InputMaybe<IdInput>;
   description?: InputMaybe<Scalars["String"]["input"]>;
   location?: InputMaybe<Scalars["String"]["input"]>;
-  owner?: InputMaybe<Scalars["String"]["input"]>;
   picture?: InputMaybe<Scalars["String"]["input"]>;
   price?: InputMaybe<Scalars["Int"]["input"]>;
   tags?: InputMaybe<Array<IdInput>>;
@@ -233,9 +237,19 @@ export type UpdateTagInput = {
 
 export type User = {
   __typename?: "User";
+  createdAt: Scalars["DateTime"]["output"];
+  deletedAt?: Maybe<Scalars["DateTime"]["output"]>;
   email: Scalars["String"]["output"];
   id: Scalars["ID"]["output"];
+  role: UserRole;
+  updatedAt: Scalars["DateTime"]["output"];
 };
+
+/** User possible roles */
+export enum UserRole {
+  Admin = "ADMIN",
+  User = "USER",
+}
 
 export type AdQueryVariables = Exact<{
   id: Scalars["ID"]["input"];
@@ -251,9 +265,10 @@ export type AdQuery = {
     price: number;
     description: string;
     location: string;
-    owner: string;
+    createdAt: any;
     category: { __typename?: "Category"; id: string; name: string };
     tags?: Array<{ __typename?: "Tag"; id: string; name: string }> | null;
+    createdBy?: { __typename?: "User"; id: string; email: string } | null;
   } | null;
 };
 
@@ -268,6 +283,7 @@ export type AdsQuery = {
     picture: string;
     price: number;
     createdAt: any;
+    createdBy?: { __typename?: "User"; id: string; email: string } | null;
   }>;
 };
 
@@ -275,7 +291,13 @@ export type CategoriesQueryVariables = Exact<{ [key: string]: never }>;
 
 export type CategoriesQuery = {
   __typename?: "Query";
-  categories: Array<{ __typename?: "Category"; id: string; name: string }>;
+  categories: Array<{
+    __typename?: "Category";
+    id: string;
+    name: string;
+    createdAt: any;
+    createdBy?: { __typename?: "User"; id: string; email: string } | null;
+  }>;
 };
 
 export type CategoryQueryVariables = Exact<{
@@ -288,6 +310,7 @@ export type CategoryQuery = {
     __typename?: "Category";
     id: string;
     name: string;
+    createdAt: any;
     ads: Array<{
       __typename?: "Ad";
       id: string;
@@ -296,6 +319,7 @@ export type CategoryQuery = {
       price: number;
       createdAt: any;
     }>;
+    createdBy?: { __typename?: "User"; id: string; email: string } | null;
   } | null;
 };
 
@@ -321,7 +345,12 @@ export type CreateCategoryMutationVariables = Exact<{
 
 export type CreateCategoryMutation = {
   __typename?: "Mutation";
-  createCategory: { __typename?: "Category"; id: string; name: string };
+  createCategory: {
+    __typename?: "Category";
+    id: string;
+    name: string;
+    createdAt: any;
+  };
 };
 
 export type CreateTagMutationVariables = Exact<{
@@ -330,7 +359,7 @@ export type CreateTagMutationVariables = Exact<{
 
 export type CreateTagMutation = {
   __typename?: "Mutation";
-  createTag: { __typename?: "Tag"; id: string; name: string };
+  createTag: { __typename?: "Tag"; id: string; name: string; createdAt: any };
 };
 
 export type DeleteAdMutationVariables = Exact<{
@@ -339,7 +368,7 @@ export type DeleteAdMutationVariables = Exact<{
 
 export type DeleteAdMutation = {
   __typename?: "Mutation";
-  deleteAd?: string | null;
+  deleteAd?: { __typename?: "Ad"; id: string } | null;
 };
 
 export type LogInUserMutationVariables = Exact<{
@@ -371,7 +400,13 @@ export type TagsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type TagsQuery = {
   __typename?: "Query";
-  tags: Array<{ __typename?: "Tag"; id: string; name: string }>;
+  tags: Array<{
+    __typename?: "Tag";
+    id: string;
+    name: string;
+    createdAt: any;
+    createdBy?: { __typename?: "User"; id: string; email: string } | null;
+  }>;
 };
 
 export type UpdateAdMutationVariables = Exact<{
@@ -388,7 +423,12 @@ export type WhoAmIQueryVariables = Exact<{ [key: string]: never }>;
 
 export type WhoAmIQuery = {
   __typename?: "Query";
-  whoAmI?: { __typename?: "User"; id: string; email: string } | null;
+  whoAmI?: {
+    __typename?: "User";
+    id: string;
+    email: string;
+    role: UserRole;
+  } | null;
 };
 
 export const AdDocument = {
@@ -433,7 +473,6 @@ export const AdDocument = {
                 { kind: "Field", name: { kind: "Name", value: "price" } },
                 { kind: "Field", name: { kind: "Name", value: "description" } },
                 { kind: "Field", name: { kind: "Name", value: "location" } },
-                { kind: "Field", name: { kind: "Name", value: "owner" } },
                 {
                   kind: "Field",
                   name: { kind: "Name", value: "category" },
@@ -453,6 +492,18 @@ export const AdDocument = {
                     selections: [
                       { kind: "Field", name: { kind: "Name", value: "id" } },
                       { kind: "Field", name: { kind: "Name", value: "name" } },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "createdBy" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "email" } },
                     ],
                   },
                 },
@@ -485,6 +536,17 @@ export const AdsDocument = {
                 { kind: "Field", name: { kind: "Name", value: "picture" } },
                 { kind: "Field", name: { kind: "Name", value: "price" } },
                 { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "createdBy" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "email" } },
+                    ],
+                  },
+                },
               ],
             },
           },
@@ -511,6 +573,18 @@ export const CategoriesDocument = {
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "id" } },
                 { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "createdBy" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "email" } },
+                    ],
+                  },
+                },
               ],
             },
           },
@@ -574,6 +648,18 @@ export const CategoryDocument = {
                         kind: "Field",
                         name: { kind: "Name", value: "createdAt" },
                       },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "createdBy" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "email" } },
                     ],
                   },
                 },
@@ -678,6 +764,7 @@ export const CreateCategoryDocument = {
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "id" } },
                 { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
               ],
             },
           },
@@ -730,6 +817,7 @@ export const CreateTagDocument = {
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "id" } },
                 { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
               ],
             },
           },
@@ -771,6 +859,12 @@ export const DeleteAdDocument = {
                 },
               },
             ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+              ],
+            },
           },
         ],
       },
@@ -907,6 +1001,18 @@ export const TagsDocument = {
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "id" } },
                 { kind: "Field", name: { kind: "Name", value: "name" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "createdBy" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "email" } },
+                    ],
+                  },
+                },
               ],
             },
           },
@@ -997,6 +1103,7 @@ export const WhoAmIDocument = {
               selections: [
                 { kind: "Field", name: { kind: "Name", value: "id" } },
                 { kind: "Field", name: { kind: "Name", value: "email" } },
+                { kind: "Field", name: { kind: "Name", value: "role" } },
               ],
             },
           },

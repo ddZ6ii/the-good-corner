@@ -5,6 +5,11 @@ export const GET_TAGS = gql(/* GraphQL */ `
     tags {
       id
       name
+      createdAt
+      createdBy {
+        id
+        email
+      }
     }
   }
 `);

@@ -1,4 +1,13 @@
-import { Arg, Args, ID, Mutation, Query, Resolver } from 'type-graphql';
+import {
+  Arg,
+  Args,
+  Authorized,
+  Ctx,
+  ID,
+  Mutation,
+  Query,
+  Resolver,
+} from 'type-graphql';
 import * as tagsModel from '@/models/tags.model.ts';
 import {
   AddTagInput,
@@ -7,6 +16,7 @@ import {
   UpdateTagInput,
 } from '@/schemas/tags.schemas';
 import { Tag } from '@/schemas/entities/Tag';
+import { AuthContextType, UserRole } from '@/types/index.types';
 
 @Resolver()
 export class TagsResolver {
@@ -26,29 +36,34 @@ export class TagsResolver {
     return tag;
   }
 
+  @Authorized(UserRole.ADMIN)
   @Mutation(() => Tag)
   async createTag(
     @Arg('data', () => AddTagInput) data: AddTagInput,
+    @Ctx() context: AuthContextType,
   ): Promise<Tag> {
-    const createdTag = await tagsModel.create(data);
+    const createdTag = await tagsModel.create(data, context.user);
     return createdTag;
   }
 
+  @Authorized(UserRole.ADMIN)
   @Mutation(() => Tag, { nullable: true })
   async updateTag(
     @Arg('id', () => ID) id: number,
     @Arg('data', () => UpdateTagInput) data: UpdateTagInput,
+    @Ctx() context: AuthContextType,
   ): Promise<Tag | null> {
-    const updatedTag = await tagsModel.patch(id, data);
+    const updatedTag = await tagsModel.patch(id, data, context.user);
     return updatedTag;
   }
 
-  @Mutation(() => ID, { nullable: true })
-  async deleteTag(@Arg('id', () => ID) id: number): Promise<number | null> {
-    const result = await tagsModel.remove(id);
-    if (result.affected === 0) {
-      return null;
-    }
-    return id;
+  @Authorized(UserRole.ADMIN)
+  @Mutation(() => Tag, { nullable: true })
+  async deleteTag(
+    @Arg('id', () => ID) id: number,
+    @Ctx() context: AuthContextType,
+  ): Promise<Tag | null> {
+    const deletedTag = await tagsModel.remove(id, context.user);
+    return deletedTag;
   }
 }
