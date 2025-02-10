@@ -6,8 +6,9 @@ services:
     environment:
       - NODE_ENV=development
       - API_URL=http://server:3000
-    ports:
-      - 5173:5173
+    # Port mapping is no longer required since the nginx api gateway centralizes the app entry point and redirects the incoming requests to the proper service.
+    # ports:
+    #   - 5173:5173
     # Linked volumes ("bind mounts") to map the listed files and directories between the host and the container (hot reloading: ensure the frontend code is updated in the container when the code is changed on the host).
     volumes:
       - ./frontend/vite.config.ts:/app/vite.config.ts
@@ -27,8 +28,9 @@ services:
     environment:
       - NODE_ENV=development
       - DB_HOST=db # override DB_HOST in .env (localhost by default when the backend is run without a Docker containter, but use service name when running the backend with Docker to connect to the database container).
-    ports:
-      - 3000:3000
+    # Port mapping is no longer required since the nginx api gateway centralizes the app entry point and redirects the incoming requests to the proper service.
+    # ports:
+    #   - 3000:3000
     depends_on:
       db:
         condition: service_started
@@ -66,6 +68,25 @@ services:
       # - /var/lib/postgresql/data
       # Named volume (can only be deleted manually, recommended for production):
       - pgdata:/var/lib/postgresql/data
+
+  # Use nginx's API gateway service to:
+  # - centralize all the application endpoints (each request is then re-directed to the proper service url)
+  # - avoid CORS policy & cookies issues
+  # Requires to setup a `nginx.conf` file in the `nginx` directory.
+  # ⚠️ Backend server runs on a different domain that the frontend server (different ports)!
+  # The proxy allows the frontend to emit requests as if they were coming from the same domain as the server.# The `uri` option of the ApolloClient instance (App.tsx) must also be set to "/api" to use the proxy.
+  # With both the proxy and the `uri` set to "/api", the frontend server will forward the requests to the backend server as if they were on the same domain.
+  # ⚙️ Since the app is dockerized, use the backend service name "server" as the address for the backend server (instead of "localhost") since services adresses are resolved by the docker DNS.
+  nginx:
+    container_name: tgc-nginx
+    image: nginx
+    ports:
+      - 8080:80
+    depends_on:
+      - client
+      - server
+    volumes:
+      - ./nginx:/etc/nginx
 
 # Specify docker-compose to create the named volume used to persist the database.
 volumes:
