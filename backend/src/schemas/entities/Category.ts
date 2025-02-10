@@ -73,13 +73,16 @@ export class Category extends BaseEntity {
    * No mapping needed on the other side (User entity, no need to know which categories a user created when requesting users).
    *
    * Many-to-One relation options:
-   *  - { eager: true } will automatically fetch the related user (who created the category) when  fetching a category, without having to explicitly set the option { relations: ['createdBy'] } when calling Category.find(), Category.findBy() or findOneBy().
+   *  - { eager: true } will automatically fetch the related user (who created the category) when  fetching a category, without having to explicitly set the option { relations: ['createdBy'] } when calling Category.find(), Category.findBy() or findOneBy(). Here the eager option is commented since we now use makeRelations() to fetch the related category.
    *
    *  - { nullable: false } will make sure that a user must be provided when creating a category.
    *
    */
   // !TODO: remove {nullable: true} when the dump file will be updated with a user for every category ...
-  @ManyToOne(() => User, { eager: true })
+  @ManyToOne(
+    () => User,
+    // { eager: true }
+  )
   @Field(() => User, { nullable: true })
   createdBy!: User;
 }

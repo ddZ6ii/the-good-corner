@@ -1,3 +1,4 @@
+import { GraphQLResolveInfo } from 'graphql';
 import { Like } from 'typeorm';
 import {
   AddCategoryInput,
@@ -5,27 +6,42 @@ import {
 } from '@/schemas/categories.schemas';
 import { Category } from '@/schemas/entities/Category';
 import { User } from '@/schemas/entities/User';
+import { makeRelations } from '@/utils';
 
-export function findAll(categoryName?: string): Promise<Category[]> {
-  if (!categoryName) return Category.find({ relations: ['ads', 'ads.tags'] });
+/**
+ * When specifying the `eager: true` option in the Category entity, the related category will be automatically fetched when fetching an category, without having to explicitly set the option `relations: ['ads, ads.tags']` when calling Category.find(), Category.findBy() or findOneBy().
+ *
+ * Here we use the `makeRelations` function to dynamically build the relations to fetch based on the GraphQL query info object (more efficient).
+ */
+
+export function findAll(
+  info: GraphQLResolveInfo,
+  categoryName?: string,
+): Promise<Category[]> {
+  if (!categoryName)
+    return Category.find({ relations: makeRelations(info, Category) });
   return Category.find({
     where: {
       name: Like(`%${categoryName.toLowerCase()}%`),
     },
-    relations: ['ads', 'ads.tags'],
+    relations: makeRelations(info, Category),
   });
 }
 
-export function findOneBy(categoryId: number): Promise<Category | null> {
+export function findOneBy(
+  categoryId: number,
+  info: GraphQLResolveInfo,
+): Promise<Category | null> {
   return Category.findOne({
     where: { id: categoryId },
-    relations: ['ads', 'ads.tags'],
+    relations: makeRelations(info, Category),
   });
 }
 
 export function findOneByAuthor(
   categoryId: number,
   userId: number,
+  info: GraphQLResolveInfo,
 ): Promise<Category | null> {
   return Category.findOne({
     where: {
@@ -34,7 +50,7 @@ export function findOneByAuthor(
         id: userId,
       },
     },
-    relations: ['ads', 'ads.tags'],
+    relations: makeRelations(info, Category),
   });
 }
 

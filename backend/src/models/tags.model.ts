@@ -1,23 +1,37 @@
+import { GraphQLResolveInfo } from 'graphql';
 import { Like } from 'typeorm';
 import { AddTagInput, UpdateTagInput } from '@/schemas/tags.schemas';
 import { Tag } from '@/schemas/entities/Tag';
 import { User } from '@/schemas/entities/User';
+import { makeRelations } from '@/utils';
 
-export function findAll(tagName?: string): Promise<Tag[]> {
+/**
+ * When specifying the `eager: true` option in the Tag entity, the related category will be automatically fetched when fetching an tag, without having to explicitly set the option `relations: ['ads, ads.tags']` when calling Tag.find(), Tag.findBy() or findOneBy().
+ *
+ * Here we use the `makeRelations` function to dynamically build the relations to fetch based on the GraphQL query info object (more efficient).
+ */
+
+export function findAll(
+  info: GraphQLResolveInfo,
+  tagName?: string,
+): Promise<Tag[]> {
   // Add nested `ads.tags` relations to the query to also display all the other tags related to an ad for each tag.
-  if (!tagName) return Tag.find({ relations: ['ads', 'ads.tags'] });
+  if (!tagName) return Tag.find({ relations: makeRelations(info, Tag) });
   return Tag.find({
     where: {
       name: Like(`%${tagName.toLowerCase()}%`),
     },
-    relations: ['ads', 'ads.tags'],
+    relations: makeRelations(info, Tag),
   });
 }
 
-export function findOneBy(tagId: number): Promise<Tag | null> {
+export function findOneBy(
+  tagId: number,
+  info: GraphQLResolveInfo,
+): Promise<Tag | null> {
   return Tag.findOne({
     where: { id: tagId },
-    relations: ['ads', 'ads.tags'],
+    relations: makeRelations(info, Tag),
   });
 }
 

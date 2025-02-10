@@ -4,6 +4,7 @@ import {
   Authorized,
   Ctx,
   ID,
+  Info,
   Mutation,
   Query,
   Resolver,
@@ -17,6 +18,7 @@ import {
 } from '@/schemas/categories.schemas';
 import { Category } from '@/schemas/entities/Category';
 import { AuthContextType, UserRole } from '@/types/index.types';
+import { GraphQLResolveInfo } from 'graphql';
 
 @Resolver()
 export class CategoriesResolver {
@@ -24,8 +26,9 @@ export class CategoriesResolver {
   async categories(
     // Allow to pass optional name parameter to filter categories by name.
     @Args(() => GetCategoriesArgs) { name }: GetCategoriesArgs,
+    @Info() info: GraphQLResolveInfo,
   ): Promise<Category[]> {
-    const categories = await categoriesModel.findAll(name);
+    const categories = await categoriesModel.findAll(info, name);
     return categories;
   }
 
@@ -33,8 +36,9 @@ export class CategoriesResolver {
   @Query(() => Category, { nullable: true })
   async category(
     @Args(() => GetCategoryArgs) { id }: GetCategoryArgs,
+    @Info() info: GraphQLResolveInfo,
   ): Promise<Category | null> {
-    const category = await categoriesModel.findOneBy(id);
+    const category = await categoriesModel.findOneBy(id, info);
     return category;
   }
 
