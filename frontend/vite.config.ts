@@ -18,25 +18,9 @@ export default defineConfig({
     minify: true,
     cssMinify: true,
   },
-  // !TODO: replace this temporary fix by implementing nginx api gateway to centralize the application entry point (will be used as prod solution)...
-  /** Use a proxy to avoid CORS policy & cookies issues
-   *
-   * ⚠️ Backend server runs on a different domain that the frontend server (different ports)!
-   * The proxy allows the frontend to emit requests as if they were coming from the same domain as the server.
-   * The `uri` option of the ApolloClient instance (App.tsx) must also be set to "/api" to use the proxy.
-   * With both the proxy and the `uri` set to "/api", the frontend server will forward the requests to the backend server as if they were on the same domain.
-   *
-   * ⚙️ Since the app is dockerized, use the backend service name "server" as the address for the backend server (instead of "localhost") since services adresses are resolved by the docker DNS.
-   *
-   */
   server: {
-    proxy: {
-      "/api": {
-        target: "http://server:3000", // or http://localhost:3000 if running the front locally with yarn run dev
-        changeOrigin: true,
-        secure: false,
-      },
-    },
+    // Configure Vite's server HMR-specific option to work with ngninx reverse proxy.
+    hmr: { path: "hmr" },
   },
   resolve: {
     alias: {

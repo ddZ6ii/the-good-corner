@@ -18,7 +18,9 @@ import "./App.css";
 import { AuthStatus } from "@/types/auth.types";
 
 const client = new ApolloClient({
-  // Use the `proxy` url defined in vite.config.ts to avoid CORS policy issue (backend server is on a different domain that the frontend server (different port))
+  // Use an url relative to the app unique entrypoint defined by the nginx api gateway.
+  // Using a proxy to centralize the entrypoint avoids CORS policy issue (backend server is on a different domain that the frontend server (different port)).
+  // Using a relative url is also a good practice to avoid hardcoding the backend server url which can change depending on the environment (development, staging, production).
   uri: "/api",
   cache: new InMemoryCache(),
   // Dev mode only (Apollo dev tools with Firefox): do not use in production.
