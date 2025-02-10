@@ -1,9 +1,11 @@
+import { GraphQLResolveInfo } from 'graphql';
 import {
   Arg,
   Args,
   Authorized,
   Ctx,
   ID,
+  Info,
   Mutation,
   Query,
   Resolver,
@@ -25,15 +27,19 @@ export class AdsResolver {
   async ads(
     // Allow to pass optional categoryName parameter to filter ads by category's name.
     @Args(() => GetAdsArgs) { categoryName }: GetAdsArgs,
+    @Info() info: GraphQLResolveInfo,
   ): Promise<Ad[]> {
-    const ads = await adsModel.findAll(categoryName);
+    const ads = await adsModel.findAll(info, categoryName);
     return ads;
   }
 
   // Set nullable to true to allow returning null if no ad is found, and avoid throwing an error.
   @Query(() => Ad, { nullable: true })
-  async ad(@Args(() => GetAdArgs) { id }: GetAdArgs): Promise<Ad | null> {
-    const ad = await adsModel.findOneBy(id);
+  async ad(
+    @Args(() => GetAdArgs) { id }: GetAdArgs,
+    @Info() info: GraphQLResolveInfo,
+  ): Promise<Ad | null> {
+    const ad = await adsModel.findOneBy(id, info);
     return ad;
   }
 
@@ -55,8 +61,9 @@ export class AdsResolver {
     @Arg('data', () => UpdateAdInput)
     data: UpdateAdInput,
     @Ctx() context: AuthContextType,
+    @Info() info: GraphQLResolveInfo,
   ): Promise<Ad | null> {
-    const updatedAd = await adsModel.patch(id, data, context.user);
+    const updatedAd = await adsModel.patch(id, data, context.user, info);
     return updatedAd;
   }
 

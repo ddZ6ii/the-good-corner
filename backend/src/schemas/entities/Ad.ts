@@ -84,20 +84,24 @@ export class Ad extends BaseEntity {
 
   /** Many-to-One relation options
    *
-   * The option { eager: true } will automatically fetch the related category when fetching an ad, without having to explicitly set the option { relations: ['category'] } when calling Ad.find(), Ad.findBy() or findOneBy().
+   * The option { eager: true } will automatically fetch the related category when fetching an ad, without having to explicitly set the option { relations: ['category'] } when calling Ad.find(), Ad.findBy() or findOneBy(). Here the eager option is commented since we now use makeRelations() to fetch the related category.
    *
    * The option { nullable: false } will make sure that a category must be provided when creating an ad.
    *
    */
   @ManyToOne(() => Category, (category) => category.ads, {
-    eager: true,
+    // eager: true,
     nullable: false,
   })
   @Field(() => Category)
   category!: Category;
 
   // !TODO: remove {nullable: true} when the dump file will be updated with a user for every category ...
-  @ManyToOne(() => User, { eager: true })
+  //  Here the eager option is commented since we now use makeRelations() to fetch the related category.
+  @ManyToOne(
+    () => User,
+    // { eager: true }
+  )
   @Field(() => User, { nullable: true })
   createdBy!: User;
 

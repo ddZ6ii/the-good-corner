@@ -80,12 +80,15 @@ export class Tag extends BaseEntity {
    * No mapping needed on the other side (User entity, no need to know which tags a user created when requesting users).
    *
    * Many-to-One relation options:
-   *  - { eager: true } will automatically fetch the related user (who created the tag) when  fetching a tag, without having to explicitly set the option { relations: ['createdBy'] } when calling Tag.find(), Tag.findBy() or findOneBy().
+   *  - { eager: true } will automatically fetch the related user (who created the tag) when  fetching a tag, without having to explicitly set the option { relations: ['createdBy'] } when calling Tag.find(), Tag.findBy() or findOneBy(). Here the eager option is commented since we now use makeRelations() to fetch the related category.
    *
    *  - { nullable: false } will make sure that a user must be provided when creating a tag.
    */
   // !TODO: remove {nullable: true} when the dump file will be updated with a user for every category ...
-  @ManyToOne(() => User, { eager: true })
+  @ManyToOne(
+    () => User,
+    // { eager: true }
+  )
   @Field(() => User, { nullable: true })
   createdBy!: User;
 }
