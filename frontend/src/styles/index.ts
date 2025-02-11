@@ -1,5 +1,5 @@
-import { css } from "styled-components";
-import { theme } from "@/themes/theme";
+import { css } from 'styled-components'
+import { theme } from '@/themes'
 
 export const baseButtonStyle = css`
   padding: 8px;
@@ -23,7 +23,7 @@ export const baseButtonStyle = css`
     background-color: ${theme.color.primary.main};
     color: ${theme.color.white};
   }
-`;
+`
 
 export const baseInputStyle = css`
   padding: 8px 8px;
@@ -41,7 +41,7 @@ export const baseInputStyle = css`
       outline-color: ${theme.color.status.danger};
     }
   }
-`;
+`
 
 export const basePillStyle = css`
   padding: 4px 8px;
@@ -50,4 +50,4 @@ export const basePillStyle = css`
   font-size: 12px;
   background-color: ${theme.color.secondary.light};
   border-radius: ${theme.borderRadius.pill};
-`;
+`

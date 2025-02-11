@@ -1,7 +1,7 @@
-import { Suspense } from "react";
-import Loader from "@/common/Loader";
-import RecentAds from "@/components/RecentAds";
-import PageContent from "@/layouts/PageContent";
+import { Suspense } from 'react'
+import { Loader } from '@/common'
+import { RecentAds } from '@/components'
+import { PageContent } from '@/layouts'
 
 export default function HomePage() {
   return (
@@ -10,5 +10,5 @@ export default function HomePage() {
         <RecentAds />
       </Suspense>
     </PageContent>
-  );
+  )
 }

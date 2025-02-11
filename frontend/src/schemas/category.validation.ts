@@ -1,11 +1,11 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 export const CATEGORY_CONSTRAINTS = {
   name: {
     minLength: 3,
     maxLength: 50,
   },
-};
+}
 
 export const CategoryContentSchema = z.object({
   name: z
@@ -13,4 +13,4 @@ export const CategoryContentSchema = z.object({
     .trim()
     .min(CATEGORY_CONSTRAINTS.name.minLength)
     .max(CATEGORY_CONSTRAINTS.name.maxLength),
-});
+})

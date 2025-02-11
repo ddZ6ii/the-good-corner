@@ -1,29 +1,28 @@
-import styled, { css } from "styled-components";
-import { useState } from "react";
-import { IoMdAddCircleOutline } from "react-icons/io";
-import { IoChevronDown } from "react-icons/io5";
-import { useMutation, useSuspenseQuery } from "@apollo/client";
-import { Button } from "@/common/Button";
-import { Editor } from "@/components/Editor";
-import { Modal } from "@/common/Modal";
-import { Field, Info, Label, Text } from "@/components/form";
-import { GET_CATEGORIES } from "@/graphql/categories";
-import { CREATE_CATEGORY } from "@/graphql/createCategory";
-import { WHO_AM_I } from "@/graphql/whoAmI";
-import { UserRole } from "@/gql/graphql";
-import { CategoryContentSchema } from "@/schemas/category.validation";
-import { baseInputStyle } from "@/themes/styles";
-import { theme } from "@/themes/theme";
-import { notifySuccess } from "@/utils/notify";
+import styled, { css } from 'styled-components'
+import { useState } from 'react'
+import { IoMdAddCircleOutline } from 'react-icons/io'
+import { IoChevronDown } from 'react-icons/io5'
+import { useMutation, useSuspenseQuery } from '@apollo/client'
+import { Button, Modal } from '@/common'
+import { Editor } from '@/components'
+import { Field, Info, Label, Text } from '@/components/form'
+import { GET_CATEGORIES } from '@/graphql/categories'
+import { CREATE_CATEGORY } from '@/graphql/createCategory'
+import { WHO_AM_I } from '@/graphql/whoAmI'
+import { UserRole } from '@/gql/graphql'
+import { CategoryContentSchema } from '@/schemas/category.validation'
+import { baseInputStyle } from '@/styles'
+import { theme } from '@/themes'
+import { notifySuccess } from '@/utils'
 
 type SelectCategoryProps = {
-  value: string;
-  errors: string[];
-  disabled: boolean;
-  onCategoryChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  onCategoryBlur: (e: React.FocusEvent<HTMLSelectElement>) => void;
-  onCategoryAdd: (newCategoryId: string) => void;
-};
+  value: string
+  errors: string[]
+  disabled: boolean
+  onCategoryChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
+  onCategoryBlur: (e: React.FocusEvent<HTMLSelectElement>) => void
+  onCategoryAdd: (newCategoryId: string) => void
+}
 
 export default function SelectCategory({
   value,
@@ -33,17 +32,17 @@ export default function SelectCategory({
   onCategoryBlur,
   onCategoryAdd,
 }: SelectCategoryProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: { whoAmI: user } = {}, error: errorUser } =
-    useSuspenseQuery(WHO_AM_I);
+    useSuspenseQuery(WHO_AM_I)
   const { data: { categories = [] } = {}, error: errorCategories } =
-    useSuspenseQuery(GET_CATEGORIES);
-  const [createCategory] = useMutation(CREATE_CATEGORY);
+    useSuspenseQuery(GET_CATEGORIES)
+  const [createCategory] = useMutation(CREATE_CATEGORY)
 
   const closeModal = () => {
-    setIsModalOpen(false);
-  };
+    setIsModalOpen(false)
+  }
   const handleAddCategory = async (newCategoryName: string) => {
     // Add new category to database.
     const createdCategory = await createCategory({
@@ -52,25 +51,25 @@ export default function SelectCategory({
       },
       // Refetch categories after adding a new one.
       refetchQueries: [{ query: GET_CATEGORIES }],
-    });
+    })
     if (!createdCategory.data) {
-      throw new Error("Failed to create category");
+      throw new Error('Failed to create category')
     }
     // Set newly added category as current selection in the parent form.
-    const { id: newCategoryId } = createdCategory.data.createCategory;
-    onCategoryAdd(newCategoryId as unknown as string);
+    const { id: newCategoryId } = createdCategory.data.createCategory
+    onCategoryAdd(newCategoryId as unknown as string)
 
-    closeModal();
-    notifySuccess("Category successfully created!");
-  };
+    closeModal()
+    notifySuccess('Category successfully created!')
+  }
 
   if (errorCategories) {
-    return <p>Could not retrieve categories...</p>;
+    return <p>Could not retrieve categories...</p>
   }
 
   if (errorUser || !user) {
-    if (errorUser) console.error(errorUser);
-    return <p>Cannot retrieve user!</p>;
+    if (errorUser) console.error(errorUser)
+    return <p>Cannot retrieve user!</p>
   }
 
   return (
@@ -87,7 +86,7 @@ export default function SelectCategory({
             aria-label="Add new category"
             color="primary"
             onClick={() => {
-              setIsModalOpen(true);
+              setIsModalOpen(true)
             }}
           >
             <IoMdAddCircleOutline />
@@ -128,7 +127,7 @@ export default function SelectCategory({
         />
       </Modal>
     </>
-  );
+  )
 }
 
 const Container = styled.div<{ $margin?: boolean }>`
@@ -144,7 +143,7 @@ const Container = styled.div<{ $margin?: boolean }>`
       outline-color: ${theme.color.status.danger};
     }
   }
-`;
+`
 
 const Select = styled.select`
   ${baseInputStyle}
@@ -162,7 +161,7 @@ const Select = styled.select`
     translate: 0 -50%;
     stroke: color-mix(in srgb, ${theme.color.neutral.light} 80%, transparent);
   }
-`;
+`
 
 const AddCategoryButton = styled(Button)`
   position: absolute;
@@ -186,4 +185,4 @@ const AddCategoryButton = styled(Button)`
       fill: ${theme.color.white};
     }
   }
-`;
+`

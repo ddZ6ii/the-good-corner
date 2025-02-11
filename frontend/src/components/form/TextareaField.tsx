@@ -1,13 +1,13 @@
-import { HTMLProps } from "react";
-import { Label, Field, Info, Text, TextArea } from "@/components/form";
-import { capitalize } from "@/utils/format";
+import { HTMLProps } from 'react'
+import { Label, Field, Info, Text, TextArea } from '@/components/form'
+import { capitalize } from '@/utils'
 
 interface TextareaFieldProps extends HTMLProps<HTMLTextAreaElement> {
-  label: string;
-  value: string;
-  errors: string[];
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
+  label: string
+  value: string
+  errors: string[]
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+  onBlur?: (e: React.FocusEvent<HTMLTextAreaElement>) => void
 }
 
 export default function TextareaField({
@@ -32,7 +32,7 @@ export default function TextareaField({
         onBlur={onBlur}
         {...restProps}
       />
-      {errors.length > 0 && <Text>{errors.join(". ")}</Text>}
+      {errors.length > 0 && <Text>{errors.join('. ')}</Text>}
     </Field>
-  );
+  )
 }

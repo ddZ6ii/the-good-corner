@@ -1,24 +1,24 @@
-import styled from "styled-components";
-import { useMemo } from "react";
-import { useSuspenseQuery } from "@apollo/client";
-import { NavLink } from "@/common/Link";
-import { GET_CATEGORIES } from "@/graphql/categories";
-import { theme } from "@/themes/theme";
-import { capitalize } from "@/utils/format";
+import styled from 'styled-components'
+import { useMemo } from 'react'
+import { useSuspenseQuery } from '@apollo/client'
+import { NavLink } from '@/common'
+import { GET_CATEGORIES } from '@/graphql/categories'
+import { theme } from '@/themes'
+import { capitalize } from '@/utils'
 
 export default function Navbar() {
   const { data: { categories = [] } = {}, error } =
-    useSuspenseQuery(GET_CATEGORIES);
+    useSuspenseQuery(GET_CATEGORIES)
 
   const sortedCategories = useMemo(
     () =>
       [...categories].sort((cat1, cat2) => cat1.name.localeCompare(cat2.name)),
     [categories],
-  );
+  )
 
   if (error) {
-    console.error(error);
-    return <p>No categories currently available...</p>;
+    console.error(error)
+    return <p>No categories currently available...</p>
   }
 
   return (
@@ -33,7 +33,7 @@ export default function Navbar() {
         ))}
       </NavList>
     </nav>
-  );
+  )
 }
 
 const NavList = styled.ul`
@@ -52,4 +52,4 @@ const NavList = styled.ul`
   @media screen and (min-width: 720px) {
     padding-top: 14px;
   }
-`;
+`

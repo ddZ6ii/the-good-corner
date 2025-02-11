@@ -1,30 +1,30 @@
-import styled, { css } from "styled-components";
-import { ReactNode } from "react";
-import { theme } from "@themes/theme";
+import styled, { css } from 'styled-components'
+import { ReactNode } from 'react'
+import { theme } from '@/themes'
 
-type SizeVariant = "sm" | "md" | "lg";
+type SizeVariant = 'sm' | 'md' | 'lg'
 
 type SpinnerProps = {
-  size: SizeVariant;
-};
+  size: SizeVariant
+}
 
 type ContainerProps = {
-  $center?: boolean;
-  $mt?: number;
-  $mb?: number;
-  $ml?: number;
-  $mr?: number;
-  $mx?: number;
-  $my?: number;
-};
+  $center?: boolean
+  $mt?: number
+  $mb?: number
+  $ml?: number
+  $mr?: number
+  $mx?: number
+  $my?: number
+}
 
 type LoaderProps = Partial<SpinnerProps> &
   ContainerProps & {
-    children?: ReactNode;
-  };
+    children?: ReactNode
+  }
 
 export default function Loader({
-  size = "md",
+  size = 'md',
   $center = false,
   children,
   ...restProps
@@ -34,7 +34,7 @@ export default function Loader({
       <Spinner size={size} />
       {children}
     </Container>
-  );
+  )
 }
 
 const variant = {
@@ -52,7 +52,7 @@ const variant = {
       width: 56px;
     `,
   },
-};
+}
 
 const Container = styled.div<ContainerProps>`
   align-self: center;
@@ -97,7 +97,7 @@ const Container = styled.div<ContainerProps>`
     css`
       height: 100%;
     `}
-`;
+`
 
 const Spinner = styled.div<SpinnerProps>`
   aspect-ratio: 1;
@@ -126,4 +126,4 @@ const Spinner = styled.div<SpinnerProps>`
       transform: rotate(1turn);
     }
   }
-`;
+`

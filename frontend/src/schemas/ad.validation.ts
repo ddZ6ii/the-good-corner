@@ -1,6 +1,6 @@
-import { z } from "zod";
-import { CATEGORY_CONSTRAINTS } from "@/schemas/category.validation";
-import { TAG_CONSTRAINTS } from "@/schemas/tag.validation";
+import { z } from 'zod'
+import { CATEGORY_CONSTRAINTS } from '@/schemas/category.validation'
+import { TAG_CONSTRAINTS } from '@/schemas/tag.validation'
 
 const AD_CONSTRAINTS = {
   title: {
@@ -15,7 +15,7 @@ const AD_CONSTRAINTS = {
     minLength: 3,
     maxLength: 50,
   },
-};
+}
 
 export const AdContentSchema = z.object({
   title: z
@@ -40,7 +40,7 @@ export const AdContentSchema = z.object({
       id: z.string(),
     },
     {
-      invalid_type_error: "is invalid",
+      invalid_type_error: 'is invalid',
     },
   ),
   tags: z
@@ -55,9 +55,9 @@ export const AdContentSchema = z.object({
     )
     .array()
     .optional(),
-});
+})
 
-export const AdPartialContentSchema = AdContentSchema.partial();
+export const AdPartialContentSchema = AdContentSchema.partial()
 
 export const AdSchema = AdContentSchema.extend({
   id: z.string(),
@@ -91,4 +91,4 @@ export const AdSchema = AdContentSchema.extend({
     )
     .array()
     .optional(),
-});
+})

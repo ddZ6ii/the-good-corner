@@ -1,4 +1,4 @@
-import { gql } from "@/gql";
+import { gql } from '@/gql'
 
 export const WHO_AM_I = gql(/* GraphQL */ `
   query WhoAmI {
@@ -8,4 +8,4 @@ export const WHO_AM_I = gql(/* GraphQL */ `
       role
     }
   }
-`);
+`)

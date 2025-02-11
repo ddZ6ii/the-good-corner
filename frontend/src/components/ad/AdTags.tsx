@@ -1,12 +1,12 @@
-import styled, { css } from "styled-components";
-import { HTMLProps } from "react";
-import { Tag } from "@/gql/graphql";
-import { basePillStyle } from "@/themes/styles";
-import { mapColor } from "@/themes/theme";
+import styled, { css } from 'styled-components'
+import { HTMLProps } from 'react'
+import { Tag } from '@/gql/graphql'
+import { basePillStyle } from '@/styles'
+import { mapColor } from '@/themes'
 
 type AdTagsProps = {
-  tags: Pick<Tag, "id" | "name">[];
-};
+  tags: Pick<Tag, 'id' | 'name'>[]
+}
 
 export default function AdTags({ tags }: AdTagsProps) {
   return (
@@ -16,10 +16,10 @@ export default function AdTags({ tags }: AdTagsProps) {
           <TagItem key={tag.id} $color={mapColor(index)}>
             {tag.name}
           </TagItem>
-        );
+        )
       })}
     </TagList>
-  );
+  )
 }
 
 const TagList = styled.ul`
@@ -27,10 +27,10 @@ const TagList = styled.ul`
   flex-wrap: wrap;
   column-gap: 12px;
   row-gap: 8px;
-`;
+`
 
 interface TagItemProps extends HTMLProps<HTMLLIElement> {
-  $color: string;
+  $color: string
 }
 
 const TagItem = styled.li<TagItemProps>`
@@ -39,4 +39,4 @@ const TagItem = styled.li<TagItemProps>`
   ${({ $color }) => css`
     background-color: ${$color};
   `}
-`;
+`

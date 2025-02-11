@@ -1,43 +1,45 @@
-import { Suspense, useEffect, useReducer, useRef } from "react";
-import { ZodError } from "zod";
-import { Button } from "@/common/Button";
+import { Suspense, useEffect, useReducer, useRef } from 'react'
+import { ZodError } from 'zod'
+import { Button } from '@/common/Button'
 import {
   InputField,
   SelectTags,
   SelectCategory,
   TextareaField,
   Form,
-} from "@/components/form";
-import Loader from "@/common/Loader";
-import { IdInput } from "@/gql/graphql";
-import { adFormReducer } from "@/reducers/adForm.reducer";
-import { getOjectKeys } from "@/types/utils.types";
-import { AdFormData, AdFormError, AdFormState } from "@/types/adForm.types";
-import { convertPriceToCents, formatPrice } from "@/utils/format";
-import { mapZodError } from "@/utils/formatErrors";
-import { notifyError } from "@/utils/notify";
+} from '@/components/form'
+import { Loader } from '@/common'
+import { IdInput } from '@/gql/graphql'
+import { adFormReducer } from '@/reducers'
+import { AdFormData, AdFormError, AdFormState, getOjectKeys } from '@/types'
+import {
+  convertPriceToCents,
+  formatPrice,
+  mapZodError,
+  notifyError,
+} from '@/utils'
 
 type AdEditorProps = {
-  edit?: boolean;
-  initialFormState: AdFormState;
-  onSubmit: (formData: AdFormData) => Promise<void>;
-};
+  edit?: boolean
+  initialFormState: AdFormState
+  onSubmit: (formData: AdFormData) => Promise<void>
+}
 
 export default function AdForm({
   edit = false,
   initialFormState,
   onSubmit,
 }: AdEditorProps) {
-  const ref = useRef<HTMLFormElement>(null);
-  const [formState, dispatch] = useReducer(adFormReducer, initialFormState);
+  const ref = useRef<HTMLFormElement>(null)
+  const [formState, dispatch] = useReducer(adFormReducer, initialFormState)
 
   const focusFirstFieldWithError = (error: AdFormError): void => {
-    const keys = getOjectKeys(error);
-    const firstInputWithError = keys.find((key) => error[key].length > 0);
-    if (!ref.current || !firstInputWithError) return;
-    const target = ref.current.elements.namedItem(firstInputWithError);
-    if (target instanceof HTMLElement) target.focus();
-  };
+    const keys = getOjectKeys(error)
+    const firstInputWithError = keys.find((key) => error[key].length > 0)
+    if (!ref.current || !firstInputWithError) return
+    const target = ref.current.elements.namedItem(firstInputWithError)
+    if (target instanceof HTMLElement) target.focus()
+  }
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -46,21 +48,21 @@ export default function AdForm({
     checked?: boolean,
   ): void => {
     dispatch({
-      type: "update_input",
+      type: 'update_input',
       payload: {
         name: e.target.name,
         nextValue: nextValue ?? e.target.value,
         // Conditionally add checked property to payload (applies only to tag(s) selection).
         ...(checked !== undefined && { checked }),
       },
-    });
+    })
     dispatch({
-      type: "update_status",
+      type: 'update_status',
       payload: {
-        nextStatus: "typing",
+        nextStatus: 'typing',
       },
-    });
-  };
+    })
+  }
   const handleBlur = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -68,58 +70,58 @@ export default function AdForm({
     nextValue?: string | number | IdInput,
   ): void => {
     dispatch({
-      type: "validate_field",
+      type: 'validate_field',
       payload: {
         name: e.target.name,
         nextValue: nextValue ?? e.target.value,
       },
-    });
-  };
+    })
+  }
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
   ): Promise<void> => {
     try {
-      e.preventDefault();
+      e.preventDefault()
       dispatch({
-        type: "update_status",
-        payload: { nextStatus: "submitting" },
-      });
+        type: 'update_status',
+        payload: { nextStatus: 'submitting' },
+      })
       dispatch({
-        type: "reset_form_error",
-      });
-      await onSubmit(formState.data);
+        type: 'reset_form_error',
+      })
+      await onSubmit(formState.data)
       dispatch({
-        type: "update_status",
-        payload: { nextStatus: "success" },
-      });
+        type: 'update_status',
+        payload: { nextStatus: 'success' },
+      })
     } catch (error: unknown) {
       if (error instanceof ZodError) {
-        const nextFormError = mapZodError(error, formState.error);
+        const nextFormError = mapZodError(error, formState.error)
         dispatch({
-          type: "validate_form",
+          type: 'validate_form',
           payload: { nextFormError },
-        });
+        })
       } else {
-        console.error(error);
+        console.error(error)
         notifyError(
-          "Oops... an error has occured. Please check the form or try again later.",
-        );
+          'Oops... an error has occured. Please check the form or try again later.',
+        )
       }
       dispatch({
-        type: "update_status",
-        payload: { nextStatus: "error" },
-      });
+        type: 'update_status',
+        payload: { nextStatus: 'error' },
+      })
     }
-  };
+  }
 
   useEffect(() => {
     const hasError = getOjectKeys(formState.error).some(
       (key) => formState.error[key].length > 0,
-    );
-    if (hasError && formState.status === "error") {
-      focusFirstFieldWithError(formState.error);
+    )
+    if (hasError && formState.status === 'error') {
+      focusFirstFieldWithError(formState.error)
     }
-  }, [formState.status, formState.error]);
+  }, [formState.status, formState.error])
 
   return (
     <Form ref={ref} onSubmit={handleSubmit} noValidate>
@@ -127,7 +129,7 @@ export default function AdForm({
         label="Title"
         placeholder="What's your ad's title?"
         value={formState.data.title}
-        disabled={formState.status === "submitting"}
+        disabled={formState.status === 'submitting'}
         errors={formState.error.title}
         onChange={handleChange}
         onBlur={handleBlur}
@@ -139,7 +141,7 @@ export default function AdForm({
         required
         placeholder="Try your best to describe your item to other customers..."
         value={formState.data.description}
-        disabled={formState.status === "submitting"}
+        disabled={formState.status === 'submitting'}
         errors={formState.error.description}
         onChange={handleChange}
         onBlur={handleBlur}
@@ -151,13 +153,13 @@ export default function AdForm({
         placeholder="Estimate the value of your item..."
         value={formatPrice(formState.data.price)}
         errors={formState.error.price}
-        disabled={formState.status === "submitting"}
+        disabled={formState.status === 'submitting'}
         onChange={(e) => {
-          const priceInCents = convertPriceToCents(e.target.value);
-          handleChange(e, priceInCents);
+          const priceInCents = convertPriceToCents(e.target.value)
+          handleChange(e, priceInCents)
         }}
         onBlur={(e) => {
-          handleBlur(e, convertPriceToCents(e.target.value));
+          handleBlur(e, convertPriceToCents(e.target.value))
         }}
         required
       />
@@ -166,7 +168,7 @@ export default function AdForm({
         type="url"
         placeholder="Add a url picture of your item..."
         value={formState.data.picture}
-        disabled={formState.status === "submitting"}
+        disabled={formState.status === 'submitting'}
         errors={formState.error.picture}
         onChange={handleChange}
         onBlur={handleBlur}
@@ -176,7 +178,7 @@ export default function AdForm({
         label="Location"
         placeholder="Enter your city..."
         value={formState.data.location}
-        disabled={formState.status === "submitting"}
+        disabled={formState.status === 'submitting'}
         errors={formState.error.location}
         onChange={handleChange}
         onBlur={handleBlur}
@@ -184,53 +186,53 @@ export default function AdForm({
       />
       <Suspense fallback={<Loader size="md" />}>
         <SelectCategory
-          value={formState.data.category?.id ?? "none"}
-          disabled={formState.status === "submitting"}
+          value={formState.data.category?.id ?? 'none'}
+          disabled={formState.status === 'submitting'}
           errors={formState.error.category}
           onCategoryChange={(e) => {
-            handleChange(e, { id: e.target.value });
+            handleChange(e, { id: e.target.value })
           }}
           onCategoryBlur={(e) => {
-            handleBlur(e, { id: e.target.value });
+            handleBlur(e, { id: e.target.value })
           }}
           onCategoryAdd={(newCategoryId: string) => {
             dispatch({
-              type: "update_input",
+              type: 'update_input',
               payload: {
-                name: "category",
+                name: 'category',
                 nextValue: { id: newCategoryId },
               },
-            });
+            })
           }}
         />
       </Suspense>
       <Suspense fallback={<Loader size="md" />}>
         <SelectTags
           selectedTags={formState.data.tags}
-          disabled={formState.status === "submitting"}
+          disabled={formState.status === 'submitting'}
           errors={formState.error.tags}
           onTagChange={(e) => {
-            handleChange(e, Number(e.target.value), e.target.checked);
+            handleChange(e, Number(e.target.value), e.target.checked)
           }}
           onTagAdd={(newTagId: string) => {
             dispatch({
-              type: "update_input",
+              type: 'update_input',
               payload: {
-                name: "tags",
+                name: 'tags',
                 nextValue: Number(newTagId),
                 checked: true,
               },
-            });
+            })
           }}
         />
       </Suspense>
       <Button
         type="submit"
         color="primary"
-        disabled={formState.status === "submitting"}
+        disabled={formState.status === 'submitting'}
       >
-        {edit ? "Update" : "Create"} ad
+        {edit ? 'Update' : 'Create'} ad
       </Button>
     </Form>
-  );
+  )
 }

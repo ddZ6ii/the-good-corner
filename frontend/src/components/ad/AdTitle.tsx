@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const AdTitle = styled.h3`
   font-weight: bold;
@@ -6,4 +6,4 @@ export const AdTitle = styled.h3`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-`;
+`

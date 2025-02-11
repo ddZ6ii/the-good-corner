@@ -1,6 +1,5 @@
-import styled from "styled-components";
-import { Button } from "@common/Button";
-import { Input } from "@/common/Input";
+import styled from 'styled-components'
+import { Button, Input } from '@/common'
 
 export default function SearchBar() {
   return (
@@ -22,7 +21,7 @@ export default function SearchBar() {
         </svg>
       </Button>
     </Form>
-  );
+  )
 }
 
 const Form = styled.form`
@@ -30,4 +29,4 @@ const Form = styled.form`
   flex-grow: 1;
   justify-content: center;
   gap: 4px;
-`;
+`

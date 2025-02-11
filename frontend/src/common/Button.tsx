@@ -1,14 +1,14 @@
-import styled, { css } from "styled-components";
-import { ButtonHTMLAttributes } from "react";
-import { baseButtonStyle } from "@/themes/styles";
-import { theme } from "@themes/theme";
+import styled, { css } from 'styled-components'
+import { ButtonHTMLAttributes } from 'react'
+import { baseButtonStyle } from '@/styles'
+import { theme } from '@/themes'
 
 // Props can only accept either $primary or $secondary, not both.
 type ButtonVariantProps = {
-  color?: "primary" | "secondary";
-};
+  color?: 'primary' | 'secondary'
+}
 
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & ButtonVariantProps;
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & ButtonVariantProps
 
 export const Button = styled.button<ButtonProps>`
   ${baseButtonStyle}
@@ -26,7 +26,7 @@ export const Button = styled.button<ButtonProps>`
   }
 
   ${({ color }) => {
-    if (color === "secondary") {
+    if (color === 'secondary') {
       return css`
         background-color: ${theme.color.secondary.main};
         border-color: ${theme.color.secondary.main};
@@ -36,8 +36,8 @@ export const Button = styled.button<ButtonProps>`
           border-color: ${theme.color.secondary.main};
           color: ${theme.color.secondary.main};
         }
-      `;
-    } else if (color === "primary") {
+      `
+    } else if (color === 'primary') {
       return css`
         background-color: ${theme.color.primary.main};
         color: ${theme.color.white};
@@ -46,9 +46,9 @@ export const Button = styled.button<ButtonProps>`
           border-color: ${theme.color.primary.main};
           color: ${theme.color.primary.main};
         }
-      `;
+      `
     }
-    return css``;
+    return css``
   }};
 
   &[disabled] {
@@ -61,4 +61,4 @@ export const Button = styled.button<ButtonProps>`
     color: ${theme.color.neutral.light};
     cursor: not-allowed;
   }
-`;
+`

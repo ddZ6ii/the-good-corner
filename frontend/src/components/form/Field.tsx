@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled, { css } from 'styled-components'
 
 export const Field = styled.div<{ $inline?: boolean }>`
   position: relative;
@@ -16,4 +16,4 @@ export const Field = styled.div<{ $inline?: boolean }>`
     cursor: pointer;
     font-weight: normal;
   }
-`;
+`

@@ -1,44 +1,45 @@
-import { useState } from "react";
-import { useMutation } from "@apollo/client";
-import { NavLink } from "@/common/Link";
-import SignForm from "@/components/SignForm";
-import { SIGN_UP } from "@/graphql/signUp";
-import PageContent from "@/layouts/PageContent";
-import { SignUpSchema } from "@/schemas/signForm.validation";
-import { SignUpFormData } from "@/types/signForm.types";
+import { useState } from 'react'
+import { useMutation } from '@apollo/client'
+import { NavLink } from '@/common'
+import { SignForm } from '@/components'
+import { SIGN_UP } from '@/graphql/signUp'
+import { PageContent } from '@/layouts'
+import { SignUpSchema } from '@/schemas'
+import { SignUpFormData } from '@/types'
 
-/** Test config.
- * ----------------------
-const initialFormData = {
-  email: "test@email.com",
-  password: "My-Super-Password-123",
-  confirmPassword: "My-Super-Password-123",
-};
+/*
+  Test config.
+  ----------------------
+  const initialFormData = {
+    email: "test@email.com",
+    password: "My-Super-Password-123",
+    confirmPassword: "My-Super-Password-123",
+  }; 
  */
 
 const initialFormData: SignUpFormData = {
-  email: "",
-  password: "",
-  confirmPassword: "",
-};
+  email: '',
+  password: '',
+  confirmPassword: '',
+}
 
 export default function SignUpPage() {
-  const [title, setTitle] = useState("Sign In");
-  const [signUp] = useMutation(SIGN_UP);
+  const [title, setTitle] = useState('Sign In')
+  const [signUp] = useMutation(SIGN_UP)
 
   const signUpUser = async (formData: SignUpFormData) => {
-    const parsedBody = SignUpSchema.parse(formData);
-    const { confirmPassword: _, ...userData } = parsedBody;
+    const parsedBody = SignUpSchema.parse(formData)
+    const { confirmPassword: _, ...userData } = parsedBody
 
     const { data, errors } = await signUp({
       variables: { data: userData },
-    });
+    })
     if (errors !== undefined || !data?.createUser) {
-      if (errors) console.error("Failed to sign up:", errors);
-      throw new Error("Failed to sign up!");
+      if (errors) console.error('Failed to sign up:', errors)
+      throw new Error('Failed to sign up!')
     }
-    setTitle("Thank you!");
-  };
+    setTitle('Thank you!')
+  }
 
   return (
     <PageContent title={title}>
@@ -49,7 +50,7 @@ export default function SignUpPage() {
         onSignUpSuccessComponent={<AccountCreationConfimation />}
       />
     </PageContent>
-  );
+  )
 }
 
 function AccountCreationConfimation() {
@@ -70,5 +71,5 @@ function AccountCreationConfimation() {
         to start using our services.
       </p>
     </div>
-  );
+  )
 }

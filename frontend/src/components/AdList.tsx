@@ -1,13 +1,13 @@
-import styled from "styled-components";
-import { NavLink, NavLinkProps } from "react-router-dom";
-import { Ad, AdContent, AdPrice, AdThumbnail, AdTitle } from "@/components/ad";
-import { AdsQuery } from "@/gql/graphql";
-import { theme } from "@/themes/theme";
-import { formatPriceWithCurrency } from "@utils/format";
+import styled from 'styled-components'
+import { NavLink, NavLinkProps } from 'react-router-dom'
+import { Ad, AdContent, AdPrice, AdThumbnail, AdTitle } from '@/components/ad'
+import { AdsQuery } from '@/gql/graphql'
+import { theme } from '@/themes'
+import { formatPriceWithCurrency } from '@/utils'
 
 type AdListProps = {
-  ads: AdsQuery["ads"];
-};
+  ads: AdsQuery['ads']
+}
 
 export default function AdList({ ads }: AdListProps) {
   return (
@@ -26,7 +26,7 @@ export default function AdList({ ads }: AdListProps) {
         </li>
       ))}
     </AdGallery>
-  );
+  )
 }
 
 const AdGallery = styled.ul`
@@ -34,7 +34,7 @@ const AdGallery = styled.ul`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
   gap: 40px;
-`;
+`
 
 const AdLink = styled(NavLink)<NavLinkProps>`
   text-decoration: inherit;
@@ -47,4 +47,4 @@ const AdLink = styled(NavLink)<NavLinkProps>`
       transform: scale(1.05);
     }
   }
-`;
+`

@@ -1,7 +1,6 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
-import PageLayout from "@layouts/PageLayout";
-import ProtectedRoute from "@/layouts/ProtectedRoute";
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
+import { PageLayout, ProtectedRoute } from '@/layouts'
 import {
   AdminPage,
   AdPage,
@@ -13,32 +12,38 @@ import {
   SignInPage,
   SignUpPage,
   SignOutPage,
-} from "@/pages";
-import "./App.css";
-import { AuthStatus } from "@/types/auth.types";
+} from '@/pages'
+import { AuthStatus } from '@/types'
+import './App.css'
 
 const client = new ApolloClient({
-  // Use an url relative to the app unique entrypoint defined by the nginx api gateway.
-  // Using a proxy to centralize the entrypoint avoids CORS policy issue (backend server is on a different domain that the frontend server (different port)).
-  // Using a relative url is also a good practice to avoid hardcoding the backend server url which can change depending on the environment (development, staging, production).
-  uri: "/api",
+  /*
+    Use an url relative to the app unique entrypoint defined by the nginx api gateway.
+    Using a proxy to centralize the entrypoint avoids CORS policy issue (backend server is on a different domain that the frontend server (different port)).
+    Using a relative url is also a good practice to avoid hardcoding the backend server url which can change depending on the environment (development, staging, production).
+   */
+  uri: '/api',
   cache: new InMemoryCache(),
   // Dev mode only (Apollo dev tools with Firefox): do not use in production.
   devtools: {
     enabled: true,
   },
-  // Send the cookies along with every request (user authentication). Set the "credentials" option to "same-origin" if the backend server is in the same domain.
-  credentials: "same-origin",
-});
+  /*
+    Send the cookies along with every request (user authentication). 
+    Set the "credentials" option to "same-origin" if the backend server is in the same domain.
+  */
+  credentials: 'same-origin',
+})
 
-/** Public and protected routes
- * Public routes (no authentication required): HomePage, AboutPage, 404 page
- * Protected routes:
- * - authentication required: AdPage, CategoryPage, NewAdPage, EditAdPage
- * - no authentication required: SignInPage, SignUpPage, SignOutPage
- *
- */
-function App() {
+/* 
+  Public and protected routes
+  --------------------------------
+  Public routes (no authentication required): HomePage, AboutPage, 404 page
+  Protected routes:
+  - authentication required: AdPage, CategoryPage, NewAdPage, EditAdPage
+  - no authentication required: SignInPage, SignUpPage, SignOutPage
+*/
+export default function App() {
   return (
     <ApolloProvider client={client}>
       <BrowserRouter>
@@ -85,7 +90,5 @@ function App() {
         </Routes>
       </BrowserRouter>
     </ApolloProvider>
-  );
+  )
 }
-
-export default App;

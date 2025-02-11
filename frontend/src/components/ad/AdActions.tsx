@@ -1,54 +1,54 @@
-import styled, { css } from "styled-components";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Reference, useMutation } from "@apollo/client";
-import { Button } from "@/common/Button";
-import { ACTIONS } from "@/components/ad";
-import { DELETE_AD } from "@/graphql/deleteAd";
-import { theme } from "@/themes/theme";
-import { notifyError, notifySuccess } from "@/utils/notify";
+import styled, { css } from 'styled-components'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Reference, useMutation } from '@apollo/client'
+import { Button } from '@/common'
+import { ACTIONS } from '@/components/ad'
+import { DELETE_AD } from '@/graphql/deleteAd'
+import { theme } from '@/themes'
+import { notifyError, notifySuccess } from '@/utils'
 
 type AdActionsProps = {
-  id: string;
-};
+  id: string
+}
 
 export default function AdActions({ id }: AdActionsProps) {
-  const navigate = useNavigate();
-  const [disabled, setDisabled] = useState(false);
-  const [deleteAd, { loading }] = useMutation(DELETE_AD);
+  const navigate = useNavigate()
+  const [disabled, setDisabled] = useState(false)
+  const [deleteAd, { loading }] = useMutation(DELETE_AD)
 
   const removeAd = async (id: string): Promise<void> => {
     try {
-      setDisabled(true);
+      setDisabled(true)
       const { data, errors } = await deleteAd({
         variables: { id },
         // Update Apollo's cache to reflect ad deletion on the UI displayed from other components fetching the ads.
         update(cache, { data }) {
-          if (!data?.deleteAd) return;
+          if (!data?.deleteAd) return
           cache.modify({
             fields: {
               ads(existingAdRefs: readonly Reference[] = [], { readField }) {
                 return existingAdRefs.filter(
-                  (adRef) => readField("id", adRef) !== id,
-                );
+                  (adRef) => readField('id', adRef) !== id,
+                )
               },
             },
-          });
+          })
         },
-      });
+      })
       if (errors !== undefined || !data) {
-        throw new Error("Failed to delete ad!");
+        throw new Error('Failed to delete ad!')
       }
-      notifySuccess("Ad successfully deleted!");
+      notifySuccess('Ad successfully deleted!')
       setTimeout(() => {
-        navigate("/", { replace: true });
-      }, 3000);
+        navigate('/', { replace: true })
+      }, 3000)
     } catch (error: unknown) {
-      console.error(error);
-      notifyError("Oops... an error has occured. Please try again later.");
-      setDisabled(false);
+      console.error(error)
+      notifyError('Oops... an error has occured. Please try again later.')
+      setDisabled(false)
     }
-  };
+  }
 
   return (
     <ActionList>
@@ -61,11 +61,11 @@ export default function AdActions({ id }: AdActionsProps) {
             color="primary"
             disabled={loading || disabled}
             onClick={async (_e) => {
-              if (action.title.toLowerCase() === "edit") {
-                navigate(`/ads/${id}/edit`);
+              if (action.title.toLowerCase() === 'edit') {
+                navigate(`/ads/${id}/edit`)
               }
-              if (action.title.toLowerCase() === "delete") {
-                await removeAd(id);
+              if (action.title.toLowerCase() === 'delete') {
+                await removeAd(id)
               }
             }}
           >
@@ -74,7 +74,7 @@ export default function AdActions({ id }: AdActionsProps) {
         </ActionItem>
       ))}
     </ActionList>
-  );
+  )
 }
 
 const ActionList = styled.ul`
@@ -83,12 +83,12 @@ const ActionList = styled.ul`
   right: 8px;
   display: grid;
   gap: 8px;
-`;
+`
 
 const ActionItem = styled.li`
   aspect-ratio: 1;
   font-size: 1.25em;
-`;
+`
 
 const ActionButton = styled(Button)`
   padding: 8px;
@@ -109,7 +109,7 @@ const ActionButton = styled(Button)`
   }
 
   ${({ title }) =>
-    title?.toLowerCase() === "delete" &&
+    title?.toLowerCase() === 'delete' &&
     css`
       &:is(:hover, :focus-visible) {
         background-color: ${theme.color.status.danger};
@@ -133,4 +133,4 @@ const ActionButton = styled(Button)`
       transform: rotate(0deg);
     }
   }
-`;
+`
