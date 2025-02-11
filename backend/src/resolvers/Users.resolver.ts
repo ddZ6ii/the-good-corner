@@ -40,12 +40,12 @@ export class UsersResolver {
     return user
   }
 
-  /** Query the client (frontend) can use to know whether the user is authenticated or not.
-   *
-   * ⚠️ This request should not fail (to avoid dealing with both response data and errors in the frontend)!
-   * It should either return the current User (if authenticated) or either null.
-   *
-   */
+  /*
+    Query the client (frontend) can use to know whether the user is authenticated or not.
+   
+    ⚠️ This request should not fail (to avoid dealing with both response data and errors in the frontend)!
+    It should either return the current User (if authenticated) or either null.
+  */
   @Query(() => User, { nullable: true })
   async whoAmI(@Ctx() context: ContextType): Promise<User | null> {
     const user = await getUserFromContext(context)

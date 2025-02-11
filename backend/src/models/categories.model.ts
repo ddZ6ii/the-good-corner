@@ -4,11 +4,11 @@ import { AddCategoryInput, UpdateCategoryInput } from '@/schemas'
 import { Category, User } from '@/schemas/entities'
 import { makeRelations } from '@/utils'
 
-/**
- * When specifying the `eager: true` option in the Category entity, the related category will be automatically fetched when fetching an category, without having to explicitly set the option `relations: ['ads, ads.tags']` when calling Category.find(), Category.findBy() or findOneBy().
- *
- * Here we use the `makeRelations` function to dynamically build the relations to fetch based on the GraphQL query info object (more efficient).
- */
+/*
+  When specifying the `eager: true` option in the Category entity, the related category will be automatically fetched when fetching an category, without having to explicitly set the option `relations: ['ads, ads.tags']` when calling Category.find(), Category.findBy() or findOneBy().
+ 
+  Here we use the `makeRelations` function to dynamically build the relations to fetch based on the GraphQL query info object (more efficient).
+*/
 
 export function findAll(
   info: GraphQLResolveInfo,

@@ -4,11 +4,11 @@ import { AddTagInput, UpdateTagInput } from '@/schemas'
 import { Tag, User } from '@/schemas/entities'
 import { makeRelations } from '@/utils'
 
-/**
- * When specifying the `eager: true` option in the Tag entity, the related category will be automatically fetched when fetching an tag, without having to explicitly set the option `relations: ['ads, ads.tags']` when calling Tag.find(), Tag.findBy() or findOneBy().
- *
- * Here we use the `makeRelations` function to dynamically build the relations to fetch based on the GraphQL query info object (more efficient).
- */
+/*
+  When specifying the `eager: true` option in the Tag entity, the related category will be automatically fetched when fetching an tag, without having to explicitly set the option `relations: ['ads, ads.tags']` when calling Tag.find(), Tag.findBy() or findOneBy().
+ 
+  Here we use the `makeRelations` function to dynamically build the relations to fetch based on the GraphQL query info object (more efficient).
+*/
 
 export function findAll(
   info: GraphQLResolveInfo,
