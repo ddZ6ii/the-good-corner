@@ -2,14 +2,15 @@ import { argon2id, Options } from 'argon2'
 import Cookies from 'cookies'
 import { Secret, SignOptions } from 'jsonwebtoken'
 
-/** OWASP minimum recommendations for argon2id:
- *
- *    - memoryCost (memory size m): 19 MiB (2^14.28)
- *    - timeCost (iteration count t): 2
- *    - parallelism (degree of parallelism p): 1
- *
- * For more information, see: https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#:~:text=To%20sum%20up%20our%20recommendations,and%201%20degree%20of%20parallelism.
- */
+/*
+  OWASP minimum recommendations for argon2id:
+  
+  - memoryCost (memory size m): 19 MiB (2^14.28)
+  - timeCost (iteration count t): 2
+  - parallelism (degree of parallelism p): 1
+  
+  For more information, see: https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#:~:text=To%20sum%20up%20our%20recommendations,and%201%20degree%20of%20parallelism.
+*/
 export const HASHING_OPTIONS: Options = {
   type: argon2id,
   memoryCost: 2 ** 14.28,

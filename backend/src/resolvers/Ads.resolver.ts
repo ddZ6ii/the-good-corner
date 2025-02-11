@@ -17,7 +17,7 @@ import { AuthContextType, UserRole } from '@/types'
 
 @Resolver()
 export class AdsResolver {
-  /** Public queries */
+  // Public queries
   @Query(() => [Ad])
   async ads(
     // Allow to pass optional categoryName parameter to filter ads by category's name.
@@ -38,7 +38,7 @@ export class AdsResolver {
     return ad
   }
 
-  /** Private queries */
+  // Private queries //
   @Authorized(UserRole.ADMIN, UserRole.USER)
   @Mutation(() => Ad)
   async createAd(

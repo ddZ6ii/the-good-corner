@@ -5,11 +5,11 @@ import { Ad, User } from '@/schemas/entities'
 import { UserRole } from '@/types'
 import { makeRelations, merge } from '@/utils'
 
-/**
- * When specifying the `eager: true` option in the Ad entity, the related category will be automatically fetched when fetching an ad, without having to explicitly set the option `relations: ['category']` when calling Ad.find(), Ad.findBy() or findOneBy().
- *
- * Here we use the `makeRelations` function to dynamically build the relations to fetch based on the GraphQL query info object (more efficient).
- */
+/*
+  When specifying the `eager: true` option in the Ad entity, the related category will be automatically fetched when fetching an ad, without having to explicitly set the option `relations: ['category']` when calling Ad.find(), Ad.findBy() or findOneBy().
+ 
+  Here we use the `makeRelations` function to dynamically build the relations to fetch based on the GraphQL query info object (more efficient).
+*/
 
 export function findAll(
   info: GraphQLResolveInfo,
