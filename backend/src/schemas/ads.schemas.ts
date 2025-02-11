@@ -4,9 +4,9 @@ import {
   IsUrl,
   Length,
   ValidateNested,
-} from 'class-validator';
-import { ArgsType, Field, ID, InputType, Int } from 'type-graphql';
-import { IdInput } from '@/schemas/utils.schemas';
+} from 'class-validator'
+import { ArgsType, Field, ID, InputType, Int } from 'type-graphql'
+import { IdInput } from '@/schemas'
 
 /* -------------------------------------------------------------------------- */
 /* "WRITE" CLASSES (query and mutation arguments)                             */
@@ -23,77 +23,77 @@ import { IdInput } from '@/schemas/utils.schemas';
 export class GetAdsArgs {
   @Field(() => String, { nullable: true })
   @IsNotEmpty()
-  categoryName?: string;
+  categoryName?: string
 }
 
 @ArgsType()
 export class GetAdArgs {
   @Field(() => ID)
   @IsNotEmpty()
-  id!: number;
+  id!: number
 }
 
 @InputType({ description: 'New ad data' })
 export class AddAdInput {
   @Field(() => String)
   @Length(5, 50)
-  title!: string;
+  title!: string
 
   @Field(() => String)
   @Length(5, 500)
-  description!: string;
+  description!: string
 
   @Field(() => Int)
   @IsPositive()
-  price!: number;
+  price!: number
 
   @Field(() => String)
   @IsUrl()
-  picture!: string;
+  picture!: string
 
   @Field(() => String)
   @Length(3, 50)
-  location!: string;
+  location!: string
 
   @Field(() => IdInput)
   @ValidateNested() // Perform nested validation on nested arrays or objects.
-  category!: IdInput;
+  category!: IdInput
 
   // Nullable field so we can create an ad without tags by either not passing the `tags` property, or either passing "tag" = null or "tags" = [].
   @Field(() => [IdInput], { nullable: true })
   @ValidateNested()
-  tags?: IdInput[];
+  tags?: IdInput[]
 }
 
 @InputType({ description: 'Update ad data' })
 export class UpdateAdInput {
   @Field(() => String, { nullable: true })
   @Length(5, 50, { message: 'Title must be between 5 and 50 characters' })
-  title?: string;
+  title?: string
 
   @Field(() => String, { nullable: true })
   @Length(5, 500, {
     message: 'Description must be between 5 and 500 characters',
   })
-  description?: string;
+  description?: string
 
   @Field(() => Int, { nullable: true })
   @IsPositive({ message: 'Price must be a positive number' })
-  price?: number;
+  price?: number
 
   @Field(() => String, { nullable: true })
   @IsUrl()
-  picture?: string;
+  picture?: string
 
   @Field(() => String, { nullable: true })
   @Length(3, 50, { message: 'Location must be between 3 and 50 characters' })
-  location?: string;
+  location?: string
 
   @Field(() => IdInput, { nullable: true })
   @ValidateNested() // Perform nested validation on nested arrays or objects.
-  category?: IdInput;
+  category?: IdInput
 
   @Field(() => [IdInput], { nullable: true })
   @ValidateNested()
-  tags?: IdInput[];
+  tags?: IdInput[]
 }

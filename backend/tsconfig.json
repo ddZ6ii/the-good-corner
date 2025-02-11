@@ -25,12 +25,13 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"],
-      "@entities/*": ["src/entities/*"],
-      "@middlewares/*": ["src/middlewares/*"],
-      "@models/*": ["src/models/*"],
-      "@resolvers/*": ["src/resolvers/*"],
-      "@types/*": ["src/types/*"],
-      "@utils/*": ["src/utils/*"]
+      "@/config/*": ["src/config/*"],
+      "@/middlewares/*": ["src/middlewares/*"],
+      "@/models/*": ["src/models/*"],
+      "@/resolvers/*": ["src/resolvers/*"],
+      "@/schemas/*": ["src/schemas/*"],
+      "@/types/*": ["src/types/*"],
+      "@/utils/*": ["src/utils/*"]
     },
 
     /* Linting */

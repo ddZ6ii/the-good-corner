@@ -1,2 +1,2 @@
-export { hasRelation, makeRelations } from './makeRelations';
-export { merge } from './merge';
+export { hasRelation, makeRelations } from './makeRelations'
+export { merge } from './merge'

@@ -1,6 +1,6 @@
-import { argon2id, Options } from 'argon2';
-import Cookies from 'cookies';
-import { Secret, SignOptions } from 'jsonwebtoken';
+import { argon2id, Options } from 'argon2'
+import Cookies from 'cookies'
+import { Secret, SignOptions } from 'jsonwebtoken'
 
 /** OWASP minimum recommendations for argon2id:
  *
@@ -15,16 +15,16 @@ export const HASHING_OPTIONS: Options = {
   memoryCost: 2 ** 14.28,
   timeCost: 2,
   parallelism: 1,
-};
+}
 
 export const JWT_OPTIONS: SignOptions = {
   algorithm: 'HS256',
   expiresIn: '3 days',
-};
+}
 
-export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY as Secret;
+export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY as Secret
 if (!JWT_SECRET_KEY) {
-  throw new Error('JWT_SECRET_KEY is not defined!');
+  throw new Error('JWT_SECRET_KEY is not defined!')
 }
 
 export const COOKIES_OPTIONS: Cookies.SetOption = {
@@ -32,4 +32,4 @@ export const COOKIES_OPTIONS: Cookies.SetOption = {
   maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days in milliseconds
   sameSite: 'strict', // prevents the cookie from being sent by the browser to a different site (mitigates CSRF and XSSI attacks)
   secure: process.env.NODE_ENV === 'production', // ensures the cookie is only sent over HTTPS (production only)
-};
+}

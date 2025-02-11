@@ -1,12 +1,8 @@
-import { GraphQLResolveInfo } from 'graphql';
-import { Like } from 'typeorm';
-import {
-  AddCategoryInput,
-  UpdateCategoryInput,
-} from '@/schemas/categories.schemas';
-import { Category } from '@/schemas/entities/Category';
-import { User } from '@/schemas/entities/User';
-import { makeRelations } from '@/utils';
+import { GraphQLResolveInfo } from 'graphql'
+import { Like } from 'typeorm'
+import { AddCategoryInput, UpdateCategoryInput } from '@/schemas'
+import { Category, User } from '@/schemas/entities'
+import { makeRelations } from '@/utils'
 
 /**
  * When specifying the `eager: true` option in the Category entity, the related category will be automatically fetched when fetching an category, without having to explicitly set the option `relations: ['ads, ads.tags']` when calling Category.find(), Category.findBy() or findOneBy().
@@ -19,13 +15,13 @@ export function findAll(
   categoryName?: string,
 ): Promise<Category[]> {
   if (!categoryName)
-    return Category.find({ relations: makeRelations(info, Category) });
+    return Category.find({ relations: makeRelations(info, Category) })
   return Category.find({
     where: {
       name: Like(`%${categoryName.toLowerCase()}%`),
     },
     relations: makeRelations(info, Category),
-  });
+  })
 }
 
 export function findOneBy(
@@ -35,7 +31,7 @@ export function findOneBy(
   return Category.findOne({
     where: { id: categoryId },
     relations: makeRelations(info, Category),
-  });
+  })
 }
 
 export function findOneByAuthor(
@@ -51,16 +47,16 @@ export function findOneByAuthor(
       },
     },
     relations: makeRelations(info, Category),
-  });
+  })
 }
 
 export function create(
   newCategoryContent: AddCategoryInput,
   user: User,
 ): Promise<Category> {
-  const newCategory = new Category();
-  Object.assign(newCategory, newCategoryContent, { createdBy: user });
-  return newCategory.save();
+  const newCategory = new Category()
+  Object.assign(newCategory, newCategoryContent, { createdBy: user })
+  return newCategory.save()
 }
 
 export async function patch(
@@ -71,10 +67,10 @@ export async function patch(
   const category = await Category.findOneBy({
     id: categoryId,
     createdBy: { id: user.id },
-  });
-  if (category === null) return null;
-  Object.assign(category, updatedCategoryContent);
-  return category.save();
+  })
+  if (category === null) return null
+  Object.assign(category, updatedCategoryContent)
+  return category.save()
 }
 
 export async function remove(
@@ -84,8 +80,8 @@ export async function remove(
   const category = await Category.findOneBy({
     id: categoryId,
     createdBy: { id: user.id },
-  });
-  if (category === null) return null;
-  await category.remove();
-  return Object.assign(category, { id: categoryId });
+  })
+  if (category === null) return null
+  await category.remove()
+  return Object.assign(category, { id: categoryId })
 }

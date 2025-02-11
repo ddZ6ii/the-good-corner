@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo } from 'graphql';
+import { GraphQLResolveInfo } from 'graphql'
 import {
   Arg,
   Args,
@@ -9,16 +9,11 @@ import {
   Mutation,
   Query,
   Resolver,
-} from 'type-graphql';
-import * as adsModel from '@/models/ads.model';
-import {
-  AddAdInput,
-  GetAdArgs,
-  GetAdsArgs,
-  UpdateAdInput,
-} from '@/schemas/ads.schemas';
-import { Ad } from '@/schemas/entities/Ad';
-import { AuthContextType, UserRole } from '@/types/index.types';
+} from 'type-graphql'
+import { adsModel } from '@/models'
+import { AddAdInput, GetAdArgs, GetAdsArgs, UpdateAdInput } from '@/schemas'
+import { Ad } from '@/schemas/entities'
+import { AuthContextType, UserRole } from '@/types'
 
 @Resolver()
 export class AdsResolver {
@@ -29,8 +24,8 @@ export class AdsResolver {
     @Args(() => GetAdsArgs) { categoryName }: GetAdsArgs,
     @Info() info: GraphQLResolveInfo,
   ): Promise<Ad[]> {
-    const ads = await adsModel.findAll(info, categoryName);
-    return ads;
+    const ads = await adsModel.findAll(info, categoryName)
+    return ads
   }
 
   // Set nullable to true to allow returning null if no ad is found, and avoid throwing an error.
@@ -39,8 +34,8 @@ export class AdsResolver {
     @Args(() => GetAdArgs) { id }: GetAdArgs,
     @Info() info: GraphQLResolveInfo,
   ): Promise<Ad | null> {
-    const ad = await adsModel.findOneBy(id, info);
-    return ad;
+    const ad = await adsModel.findOneBy(id, info)
+    return ad
   }
 
   /** Private queries */
@@ -50,8 +45,8 @@ export class AdsResolver {
     @Arg('data', () => AddAdInput) data: AddAdInput,
     @Ctx() context: AuthContextType,
   ): Promise<Ad> {
-    const createdAd = await adsModel.create(data, context.user);
-    return createdAd;
+    const createdAd = await adsModel.create(data, context.user)
+    return createdAd
   }
 
   @Authorized(UserRole.ADMIN, UserRole.USER)
@@ -63,8 +58,8 @@ export class AdsResolver {
     @Ctx() context: AuthContextType,
     @Info() info: GraphQLResolveInfo,
   ): Promise<Ad | null> {
-    const updatedAd = await adsModel.patch(id, data, context.user, info);
-    return updatedAd;
+    const updatedAd = await adsModel.patch(id, data, context.user, info)
+    return updatedAd
   }
 
   @Authorized(UserRole.ADMIN, UserRole.USER)
@@ -73,7 +68,7 @@ export class AdsResolver {
     @Arg('id', () => ID) id: number,
     @Ctx() context: AuthContextType,
   ): Promise<Ad | null> {
-    const deletedAd = await adsModel.remove(id, context.user);
-    return deletedAd;
+    const deletedAd = await adsModel.remove(id, context.user)
+    return deletedAd
   }
 }

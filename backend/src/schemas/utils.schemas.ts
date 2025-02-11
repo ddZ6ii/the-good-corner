@@ -1,5 +1,5 @@
-import { IsNotEmpty } from 'class-validator';
-import { Field, ID, InputType } from 'type-graphql';
+import { IsNotEmpty } from 'class-validator'
+import { Field, ID, InputType } from 'type-graphql'
 
 /* -------------------------------------------------------------------------- */
 /* "WRITE" CLASSES (query and mutation arguments)                             */
@@ -16,5 +16,5 @@ import { Field, ID, InputType } from 'type-graphql';
 export class IdInput {
   @Field(() => ID)
   @IsNotEmpty()
-  id!: number;
+  id!: number
 }

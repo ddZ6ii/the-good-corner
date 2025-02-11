@@ -1,7 +1,7 @@
-import eslint from '@eslint/js';
-import eslintConfigPrettier from 'eslint-config-prettier';
-import tseslint from 'typescript-eslint';
-import globals from 'globals';
+import eslint from '@eslint/js'
+import eslintConfigPrettier from 'eslint-config-prettier'
+import tseslint from 'typescript-eslint'
+import globals from 'globals'
 
 export default tseslint.config(
   /*eslint-disable @typescript-eslint/no-unsafe-argument */
@@ -49,4 +49,4 @@ export default tseslint.config(
     ignores: ['dist', 'public', 'node_modules'],
   },
   eslintConfigPrettier,
-);
+)
