@@ -1,48 +1,47 @@
-import { useNavigate } from "react-router-dom";
-import { useMutation, useSuspenseQuery } from "@apollo/client";
-import { WHO_AM_I } from "@/graphql/whoAmI";
-import { Button } from "@/common/Button";
-import { LinkBtn } from "@/common/Link";
-import { LOG_OUT } from "@/graphql/logOut";
-import { UserRole } from "@/gql/graphql";
+import { useNavigate } from 'react-router-dom'
+import { useMutation, useSuspenseQuery } from '@apollo/client'
+import { Button, LinkBtn } from '@/common'
+import { WHO_AM_I } from '@/graphql/whoAmI'
+import { LOG_OUT } from '@/graphql/logOut'
+import { UserRole } from '@/gql/graphql'
 
 export default function NavActions() {
-  const { data: { whoAmI: user } = {}, error } = useSuspenseQuery(WHO_AM_I);
+  const { data: { whoAmI: user } = {}, error } = useSuspenseQuery(WHO_AM_I)
 
-  const [logOut] = useMutation(LOG_OUT);
-  const navigate = useNavigate();
+  const [logOut] = useMutation(LOG_OUT)
+  const navigate = useNavigate()
 
   const handleLogOut = async (_e: React.MouseEvent<HTMLButtonElement>) => {
     try {
-      if (!user) return;
+      if (!user) return
       const { data, errors } = await logOut({
         refetchQueries: [{ query: WHO_AM_I }],
         awaitRefetchQueries: true, // make sure refetchQueries are completed before resolving the promise (mutation considered complete). Mandatory for the upcoming navigation which relies on the updated user authentication status for redirection.
-      });
+      })
 
       if (errors !== undefined || !data?.logOutUser) {
-        if (errors) console.error("Failed to sign out:", errors);
-        throw new Error("Failed to sign out!");
+        if (errors) console.error('Failed to sign out:', errors)
+        throw new Error('Failed to sign out!')
       }
-      navigate("/signout");
+      navigate('/signout')
     } catch (error: unknown) {
-      console.error(error);
+      console.error(error)
     }
-  };
+  }
 
-  /** Display appropriate links in the navbar based on user authentication
-   *
-   * user is `undefined` => user is loading (waiting for the server response)
-   * ⚠️ Note: this case should never be displayed to the user when using Suspense and useSuspenseQuery. The provided fallback (loader) component should be displayed instead.
-   *
-   * user is `null` => user is not authenticated (server responded with null)
-   *
-   * user is `object` => user is authenticated (server responded with user data)
-   *
+  /*
+   Display appropriate links in the navbar based on user authentication
+   
+    user is `undefined` => user is loading (waiting for the server response)
+    ⚠️ Note: this case should never be displayed to the user when using Suspense and useSuspenseQuery. The provided fallback (loader) component should be displayed instead.
+   
+    user is `null` => user is not authenticated (server responded with null)
+   
+    user is `object` => user is authenticated (server responded with user data)
    */
   if (error) {
-    console.error(error);
-    return null;
+    console.error(error)
+    return null
   }
   if (user === null) {
     return (
@@ -54,7 +53,7 @@ export default function NavActions() {
           <span>Sign Up</span>
         </LinkBtn>
       </>
-    );
+    )
   }
   return (
     <>
@@ -71,5 +70,5 @@ export default function NavActions() {
         <span>Sign Out</span>
       </Button>
     </>
-  );
+  )
 }

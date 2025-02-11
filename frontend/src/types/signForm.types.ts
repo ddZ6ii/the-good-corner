@@ -1,92 +1,92 @@
-import { Optional } from "@/types/utils.types";
+import { Optional } from '@/types'
 
 export type SignInFormData = {
-  email: string;
-  password: string;
-};
+  email: string
+  password: string
+}
 
 export type SignUpFormData = SignInFormData & {
-  confirmPassword: string;
-};
+  confirmPassword: string
+}
 
-export type SignFormData = Optional<SignUpFormData, "confirmPassword">;
+export type SignFormData = Optional<SignUpFormData, 'confirmPassword'>
 
 export type SignFormError<T extends SignFormData> = {
-  [K in keyof T]: string[];
-};
+  [K in keyof T]: string[]
+}
 
-export type SignFormStatus = "typing" | "submitting" | "success" | "error";
+export type SignFormStatus = 'typing' | 'submitting' | 'success' | 'error'
 
 export type SignFormState = {
-  data: SignFormData;
-  error: SignFormError<SignFormData>;
-  status: SignFormStatus;
-};
+  data: SignFormData
+  error: SignFormError<SignFormData>
+  status: SignFormStatus
+}
 
 type Action =
-  | "update_input"
-  | "update_error"
-  | "update_status"
-  | "validate_form"
-  | "reset_form_data"
-  | "reset_form_error"
-  | "reset_form_state";
+  | 'update_input'
+  | 'update_error'
+  | 'update_status'
+  | 'validate_form'
+  | 'reset_form_data'
+  | 'reset_form_error'
+  | 'reset_form_state'
 
 interface ActionType {
-  type: Action;
+  type: Action
 }
 
 interface UpdateInput extends ActionType {
-  type: "update_input";
+  type: 'update_input'
   payload: {
-    name: string;
-    nextValue: string;
-  };
+    name: string
+    nextValue: string
+  }
 }
 
 interface UpdateStatus extends ActionType {
-  type: "update_status";
+  type: 'update_status'
   payload: {
-    nextStatus: SignFormStatus;
-  };
+    nextStatus: SignFormStatus
+  }
 }
 
 interface UpdateError extends ActionType {
-  type: "update_error";
+  type: 'update_error'
   payload: {
-    name: string;
-    nextError: string[];
-  };
+    name: string
+    nextError: string[]
+  }
 }
 
 interface ValidateForm extends ActionType {
-  type: "validate_form";
+  type: 'validate_form'
   payload: {
-    nextFormError: SignFormError<SignFormData>;
-  };
+    nextFormError: SignFormError<SignFormData>
+  }
 }
 
 interface ResetFormData extends ActionType {
-  type: "reset_form_data";
+  type: 'reset_form_data'
   payload: {
-    initialFormData: SignFormData;
-  };
+    initialFormData: SignFormData
+  }
 }
 
 interface ResetFormError extends ActionType {
-  type: "reset_form_error";
+  type: 'reset_form_error'
   payload: {
-    initialFormError: SignFormError<SignFormData>;
-  };
+    initialFormError: SignFormError<SignFormData>
+  }
 }
 
 interface ResetFormState extends ActionType {
-  type: "reset_form_state";
+  type: 'reset_form_state'
   payload: {
-    initialFormData: SignFormData;
-    initialFormError: SignFormError<SignFormData>;
-    initialFormStatus: SignFormStatus;
-  };
+    initialFormData: SignFormData
+    initialFormError: SignFormError<SignFormData>
+    initialFormStatus: SignFormStatus
+  }
 }
 
 export type SignFormAction =
@@ -96,4 +96,4 @@ export type SignFormAction =
   | ValidateForm
   | ResetFormData
   | ResetFormError
-  | ResetFormState;
+  | ResetFormState

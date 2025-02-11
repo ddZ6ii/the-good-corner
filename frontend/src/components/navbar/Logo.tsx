@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { LinkBtn } from "@/common/Link";
+import styled from 'styled-components'
+import { LinkBtn } from '@/common'
 
 export default function Logo() {
   return (
@@ -9,7 +9,7 @@ export default function Logo() {
         <span className="desktop__long">THE GOOD CORNER</span>
       </LinkBtn>
     </Heading>
-  );
+  )
 }
 
 const Heading = styled.h1`
@@ -24,4 +24,4 @@ const Heading = styled.h1`
       display: initial;
     }
   }
-`;
+`

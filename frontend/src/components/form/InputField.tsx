@@ -1,16 +1,16 @@
-import styled, { css } from "styled-components";
-import { HTMLProps } from "react";
-import { Label, Field, Info, Text } from "@/components/form";
-import { baseInputStyle } from "@/themes/styles";
-import { theme } from "@/themes/theme";
-import { capitalize, toCamelCase } from "@/utils/format";
+import styled, { css } from 'styled-components'
+import { HTMLProps } from 'react'
+import { Label, Field, Info, Text } from '@/components/form'
+import { baseInputStyle } from '@/styles'
+import { theme } from '@/themes'
+import { capitalize, toCamelCase } from '@/utils'
 
 interface InputFieldProps extends HTMLProps<HTMLInputElement> {
-  label: string;
-  value: string;
-  errors: string[];
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  label: string
+  value: string
+  errors: string[]
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void
 }
 
 export default function InputField({
@@ -22,11 +22,11 @@ export default function InputField({
   ...restProps
 }: InputFieldProps) {
   const formatErrorMessage = () => {
-    const inputType = restProps.type ?? "text";
+    const inputType = restProps.type ?? 'text'
     const shouldDisplayErrorsAsList =
-      inputType === "password" &&
-      label.toLowerCase() === "password" &&
-      errors.length > 1;
+      inputType === 'password' &&
+      label.toLowerCase() === 'password' &&
+      errors.length > 1
     if (shouldDisplayErrorsAsList) {
       return (
         <ErrorList>
@@ -35,17 +35,17 @@ export default function InputField({
             <li key={error}>{error}</li>
           ))}
         </ErrorList>
-      );
+      )
     }
-    return <Text>{errors.join(". ")}</Text>;
-  };
+    return <Text>{errors.join('. ')}</Text>
+  }
   return (
     <Field>
       <Label htmlFor={restProps.name ?? label.toLowerCase()}>
         {capitalize(label)} {restProps.required && <Info>*</Info>}
       </Label>
       <Input
-        type={restProps.type ?? "text"}
+        type={restProps.type ?? 'text'}
         name={toCamelCase(restProps.name ?? label)}
         id={toCamelCase(restProps.name ?? label)}
         value={value}
@@ -55,24 +55,24 @@ export default function InputField({
       />
       {errors.length > 0 && formatErrorMessage()}
     </Field>
-  );
+  )
 }
 
 export const Input = styled.input`
   ${baseInputStyle}
   ${({ type }) =>
-    type === "checkbox" &&
+    type === 'checkbox' &&
     css`
       cursor: pointer;
     `}
   &[disabled] {
     cursor: not-allowed;
   }
-`;
+`
 
 const ErrorList = styled.ul`
   color: ${theme.color.status.danger};
   font-size: 12px;
   list-style-type: circle;
   list-style-position: inside;
-`;
+`

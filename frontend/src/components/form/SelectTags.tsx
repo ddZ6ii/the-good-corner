@@ -1,26 +1,25 @@
-import styled from "styled-components";
-import { useState } from "react";
-import { useMutation, useSuspenseQuery } from "@apollo/client";
-import { IoMdAddCircleOutline } from "react-icons/io";
-import { Button } from "@/common/Button";
-import { Editor } from "@/components/Editor";
-import { Modal } from "@/common/Modal";
-import { Field, Input, Label, Text } from "@/components/form";
-import { CREATE_TAG } from "@/graphql/createTag";
-import { GET_TAGS } from "@/graphql/tags";
-import { WHO_AM_I } from "@/graphql/whoAmI";
-import { IdInput, UserRole } from "@/gql/graphql";
-import { TagContentSchema } from "@/schemas/tag.validation";
-import { theme } from "@/themes/theme";
-import { notifySuccess } from "@/utils/notify";
+import styled from 'styled-components'
+import { useState } from 'react'
+import { useMutation, useSuspenseQuery } from '@apollo/client'
+import { IoMdAddCircleOutline } from 'react-icons/io'
+import { Button, Modal } from '@/common'
+import { Editor } from '@/components'
+import { Field, Input, Label, Text } from '@/components/form'
+import { CREATE_TAG } from '@/graphql/createTag'
+import { GET_TAGS } from '@/graphql/tags'
+import { WHO_AM_I } from '@/graphql/whoAmI'
+import { IdInput, UserRole } from '@/gql/graphql'
+import { TagContentSchema } from '@/schemas/tag.validation'
+import { theme } from '@/themes'
+import { notifySuccess } from '@/utils'
 
 type SelectTagsProps = {
-  selectedTags: IdInput[];
-  errors: string[];
-  disabled: boolean;
-  onTagChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onTagAdd: (newTagId: string) => void;
-};
+  selectedTags: IdInput[]
+  errors: string[]
+  disabled: boolean
+  onTagChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onTagAdd: (newTagId: string) => void
+}
 
 export default function SelectTags({
   disabled,
@@ -29,17 +28,17 @@ export default function SelectTags({
   onTagChange,
   onTagAdd,
 }: SelectTagsProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const { data: { whoAmI: user } = {}, error: errorUser } =
-    useSuspenseQuery(WHO_AM_I);
+    useSuspenseQuery(WHO_AM_I)
   const { data: { tags = [] } = {}, error: errorTags } =
-    useSuspenseQuery(GET_TAGS);
-  const [createTag] = useMutation(CREATE_TAG);
+    useSuspenseQuery(GET_TAGS)
+  const [createTag] = useMutation(CREATE_TAG)
 
   const closeModal = () => {
-    setIsModalOpen(false);
-  };
+    setIsModalOpen(false)
+  }
   const handleAddTag = async (newTagName: string) => {
     // Add new tag to database.
     const createdTag = await createTag({
@@ -48,25 +47,25 @@ export default function SelectTags({
       },
       // Refetch tags after adding a new one.
       refetchQueries: [{ query: GET_TAGS }],
-    });
+    })
     if (!createdTag.data) {
-      throw new Error("Failed to create tag");
+      throw new Error('Failed to create tag')
     }
     // Set newly added tag as current selection in the parent form.
-    const { id: newTagId } = createdTag.data.createTag;
-    onTagAdd(newTagId);
+    const { id: newTagId } = createdTag.data.createTag
+    onTagAdd(newTagId)
 
-    closeModal();
-    notifySuccess("Tag successfully created!");
-  };
+    closeModal()
+    notifySuccess('Tag successfully created!')
+  }
 
   if (errorTags) {
-    return <p>Could not retrieve tags...</p>;
+    return <p>Could not retrieve tags...</p>
   }
 
   if (errorUser || !user) {
-    if (errorUser) console.error(errorUser);
-    return <p>Cannot retrieve user!</p>;
+    if (errorUser) console.error(errorUser)
+    return <p>Cannot retrieve user!</p>
   }
 
   return (
@@ -81,7 +80,7 @@ export default function SelectTags({
             aria-label="Add new tag(s)"
             color="primary"
             onClick={() => {
-              setIsModalOpen(true);
+              setIsModalOpen(true)
             }}
           >
             <IoMdAddCircleOutline />
@@ -103,7 +102,7 @@ export default function SelectTags({
             </Field>
           ))}
         </Wrapper>
-        {errors.length > 0 && <Text>{errors.join(". ")}</Text>}
+        {errors.length > 0 && <Text>{errors.join('. ')}</Text>}
       </Fieldset>
 
       {/* Pass the "portal" prop to avoid nested forms (prevents inner form submission to trigger parent form submission). */}
@@ -116,7 +115,7 @@ export default function SelectTags({
         />
       </Modal>
     </>
-  );
+  )
 }
 
 const Wrapper = styled.div`
@@ -124,14 +123,14 @@ const Wrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 12px;
-`;
+`
 
 const Fieldset = styled.fieldset`
   position: relative;
   padding: 16px;
   border: ${theme.borderRadius.rounded_sm} solid ${theme.color.neutral.lightest};
   border-radius: ${theme.borderRadius.rounded_md};
-  & input[type="checkbox"] + label {
+  & input[type='checkbox'] + label {
     color: black;
   }
   &::placeholder {
@@ -140,14 +139,14 @@ const Fieldset = styled.fieldset`
   &:focus-visible {
     outline-color: ${theme.color.primary.main};
   }
-`;
+`
 
 const Legend = styled.legend`
   text-align: left;
   font-size: 14px;
   color: ${theme.color.neutral.light};
   font-weight: bold;
-`;
+`
 
 const AddTagButton = styled(Button)`
   position: absolute;
@@ -170,4 +169,4 @@ const AddTagButton = styled(Button)`
       fill: ${theme.color.white};
     }
   }
-`;
+`

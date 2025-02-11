@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 import {
   ChangeEvent,
   ReactNode,
@@ -6,145 +6,144 @@ import {
   useReducer,
   useRef,
   useState,
-} from "react";
-import { ZodError } from "zod";
-import { ApolloError } from "@apollo/client";
-import { Button } from "@/common/Button";
-import { NavLink } from "@/common/Link";
-import { Form as BaseForm, InputField } from "@/components/form";
-import { signFormReducer } from "@/reducers/signForm.reducer";
-import { theme } from "@/themes/theme";
+} from 'react'
+import { ZodError } from 'zod'
+import { ApolloError } from '@apollo/client'
+import { Button, NavLink } from '@/common'
+import { Form as BaseForm, InputField } from '@/components/form'
+import { signFormReducer } from '@/reducers'
+import { theme } from '@/themes'
 import {
+  getOjectKeys,
   SignFormData,
   SignFormError,
   SignFormState,
   SignInFormData,
   SignUpFormData,
-} from "@/types/signForm.types";
-import { getOjectKeys } from "@/types/utils.types";
-import { mapZodError } from "@/utils/formatErrors";
+} from '@/types'
+import { mapZodError } from '@/utils/formatErrors'
 
-type Sign = "signIn" | "signUp";
+type Sign = 'signIn' | 'signUp'
 
 interface CommonProps {
-  type: Sign;
+  type: Sign
 }
 
 interface SignInProps extends CommonProps {
-  type: "signIn";
-  initialFormData: SignInFormData;
-  onSubmit: (formData: SignInFormData) => Promise<void>;
+  type: 'signIn'
+  initialFormData: SignInFormData
+  onSubmit: (formData: SignInFormData) => Promise<void>
 }
 
 interface SignUpProps extends CommonProps {
-  type: "signUp";
-  initialFormData: SignUpFormData;
-  onSignUpSuccessComponent: ReactNode;
-  onSubmit: (formData: SignUpFormData) => Promise<void>;
+  type: 'signUp'
+  initialFormData: SignUpFormData
+  onSignUpSuccessComponent: ReactNode
+  onSubmit: (formData: SignUpFormData) => Promise<void>
 }
 
-type SignFormProps = SignInProps | SignUpProps;
+type SignFormProps = SignInProps | SignUpProps
 
 export default function SignForm(props: SignFormProps) {
-  const { type, initialFormData, onSubmit } = props;
-  const signUp = type === "signUp";
+  const { type, initialFormData, onSubmit } = props
+  const signUp = type === 'signUp'
   const onSignUpSuccessComponent = signUp
     ? props.onSignUpSuccessComponent
-    : null;
+    : null
 
   const initialFormState: SignFormState = {
     data: initialFormData,
     error: initFormErrors(initialFormData),
-    status: "typing",
-  };
+    status: 'typing',
+  }
 
-  const [formState, dispatch] = useReducer(signFormReducer, initialFormState);
-  const [serverError, setServerError] = useState("");
-  const formRef = useRef<HTMLFormElement>(null);
+  const [formState, dispatch] = useReducer(signFormReducer, initialFormState)
+  const [serverError, setServerError] = useState('')
+  const formRef = useRef<HTMLFormElement>(null)
 
-  const focusFirstFieldWithError = (error: SignFormState["error"]): void => {
-    const keys = getOjectKeys(error);
+  const focusFirstFieldWithError = (error: SignFormState['error']): void => {
+    const keys = getOjectKeys(error)
     const firstInputWithError = keys.find(
       (key) => error[key] && error[key].length > 0,
-    );
-    if (!formRef.current || !firstInputWithError) return;
-    const shouldFocusOnPassword = firstInputWithError === "confirmPassword";
+    )
+    if (!formRef.current || !firstInputWithError) return
+    const shouldFocusOnPassword = firstInputWithError === 'confirmPassword'
     const target = formRef.current.elements.namedItem(
-      shouldFocusOnPassword ? "password" : firstInputWithError,
-    );
-    if (target instanceof HTMLElement) target.focus();
-  };
+      shouldFocusOnPassword ? 'password' : firstInputWithError,
+    )
+    if (target instanceof HTMLElement) target.focus()
+  }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    dispatch({ type: "update_input", payload: { name, nextValue: value } });
-    dispatch({ type: "update_error", payload: { name, nextError: [] } });
-    dispatch({ type: "update_status", payload: { nextStatus: "typing" } });
-  };
+    const { name, value } = e.target
+    dispatch({ type: 'update_input', payload: { name, nextValue: value } })
+    dispatch({ type: 'update_error', payload: { name, nextError: [] } })
+    dispatch({ type: 'update_status', payload: { nextStatus: 'typing' } })
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
       dispatch({
-        type: "reset_form_error",
+        type: 'reset_form_error',
         payload: { initialFormError: initFormErrors(initialFormData) },
-      });
+      })
       dispatch({
-        type: "update_status",
-        payload: { nextStatus: "submitting" },
-      });
-      setServerError("");
+        type: 'update_status',
+        payload: { nextStatus: 'submitting' },
+      })
+      setServerError('')
 
       await onSubmit({
         ...formState.data,
-        confirmPassword: formState.data.confirmPassword ?? "",
-      });
+        confirmPassword: formState.data.confirmPassword ?? '',
+      })
 
       dispatch({
-        type: "update_status",
-        payload: { nextStatus: "success" },
-      });
+        type: 'update_status',
+        payload: { nextStatus: 'success' },
+      })
       dispatch({
-        type: "reset_form_data",
+        type: 'reset_form_data',
         payload: { initialFormData },
-      });
+      })
     } catch (error: unknown) {
       if (error instanceof ZodError) {
         const nextFormError = mapZodError(error, {
           ...formState.error,
           confirmPassword: formState.error.confirmPassword ?? [],
-        });
-        dispatch({ type: "validate_form", payload: { nextFormError } });
+        })
+        dispatch({ type: 'validate_form', payload: { nextFormError } })
       } else if (error instanceof ApolloError) {
-        if (error.message.toLowerCase().includes("already exists")) {
-          setServerError("An account with this email already exists");
+        if (error.message.toLowerCase().includes('already exists')) {
+          setServerError('An account with this email already exists')
         }
       } else {
-        setServerError("Invalid credentials");
+        setServerError('Invalid credentials')
       }
-      dispatch({ type: "update_status", payload: { nextStatus: "error" } });
+      dispatch({ type: 'update_status', payload: { nextStatus: 'error' } })
     }
-  };
+  }
 
   useEffect(() => {
-    if (formState.status !== "error") return;
+    if (formState.status !== 'error') return
 
     const hasFormError = getOjectKeys(formState.error).some(
       (key) => formState.error[key] && formState.error[key].length > 0,
-    );
+    )
     if (hasFormError) {
-      focusFirstFieldWithError(formState.error);
-      return;
+      focusFirstFieldWithError(formState.error)
+      return
     }
     if (serverError) {
-      if (!formRef.current) return;
-      const target = formRef.current.elements.namedItem("email");
-      if (target instanceof HTMLElement) target.focus();
+      if (!formRef.current) return
+      const target = formRef.current.elements.namedItem('email')
+      if (target instanceof HTMLElement) target.focus()
     }
-  }, [formState.status, formState.error, serverError]);
+  }, [formState.status, formState.error, serverError])
 
-  if (signUp && formState.status === "success") {
-    return <>{onSignUpSuccessComponent}</>;
+  if (signUp && formState.status === 'success') {
+    return <>{onSignUpSuccessComponent}</>
   }
 
   return (
@@ -156,7 +155,7 @@ export default function SignForm(props: SignFormProps) {
         placeholder="Your email address"
         autoComplete="email"
         value={formState.data.email}
-        disabled={formState.status === "submitting"}
+        disabled={formState.status === 'submitting'}
         errors={formState.error.email}
         onChange={handleChange}
         autoFocus
@@ -168,7 +167,7 @@ export default function SignForm(props: SignFormProps) {
         placeholder="Your password"
         autoComplete="new-password"
         value={formState.data.password}
-        disabled={formState.status === "submitting"}
+        disabled={formState.status === 'submitting'}
         errors={formState.error.password}
         onChange={handleChange}
         required
@@ -179,8 +178,8 @@ export default function SignForm(props: SignFormProps) {
           label="Confirm Password"
           placeholder="Confirm your password"
           autoComplete="new-password"
-          value={formState.data.confirmPassword ?? ""}
-          disabled={formState.status === "submitting"}
+          value={formState.data.confirmPassword ?? ''}
+          disabled={formState.status === 'submitting'}
           errors={formState.error.confirmPassword ?? []}
           onChange={handleChange}
           required
@@ -189,40 +188,40 @@ export default function SignForm(props: SignFormProps) {
       <Button
         type="submit"
         color="primary"
-        disabled={formState.status === "submitting"}
+        disabled={formState.status === 'submitting'}
       >
-        Sign {signUp ? "Up" : "In"}
+        Sign {signUp ? 'Up' : 'In'}
       </Button>
       <Text>
-        {signUp ? "Already" : "Don't"} have an account?
-        <NavLink to={signUp ? "/signin" : "/signup"} color="secondary">
-          Sign {signUp ? "In" : "Up"}
+        {signUp ? 'Already' : "Don't"} have an account?
+        <NavLink to={signUp ? '/signin' : '/signup'} color="secondary">
+          Sign {signUp ? 'In' : 'Up'}
         </NavLink>
       </Text>
     </Form>
-  );
+  )
 }
 
-function initFormErrors(initialFormData: SignFormData): SignFormState["error"] {
-  const keys = getOjectKeys(initialFormData);
+function initFormErrors(initialFormData: SignFormData): SignFormState['error'] {
+  const keys = getOjectKeys(initialFormData)
   const errors = keys.reduce(
     (acc, key) => ({ ...acc, [key]: [] }),
     {} as SignFormError<SignFormData>,
-  );
-  if (!("confirmPassword" in errors)) {
-    errors.confirmPassword = [];
+  )
+  if (!('confirmPassword' in errors)) {
+    errors.confirmPassword = []
   }
-  return errors;
+  return errors
 }
 
 const Form = styled(BaseForm)`
   width: min(100%, 340px);
-`;
+`
 
 const ErrorText = styled.p`
   color: ${theme.color.status.danger};
   font-size: 12px;
-`;
+`
 
 const Text = styled.p`
   color: ${theme.color.neutral.light};
@@ -243,4 +242,4 @@ const Text = styled.p`
       color: ${theme.color.primary.main};
     }
   }
-`;
+`

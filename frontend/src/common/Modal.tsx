@@ -1,24 +1,24 @@
-import styled, { css } from "styled-components";
-import { DialogHTMLAttributes, useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
-import { IoMdClose } from "react-icons/io";
-import { Button } from "@/common/Button";
-import { theme } from "@themes/theme";
+import styled, { css } from 'styled-components'
+import { DialogHTMLAttributes, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
+import { IoMdClose } from 'react-icons/io'
+import { Button } from '@/common'
+import { theme } from '@/themes'
 
 interface ModalProps extends DialogHTMLAttributes<HTMLDialogElement> {
-  open: boolean;
-  portal?: boolean;
-  hideCloseButton?: boolean;
-  closeOnEscape?: boolean;
-  $transparent?: boolean;
-  onClose?: () => void;
+  open: boolean
+  portal?: boolean
+  hideCloseButton?: boolean
+  closeOnEscape?: boolean
+  $transparent?: boolean
+  onClose?: () => void
 }
 
 type StyledModalProps = DialogHTMLAttributes<HTMLDialogElement> & {
-  $transparent?: boolean;
-};
+  $transparent?: boolean
+}
 
-export function Modal({
+export default function Modal({
   open,
   onClose,
   portal = false,
@@ -27,35 +27,35 @@ export function Modal({
   $transparent = false,
   children,
 }: ModalProps) {
-  const modalRef = useRef<HTMLDialogElement | null>(null);
+  const modalRef = useRef<HTMLDialogElement | null>(null)
 
   const closeModal = (): void => {
-    const modalEl = modalRef.current;
-    if (!modalEl) return;
+    const modalEl = modalRef.current
+    if (!modalEl) return
     if (onClose) {
-      onClose();
+      onClose()
     }
-    modalEl.close();
-  };
+    modalEl.close()
+  }
 
   // Close modal on Escape key press
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDialogElement>) => {
-    if (e.key === "Escape" && closeOnEscape) {
-      e.preventDefault();
-      closeModal();
+    if (e.key === 'Escape' && closeOnEscape) {
+      e.preventDefault()
+      closeModal()
     }
-  };
+  }
 
   // Open/close modal using dialog API
   useEffect(() => {
-    const modalEl = modalRef.current;
-    if (!modalEl) return;
+    const modalEl = modalRef.current
+    if (!modalEl) return
     if (open) {
-      modalEl.showModal();
+      modalEl.showModal()
     } else {
-      modalEl.close();
+      modalEl.close()
     }
-  }, [open]);
+  }, [open])
 
   const modal = (
     <Dialog
@@ -68,7 +68,7 @@ export function Modal({
           type="button"
           aria-label="Close modal"
           onClick={(_e) => {
-            closeModal();
+            closeModal()
           }}
         >
           <IoMdClose />
@@ -76,13 +76,13 @@ export function Modal({
       )}
       {children}
     </Dialog>
-  );
+  )
 
   if (portal) {
-    return createPortal(modal, document.body);
+    return createPortal(modal, document.body)
   }
 
-  return modal;
+  return modal
 }
 
 const Dialog = styled.dialog<StyledModalProps>`
@@ -109,7 +109,7 @@ const Dialog = styled.dialog<StyledModalProps>`
         opacity: 0.2;
       }
     `};
-`;
+`
 
 const CloseButton = styled(Button)`
   position: absolute;
@@ -128,4 +128,4 @@ const CloseButton = styled(Button)`
     background-color: ${theme.color.primary.main};
     color: ${theme.color.white};
   }
-`;
+`

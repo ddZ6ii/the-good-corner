@@ -1,23 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
 
-const getScreenOrientation = () => window.screen.orientation.type;
+const getScreenOrientation = () => window.screen.orientation.type
 
 export function useScreenOrientation() {
   const [orientation, setOrientation] =
-    useState<OrientationType>(getScreenOrientation);
+    useState<OrientationType>(getScreenOrientation)
 
-  const isLandScape = orientation.includes("landscape");
+  const isLandScape = orientation.includes('landscape')
 
   const updateOrientation = (_e: unknown) => {
-    setOrientation(getScreenOrientation());
-  };
+    setOrientation(getScreenOrientation())
+  }
 
   useEffect(() => {
-    window.addEventListener("orientationchange", updateOrientation);
+    window.addEventListener('orientationchange', updateOrientation)
     return () => {
-      window.removeEventListener("orientationchange", updateOrientation);
-    };
-  }, []);
+      window.removeEventListener('orientationchange', updateOrientation)
+    }
+  }, [])
 
-  return { orientation, isLandScape };
+  return { orientation, isLandScape }
 }

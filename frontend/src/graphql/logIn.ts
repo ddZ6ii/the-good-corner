@@ -1,4 +1,4 @@
-import { gql } from "@/gql";
+import { gql } from '@/gql'
 
 export const LOG_IN = gql(/* GraphQL */ `
   mutation LogInUser($data: LogInInput!) {
@@ -6,4 +6,4 @@ export const LOG_IN = gql(/* GraphQL */ `
       id
     }
   }
-`);
+`)

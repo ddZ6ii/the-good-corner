@@ -1,10 +1,10 @@
-import styled from "styled-components";
-import { ReactNode } from "react";
+import { ReactNode } from 'react'
+import styled from 'styled-components'
 
 type PageContentProps = {
-  title?: ReactNode;
-  children: ReactNode;
-};
+  title?: ReactNode
+  children: ReactNode
+}
 
 export default function PageContent({ title, children }: PageContentProps) {
   return (
@@ -12,13 +12,13 @@ export default function PageContent({ title, children }: PageContentProps) {
       <Title>{title}</Title>
       {children}
     </Section>
-  );
+  )
 }
 
 const Title = styled.h2`
   font-size: 24px;
   font-weight: 700;
-`;
+`
 
 const Section = styled.section`
   height: 100%;
@@ -26,4 +26,4 @@ const Section = styled.section`
   grid-template-rows: auto 1fr;
   align-items: start;
   gap: 32px;
-`;
+`

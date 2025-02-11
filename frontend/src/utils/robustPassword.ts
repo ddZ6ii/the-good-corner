@@ -1,5 +1,5 @@
-import { pluralize } from "@/utils/format";
-import { IssueData, RefinementCtx, ZodIssueCode } from "zod";
+import { IssueData, RefinementCtx, ZodIssueCode } from 'zod'
+import { pluralize } from '@/utils'
 
 export const PASSWORD_CONSTRAINTS = {
   minLength: 12,
@@ -8,70 +8,70 @@ export const PASSWORD_CONSTRAINTS = {
   minUppercase: 1,
   minNumber: 1,
   minSymbol: 1,
-};
+}
 
 const ALLOWED_SYMBOLS = [
-  "~",
-  "`",
-  "!",
-  "@",
-  "#",
-  "$",
-  "%",
-  "^",
-  "&",
-  "*",
-  "(",
-  ")",
-  "_",
-  "-",
-  "+",
-  "=",
-  "{",
-  "[",
-  "}",
-  "]",
-  "|",
-  "\\",
-  ":",
-  ";",
+  '~',
+  '`',
+  '!',
+  '@',
+  '#',
+  '$',
+  '%',
+  '^',
+  '&',
+  '*',
+  '(',
+  ')',
+  '_',
+  '-',
+  '+',
+  '=',
+  '{',
+  '[',
+  '}',
+  ']',
+  '|',
+  '\\',
+  ':',
+  ';',
   '"',
   "'",
-  "<",
-  ",",
-  ">",
-  ".",
-  "?",
-  "/",
-];
+  '<',
+  ',',
+  '>',
+  '.',
+  '?',
+  '/',
+]
 
 function toRegExp(symbols: string[]): RegExp {
-  const escapeSymbols: string[] = ["-", "]", "/", "\\"];
+  const escapeSymbols: string[] = ['-', ']', '/', '\\']
   const escapedString = symbols
-    .map((symbol) => (escapeSymbols.includes(symbol) ? "\\" + symbol : symbol))
-    .join("");
-  return new RegExp(`[${escapedString}]`, "g");
+    .map((symbol) => (escapeSymbols.includes(symbol) ? '\\' + symbol : symbol))
+    .join('')
+  return new RegExp(`[${escapedString}]`, 'g')
 }
 
 function countUppercase(password: string): number {
-  return (password.match(/[A-Z]/g) ?? []).length;
+  return (password.match(/[A-Z]/g) ?? []).length
 }
 
 function countlowerCase(password: string): number {
-  return (password.match(/[a-z]/g) ?? []).length;
+  return (password.match(/[a-z]/g) ?? []).length
 }
 
 function countNumber(password: string): number {
-  return (password.match(/[0-9]/g) ?? []).length;
+  return (password.match(/[0-9]/g) ?? []).length
 }
 
 function countSymbol(password: string): number {
-  const pattern = toRegExp(ALLOWED_SYMBOLS);
-  return (password.match(pattern) ?? []).length;
+  const pattern = toRegExp(ALLOWED_SYMBOLS)
+  return (password.match(pattern) ?? []).length
 }
 
 export function isRobust(password: string, ctx: RefinementCtx): boolean {
-  let robust = true;
+  let robust = true
 
   const {
     minLength,
@@ -80,51 +80,51 @@ export function isRobust(password: string, ctx: RefinementCtx): boolean {
     minUppercase,
     minNumber,
     minSymbol,
-  } = PASSWORD_CONSTRAINTS;
+  } = PASSWORD_CONSTRAINTS
 
   const baseCustomIssue: IssueData = {
     code: ZodIssueCode.custom,
-  };
+  }
 
   if (password.length < minLength || password.length > maxLength) {
-    robust = false;
+    robust = false
     ctx.addIssue({
       ...baseCustomIssue,
-      message: `Between ${minLength.toString()} and ${maxLength.toString()} ${pluralize("character", minLength)} long`,
-    });
+      message: `Between ${minLength.toString()} and ${maxLength.toString()} ${pluralize('character', minLength)} long`,
+    })
   }
 
   if (countlowerCase(password) < minLowercase) {
-    robust = false;
+    robust = false
     ctx.addIssue({
       ...baseCustomIssue,
-      message: `At least ${minLowercase.toString()} lowercase ${pluralize("letter", minLowercase)}`,
-    });
+      message: `At least ${minLowercase.toString()} lowercase ${pluralize('letter', minLowercase)}`,
+    })
   }
 
   if (countUppercase(password) < minUppercase) {
-    robust = false;
+    robust = false
     ctx.addIssue({
       ...baseCustomIssue,
-      message: `At least ${minUppercase.toString()} uppercase ${pluralize("letter", minUppercase)}`,
-    });
+      message: `At least ${minUppercase.toString()} uppercase ${pluralize('letter', minUppercase)}`,
+    })
   }
 
   if (countNumber(password) < minNumber) {
-    robust = false;
+    robust = false
     ctx.addIssue({
       ...baseCustomIssue,
-      message: `At least ${minNumber.toString()} ${pluralize("number", minNumber)}`,
-    });
+      message: `At least ${minNumber.toString()} ${pluralize('number', minNumber)}`,
+    })
   }
 
   if (countSymbol(password) < minSymbol) {
-    robust = false;
+    robust = false
     ctx.addIssue({
       ...baseCustomIssue,
-      message: `At least ${minSymbol.toString()} ${pluralize("symbol", minNumber)}`,
-    });
+      message: `At least ${minSymbol.toString()} ${pluralize('symbol', minNumber)}`,
+    })
   }
 
-  return robust;
+  return robust
 }

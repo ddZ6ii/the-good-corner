@@ -1,6 +1,6 @@
-import styled from "styled-components";
-import { LinkBtn } from "@/common/Link";
-import PageContent from "@/layouts/PageContent";
+import styled from 'styled-components'
+import { LinkBtn } from '@/common'
+import { PageContent } from '@/layouts'
 
 export default function SignOutPage() {
   return (
@@ -16,7 +16,7 @@ export default function SignOutPage() {
         </LinkBtn>
       </Container>
     </PageContent>
-  );
+  )
 }
 
 const Container = styled.div`
@@ -28,8 +28,8 @@ const Container = styled.div`
     margin-inline: auto;
     width: fit-content;
   }
-`;
+`
 
 const Text = styled.p`
   line-height: 1.5;
-`;
+`

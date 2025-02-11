@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { theme } from "@/themes/theme";
+import styled from 'styled-components'
+import { theme } from '@/themes'
 
 export const Form = styled.form`
   margin: 0 auto;
@@ -10,4 +10,4 @@ export const Form = styled.form`
   background-color: ${theme.color.white};
   border: ${theme.borderRadius.rounded_sm} solid ${theme.color.neutral.lightest};
   border-radius: ${theme.borderRadius.rounded_lg};
-`;
+`

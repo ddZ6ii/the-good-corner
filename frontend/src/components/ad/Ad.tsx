@@ -1,13 +1,13 @@
-import { theme } from "@/themes/theme";
-import { ReactNode } from "react";
-import styled from "styled-components";
+import { ReactNode } from 'react'
+import styled from 'styled-components'
+import { theme } from '@/themes'
 
 type AdCardProps = {
-  children: ReactNode;
-};
+  children: ReactNode
+}
 
 export default function Ad({ children }: AdCardProps) {
-  return <AdCard>{children}</AdCard>;
+  return <AdCard>{children}</AdCard>
 }
 
 const AdCard = styled.div`
@@ -26,4 +26,4 @@ const AdCard = styled.div`
     box-shadow: ${theme.shadow.md};
     outline: 1px solid ${theme.color.primary.main};
   }
-`;
+`

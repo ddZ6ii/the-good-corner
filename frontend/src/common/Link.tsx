@@ -1,15 +1,15 @@
-import styled, { css } from "styled-components";
-import { NavLink as RouterNavLink, NavLinkProps } from "react-router-dom";
-import { theme } from "@themes/theme";
-import { baseButtonStyle } from "@/themes/styles";
+import styled, { css } from 'styled-components'
+import { NavLink as RouterNavLink, NavLinkProps } from 'react-router-dom'
+import { baseButtonStyle } from '@/styles'
+import { theme } from '@/themes'
 
 // Props can only accept either $outline or $filled, not both.
 type LinkVariantProps = {
-  variant?: "filled" | "outline";
-  color?: "primary" | "secondary" | "neutral";
-};
+  variant?: 'filled' | 'outline'
+  color?: 'primary' | 'secondary' | 'neutral'
+}
 
-type LinkProps = NavLinkProps & LinkVariantProps;
+type LinkProps = NavLinkProps & LinkVariantProps
 
 export const LinkBtn = styled(RouterNavLink)<LinkProps>`
   ${baseButtonStyle}
@@ -24,17 +24,17 @@ export const LinkBtn = styled(RouterNavLink)<LinkProps>`
   }
 
   ${({ color }) =>
-    color === "primary" &&
+    color === 'primary' &&
     css`
       color: ${theme.color.primary.main};
     `}
 
   ${({ variant, color }) => {
-    if (variant === "filled") {
+    if (variant === 'filled') {
       const baseStyle = css`
         color: ${theme.color.white};
-      `;
-      if (color === "secondary") {
+      `
+      if (color === 'secondary') {
         return css`
           ${baseStyle}
           background-color: ${theme.color.secondary.main};
@@ -43,8 +43,8 @@ export const LinkBtn = styled(RouterNavLink)<LinkProps>`
             border-color: ${theme.color.secondary.main};
             color: ${theme.color.secondary.main};
           }
-        `;
-      } else if (color === "primary") {
+        `
+      } else if (color === 'primary') {
         return css`
           ${baseStyle}
           background-color: ${theme.color.primary.main};
@@ -53,34 +53,34 @@ export const LinkBtn = styled(RouterNavLink)<LinkProps>`
             border-color: ${theme.color.primary.main};
             color: ${theme.color.primary.main};
           }
-        `;
+        `
       } else {
-        return baseStyle;
+        return baseStyle
       }
-    } else if (variant === "outline") {
+    } else if (variant === 'outline') {
       const baseStyle = css`
         &:is(:hover, :focus-visible) {
           background-color: ${theme.color.primary.main};
           color: ${theme.color.white};
         }
-      `;
-      if (color === "secondary") {
+      `
+      if (color === 'secondary') {
         return css`
           ${baseStyle}
           border-color: ${theme.color.secondary.main};
           &:is(:hover, :focus-visible) {
             background-color: ${theme.color.secondary.main};
           }
-        `;
-      } else if (color === "primary") {
+        `
+      } else if (color === 'primary') {
         return css`
           ${baseStyle}
           border-color: ${theme.color.primary.main};
           &:is(:hover, :focus-visible) {
             background-color: ${theme.color.primary.main};
           }
-        `;
-      } else if (color === "neutral") {
+        `
+      } else if (color === 'neutral') {
         return css`
           ${baseStyle}
           border-color: ${theme.color.neutral.light};
@@ -89,15 +89,15 @@ export const LinkBtn = styled(RouterNavLink)<LinkProps>`
             background-color: ${theme.color.neutral.darkest};
             color: ${theme.color.neutral.lightest};
           }
-        `;
+        `
       } else {
-        return baseStyle;
+        return baseStyle
       }
     } else {
-      return css``;
+      return css``
     }
   }}
-`;
+`
 
 export const NavLink = styled(RouterNavLink)<LinkProps>`
   padding: 4px 8px;
@@ -117,7 +117,7 @@ export const NavLink = styled(RouterNavLink)<LinkProps>`
   }
 
   ${({ color }) => {
-    if (color === "secondary") {
+    if (color === 'secondary') {
       return css`
         color: ${theme.color.secondary.main};
         &:visited {
@@ -130,8 +130,8 @@ export const NavLink = styled(RouterNavLink)<LinkProps>`
         &:active {
           color: ${theme.color.primary.main};
         }
-      `;
-    } else if (color === "primary") {
+      `
+    } else if (color === 'primary') {
       return css`
         color: ${theme.color.primary.main};
         &:visited {
@@ -144,9 +144,9 @@ export const NavLink = styled(RouterNavLink)<LinkProps>`
         &:active {
           color: ${theme.color.secondary.main};
         }
-      `;
+      `
     } else {
-      return css``;
+      return css``
     }
   }}
-`;
+`

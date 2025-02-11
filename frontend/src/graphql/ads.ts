@@ -1,4 +1,4 @@
-import { gql } from "@/gql";
+import { gql } from '@/gql'
 
 export const GET_ADS = gql(/* GraphQL */ `
   query ads {
@@ -14,4 +14,4 @@ export const GET_ADS = gql(/* GraphQL */ `
       }
     }
   }
-`);
+`)

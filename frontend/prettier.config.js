@@ -1,10 +1,11 @@
 export default {
-  arrowParens: "always",
+  arrowParens: 'always',
   bracketSpacing: true,
-  endOfLine: "lf",
+  endOfLine: 'lf',
   printWidth: 80,
-  semi: true,
+  semi: false,
+  singleQuote: true,
   tabWidth: 2,
-  trailingComma: "all",
+  trailingComma: 'all',
   useTabs: false,
-};
+}

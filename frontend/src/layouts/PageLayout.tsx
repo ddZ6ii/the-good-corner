@@ -1,10 +1,10 @@
-import styled from "styled-components";
-import { Suspense } from "react";
-import { Outlet } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import Loader from "@/common/Loader";
-import { Logo, NavActions, Navbar, SearchBar } from "@/components/navbar";
-import { theme } from "@/themes/theme";
+import { Suspense } from 'react'
+import { Outlet } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
+import styled from 'styled-components'
+import { Loader } from '@/common'
+import { Logo, NavActions, Navbar, SearchBar } from '@/components/navbar'
+import { theme } from '@/themes'
 
 export default function PageLayout() {
   return (
@@ -28,7 +28,7 @@ export default function PageLayout() {
 
       <ToastContainer />
     </Container>
-  );
+  )
 }
 
 const Container = styled.div`
@@ -42,7 +42,7 @@ const Container = styled.div`
   @media screen and (min-width: 720px) {
     padding-inline: 32px;
   }
-`;
+`
 
 const NavigationHeader = styled.header`
   padding: 10px;
@@ -50,7 +50,7 @@ const NavigationHeader = styled.header`
   border-bottom: ${theme.borderRadius.rounded} solid
     ${theme.color.neutral.lightest};
   overflow: hidden;
-`;
+`
 
 const MainMenu = styled.div`
   margin-bottom: 4px;
@@ -71,11 +71,11 @@ const MainMenu = styled.div`
       display: initial;
     }
   }
-`;
+`
 
 const MainContent = styled.main`
   padding-block: 16px;
   @media screen and (min-width: 720px) {
     padding-block: 32px;
   }
-`;
+`

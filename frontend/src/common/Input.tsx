@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { theme } from "@themes/theme";
+import styled from 'styled-components'
+import { theme } from '@/themes'
 
 export const Input = styled.input`
   padding: 8px;
@@ -13,4 +13,4 @@ export const Input = styled.input`
   border-radius: ${theme.borderRadius.rounded_lg};
   font-family: inherit;
   font-size: 12px;
-`;
+`

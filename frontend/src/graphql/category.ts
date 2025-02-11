@@ -1,4 +1,4 @@
-import { gql } from "@/gql";
+import { gql } from '@/gql'
 
 export const GET_CATEGORY = gql(/* GraphQL */ `
   query category($id: ID!) {
@@ -19,4 +19,4 @@ export const GET_CATEGORY = gql(/* GraphQL */ `
       }
     }
   }
-`);
+`)

@@ -21,17 +21,18 @@
     "baseUrl": "src",
     "paths": {
       "@/*": ["*"],
-      "@assets/*": ["assets/*"],
-      "@common/*": ["common/*"],
-      "@components/*": ["components/*"],
-      "@contexts/*": ["contexts/*"],
-      "@hooks/*": ["hooks/*"],
-      "@layouts/*": ["layouts/*"],
-      "@pages/*": ["pages/*"],
-      "@reducers/*": ["reducers/*"],
-      "@stores/*": ["stores/*"],
-      "@themes/*": ["themes/*"],
-      "@utils/*": ["utils/*"]
+      "@/assets/*": ["assets/*"],
+      "@/common/*": ["common/*"],
+      "@/omponents/*": ["components/*"],
+      "@/contexts/*": ["contexts/*"],
+      "@/hooks/*": ["hooks/*"],
+      "@/layouts/*": ["layouts/*"],
+      "@/pages/*": ["pages/*"],
+      "@/reducers/*": ["reducers/*"],
+      "@/stores/*": ["stores/*"],
+      "@/styles/*": ["styles/*"],
+      "@/themes/*": ["themes/*"],
+      "@/utils/*": ["utils/*"]
     },
 
     /* Linting */

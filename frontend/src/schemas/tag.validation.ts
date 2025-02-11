@@ -1,11 +1,11 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 export const TAG_CONSTRAINTS = {
   name: {
     minLength: 3,
     maxLength: 50,
   },
-};
+}
 
 export const TagContentSchema = z.object({
   name: z
@@ -13,4 +13,4 @@ export const TagContentSchema = z.object({
     .trim()
     .min(TAG_CONSTRAINTS.name.minLength)
     .max(TAG_CONSTRAINTS.name.maxLength),
-});
+})

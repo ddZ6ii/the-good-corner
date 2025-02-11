@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const AdContent = styled.div`
   margin-block: 8px;
@@ -7,4 +7,4 @@ export const AdContent = styled.div`
   font-size: 18px;
   text-align: left;
   gap: 16px;
-`;
+`

@@ -1,27 +1,27 @@
-import styled from "styled-components";
-import { useParams } from "react-router-dom";
-import { useQuery } from "@apollo/client";
-import Loader from "@/common/Loader";
+import styled from 'styled-components'
+import { useParams } from 'react-router-dom'
+import { useQuery } from '@apollo/client'
+import { Loader } from '@/common'
 import {
   Ad,
   AdActions,
   AdContent,
   AdPrice,
+  AdTags,
   AdThumbnail,
   AdTitle,
-} from "@/components/ad";
-import AdTags from "@/components/ad/AdTags";
-import { GET_AD } from "@/graphql/ad";
-import { IdInput } from "@/gql/graphql";
-import PageContent from "@/layouts/PageContent";
-import { IdParamSchema } from "@/schemas/id.validation";
-import { theme } from "@/themes/theme";
-import { basePillStyle } from "@/themes/styles";
-import { capitalize, formatPriceWithCurrency } from "@/utils/format";
+} from '@/components/ad'
+import { GET_AD } from '@/graphql/ad'
+import { IdInput } from '@/gql/graphql'
+import { PageContent } from '@/layouts'
+import { IdParamSchema } from '@/schemas'
+import { basePillStyle } from '@/styles'
+import { theme } from '@/themes'
+import { capitalize, formatPriceWithCurrency } from '@/utils'
 
 export default function AdPage() {
-  const params = useParams<IdInput>();
-  const { id } = IdParamSchema.parse(params);
+  const params = useParams<IdInput>()
+  const { id } = IdParamSchema.parse(params)
   const {
     data: { ad } = {},
     error,
@@ -29,15 +29,15 @@ export default function AdPage() {
   } = useQuery(GET_AD, {
     variables: { id },
     skip: !id,
-  });
+  })
 
   if (loading) {
-    return <Loader $center size="lg" />;
+    return <Loader $center size="lg" />
   }
 
   if (error || !ad) {
-    if (error) console.error(error);
-    return <p>No ad found!</p>;
+    if (error) console.error(error)
+    return <p>No ad found!</p>
   }
 
   return (
@@ -55,18 +55,18 @@ export default function AdPage() {
         </AdContent>
       </Ad>
     </PageContent>
-  );
+  )
 }
 
 const AdCategory = styled.p`
   ${basePillStyle}
-`;
+`
 
 const BaseText = styled.p`
   color: ${theme.color.neutral.light};
   font-size: 16px;
-`;
+`
 
-const AdDescription = styled(BaseText)``;
+const AdDescription = styled(BaseText)``
 
-const AdAuthor = styled(BaseText)``;
+const AdAuthor = styled(BaseText)``

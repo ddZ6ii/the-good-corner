@@ -1,8 +1,8 @@
-export { default as Ad } from "./Ad";
-export { default as AdActions } from "./AdActions";
-
-export { ACTIONS } from "./actions";
-export { AdContent } from "./AdContent";
-export { AdPrice } from "./AdPrice";
-export { AdThumbnail } from "./AdThumbnail";
-export { AdTitle } from "./AdTitle";
+export { ACTIONS } from './actions'
+export { default as Ad } from './Ad'
+export { default as AdActions } from './AdActions'
+export { AdContent } from './AdContent'
+export { AdPrice } from './AdPrice'
+export { default as AdTags } from './AdTags'
+export { AdThumbnail } from './AdThumbnail'
+export { AdTitle } from './AdTitle'
