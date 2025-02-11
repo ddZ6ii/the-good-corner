@@ -1,7 +1,7 @@
-import { MiddlewareFn } from 'type-graphql';
-import { getUserFromContext } from '@/middlewares/auth';
-import { User } from '@/schemas/entities/User';
-import { AuthContextType, UserRole } from '@/types/index.types';
+import { MiddlewareFn } from 'type-graphql'
+import { getUserFromContext } from '@/middlewares'
+import { User } from '@/schemas/entities'
+import { AuthContextType, UserRole } from '@/types'
 
 /**
  * Restrict access to a field entity depending on user and role.
@@ -11,16 +11,16 @@ export const IsUser: MiddlewareFn<AuthContextType> = async (
   { context, root },
   next: () => Promise<User['email']>,
 ) => {
-  const user = await getUserFromContext(context);
+  const user = await getUserFromContext(context)
   if (user) {
     // `root` refers the object (resource) being resolved.
     const hasAccess =
-      user.id === (root as User).id || user.role === UserRole.ADMIN;
+      user.id === (root as User).id || user.role === UserRole.ADMIN
     if (hasAccess) {
       // Return the field content since the user is allowed to access the field.
-      return next();
+      return next()
     }
   }
   // Mask the field content since the user is not allowed to access the field.
-  return '******';
-};
+  return '******'
+}

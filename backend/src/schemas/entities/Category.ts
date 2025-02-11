@@ -1,5 +1,5 @@
-import { GraphQLDateTime } from 'graphql-scalars';
-import { Field, ID, ObjectType } from 'type-graphql';
+import { GraphQLDateTime } from 'graphql-scalars'
+import { Field, ID, ObjectType } from 'type-graphql'
 import {
   Entity,
   BaseEntity,
@@ -10,9 +10,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-} from 'typeorm';
-import { Ad } from '@/schemas/entities/Ad';
-import { User } from '@/schemas/entities/User';
+} from 'typeorm'
+import { Ad, User } from '@/schemas/entities'
 
 /* -------------------------------------------------------------------------- */
 /* "READ" CLASS                                                               */
@@ -33,11 +32,11 @@ import { User } from '@/schemas/entities/User';
 export class Category extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
-  id!: number;
+  id!: number
 
   @Column({ type: 'text' })
   @Field(() => String)
-  name!: string;
+  name!: string
 
   /**
    * Special column that is automatically set to the entity's insertion time.
@@ -45,7 +44,7 @@ export class Category extends BaseEntity {
    */
   @CreateDateColumn()
   @Field(() => GraphQLDateTime)
-  createdAt!: Date;
+  createdAt!: Date
 
   /**
    * Special column that is automatically set to the entity's update time each time you call save from entity manager or repository.
@@ -53,7 +52,7 @@ export class Category extends BaseEntity {
    */
   @UpdateDateColumn()
   @Field(() => GraphQLDateTime)
-  updatedAt!: Date;
+  updatedAt!: Date
 
   /**
    * Special column that is automatically set to the entity's delete time each time you call save from entity manager or repository.
@@ -61,12 +60,12 @@ export class Category extends BaseEntity {
    */
   @DeleteDateColumn()
   @Field(() => GraphQLDateTime, { nullable: true })
-  deletedAt!: Date;
+  deletedAt!: Date
 
   // A category can have many ads.
   @OneToMany(() => Ad, (ad) => ad.category)
   @Field(() => [Ad])
-  ads!: Ad[];
+  ads!: Ad[]
 
   /** Keep track of which user created a category
    *
@@ -84,5 +83,5 @@ export class Category extends BaseEntity {
     // { eager: true }
   )
   @Field(() => User, { nullable: true })
-  createdBy!: User;
+  createdBy!: User
 }

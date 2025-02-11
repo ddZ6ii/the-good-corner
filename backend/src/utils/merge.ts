@@ -1,4 +1,4 @@
-import { IdInput } from '@/schemas/utils.schemas';
+import { IdInput } from '@/schemas'
 
 /**
  * Merge some payload data on an existing database entity.
@@ -34,18 +34,18 @@ export function merge<T extends object>(
       if (!(key in entity)) {
         throw new Error(
           `missing key ${key} in your entity, did you forgot to fetch your relation?`,
-        );
+        )
       }
       if (Array.isArray(entity[key as keyof T])) {
         data[key] = (data[key] as IdInput[]).map((entry: IdInput) => {
           const existingEntry = (entity[key as keyof T] as IdInput[]).find(
             (entityEntry: IdInput) => entityEntry.id == entry.id,
-          );
-          return existingEntry ?? entry;
-        });
+          )
+          return existingEntry ?? entry
+        })
       }
     }
   }
-  Object.assign(entity, data);
-  return entity;
+  Object.assign(entity, data)
+  return entity
 }

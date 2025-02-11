@@ -1,5 +1,5 @@
-import { GraphQLDateTime } from 'graphql-scalars';
-import { Field, ID, Int, ObjectType } from 'type-graphql';
+import { GraphQLDateTime } from 'graphql-scalars'
+import { Field, ID, Int, ObjectType } from 'type-graphql'
 import {
   Entity,
   BaseEntity,
@@ -11,10 +11,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-} from 'typeorm';
-import { Category } from '@/schemas/entities/Category';
-import { Tag } from '@/schemas/entities/Tag';
-import { User } from '@/schemas/entities/User';
+} from 'typeorm'
+import { Category, Tag, User } from '@/schemas/entities'
 
 /* -------------------------------------------------------------------------- */
 /* "READ" CLASS                                                               */
@@ -35,28 +33,28 @@ import { User } from '@/schemas/entities/User';
 export class Ad extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
-  id!: number;
+  id!: number
 
   @Column({ type: 'text' })
   @Field(() => String)
-  title!: string;
+  title!: string
 
   @Column({ type: 'text' })
   @Field(() => String)
-  description!: string;
+  description!: string
 
   // Price is in cents to avoid floating point arithmetic issues.
   @Column({ type: 'integer', unsigned: true })
   @Field(() => Int)
-  price!: number;
+  price!: number
 
   @Column({ type: 'text' })
   @Field(() => String)
-  picture!: string;
+  picture!: string
 
   @Column({ type: 'text' })
   @Field(() => String)
-  location!: string;
+  location!: string
 
   /**
    * Special column that is automatically set to the entity's insertion time.
@@ -64,7 +62,7 @@ export class Ad extends BaseEntity {
    */
   @CreateDateColumn()
   @Field(() => GraphQLDateTime)
-  createdAt!: Date;
+  createdAt!: Date
 
   /**
    * Special column that is automatically set to the entity's update time each time you call save from entity manager or repository.
@@ -72,7 +70,7 @@ export class Ad extends BaseEntity {
    */
   @UpdateDateColumn()
   @Field(() => GraphQLDateTime)
-  updatedAt!: Date;
+  updatedAt!: Date
 
   /**
    * Special column that is automatically set to the entity's delete time each time you call save from entity manager or repository.
@@ -80,7 +78,7 @@ export class Ad extends BaseEntity {
    */
   @DeleteDateColumn()
   @Field(() => GraphQLDateTime, { nullable: true })
-  deletedAt!: Date;
+  deletedAt!: Date
 
   /** Many-to-One relation options
    *
@@ -94,7 +92,7 @@ export class Ad extends BaseEntity {
     nullable: false,
   })
   @Field(() => Category)
-  category!: Category;
+  category!: Category
 
   // !TODO: remove {nullable: true} when the dump file will be updated with a user for every category ...
   //  Here the eager option is commented since we now use makeRelations() to fetch the related category.
@@ -103,7 +101,7 @@ export class Ad extends BaseEntity {
     // { eager: true }
   )
   @Field(() => User, { nullable: true })
-  createdBy!: User;
+  createdBy!: User
 
   /** Many-to-Many relation options (join table)
    *
@@ -114,5 +112,5 @@ export class Ad extends BaseEntity {
   @ManyToMany(() => Tag, (tag) => tag.ads)
   @JoinTable()
   @Field(() => [Tag], { nullable: true })
-  tags!: Tag[];
+  tags!: Tag[]
 }

@@ -1,12 +1,11 @@
-import { GraphQLDateTime } from 'graphql-scalars';
-import { IsUser } from '@/middlewares/IsUser';
+import { GraphQLDateTime } from 'graphql-scalars'
 import {
   Field,
   ID,
   ObjectType,
   registerEnumType,
   UseMiddleware,
-} from 'type-graphql';
+} from 'type-graphql'
 import {
   BaseEntity,
   Column,
@@ -15,8 +14,9 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from 'typeorm';
-import { UserRole } from '@/types/index.types';
+} from 'typeorm'
+import { IsUser } from '@/middlewares/IsUser'
+import { UserRole } from '@/types'
 
 /* -------------------------------------------------------------------------- */
 /* "READ" CLASS                                                               */
@@ -37,7 +37,7 @@ import { UserRole } from '@/types/index.types';
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
-  id!: number;
+  id!: number
 
   @Column({ type: 'text', unique: true })
   @Field(() => String)
@@ -46,14 +46,14 @@ export class User extends BaseEntity {
    * This field should only be accessible to admins or self user.
    */
   @UseMiddleware(IsUser)
-  email!: string;
+  email!: string
 
   @Column({ type: 'text' })
-  hashedPassword!: string;
+  hashedPassword!: string
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   @Field(() => UserRole)
-  role!: UserRole; // "user" | "admin"
+  role!: UserRole // "user" | "admin"
 
   /**
    * Special column that is automatically set to the entity's insertion time.
@@ -61,7 +61,7 @@ export class User extends BaseEntity {
    */
   @CreateDateColumn()
   @Field(() => GraphQLDateTime)
-  createdAt!: string;
+  createdAt!: string
 
   /**
    * Special column that is automatically set to the entity's update time each time you call save from entity manager or repository.
@@ -69,7 +69,7 @@ export class User extends BaseEntity {
    */
   @UpdateDateColumn()
   @Field(() => GraphQLDateTime)
-  updatedAt!: Date;
+  updatedAt!: Date
 
   /**
    * Special column that is automatically set to the entity's delete time each time you call save from entity manager or repository.
@@ -77,7 +77,7 @@ export class User extends BaseEntity {
    */
   @DeleteDateColumn()
   @Field(() => GraphQLDateTime, { nullable: true })
-  deletedAt!: Date;
+  deletedAt!: Date
 
   //  May be needed if user can create other users...
   // @ManyToOne(() => User)
@@ -93,4 +93,4 @@ export class User extends BaseEntity {
 registerEnumType(UserRole, {
   name: 'UserRole', // Mandatory
   description: 'User possible roles', // Optional
-});
+})

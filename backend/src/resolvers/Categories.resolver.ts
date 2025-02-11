@@ -1,3 +1,4 @@
+import { GraphQLResolveInfo } from 'graphql'
 import {
   Arg,
   Args,
@@ -8,17 +9,16 @@ import {
   Mutation,
   Query,
   Resolver,
-} from 'type-graphql';
-import * as categoriesModel from '@/models/categories.model.ts';
+} from 'type-graphql'
+import { categoriesModel } from '@/models'
 import {
   AddCategoryInput,
   GetCategoriesArgs,
   GetCategoryArgs,
   UpdateCategoryInput,
-} from '@/schemas/categories.schemas';
-import { Category } from '@/schemas/entities/Category';
-import { AuthContextType, UserRole } from '@/types/index.types';
-import { GraphQLResolveInfo } from 'graphql';
+} from '@/schemas'
+import { Category } from '@/schemas/entities'
+import { AuthContextType, UserRole } from '@/types'
 
 @Resolver()
 export class CategoriesResolver {
@@ -28,8 +28,8 @@ export class CategoriesResolver {
     @Args(() => GetCategoriesArgs) { name }: GetCategoriesArgs,
     @Info() info: GraphQLResolveInfo,
   ): Promise<Category[]> {
-    const categories = await categoriesModel.findAll(info, name);
-    return categories;
+    const categories = await categoriesModel.findAll(info, name)
+    return categories
   }
 
   // Set nullable to true to allow returning null if no category is found, and avoid throwing an error.
@@ -38,8 +38,8 @@ export class CategoriesResolver {
     @Args(() => GetCategoryArgs) { id }: GetCategoryArgs,
     @Info() info: GraphQLResolveInfo,
   ): Promise<Category | null> {
-    const category = await categoriesModel.findOneBy(id, info);
-    return category;
+    const category = await categoriesModel.findOneBy(id, info)
+    return category
   }
 
   @Authorized(UserRole.ADMIN)
@@ -48,8 +48,8 @@ export class CategoriesResolver {
     @Arg('data', () => AddCategoryInput) data: AddCategoryInput,
     @Ctx() context: AuthContextType,
   ): Promise<Category> {
-    const createdCategory = await categoriesModel.create(data, context.user);
-    return createdCategory;
+    const createdCategory = await categoriesModel.create(data, context.user)
+    return createdCategory
   }
 
   @Authorized(UserRole.ADMIN)
@@ -60,8 +60,8 @@ export class CategoriesResolver {
     data: UpdateCategoryInput,
     @Ctx() context: AuthContextType,
   ): Promise<Category | null> {
-    const updatedCategory = await categoriesModel.patch(id, data, context.user);
-    return updatedCategory;
+    const updatedCategory = await categoriesModel.patch(id, data, context.user)
+    return updatedCategory
   }
 
   @Authorized(UserRole.ADMIN)
@@ -70,7 +70,7 @@ export class CategoriesResolver {
     @Arg('id', () => ID) id: number,
     @Ctx() context: AuthContextType,
   ): Promise<Category | null> {
-    const deletedCategory = await categoriesModel.remove(id, context.user);
-    return deletedCategory;
+    const deletedCategory = await categoriesModel.remove(id, context.user)
+    return deletedCategory
   }
 }

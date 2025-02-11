@@ -1,9 +1,9 @@
-import { resolve } from 'node:path';
-import { DataSource } from 'typeorm';
+import { resolve } from 'node:path'
+import { DataSource } from 'typeorm'
 
-const env = process.env.NODE_ENV ?? 'development';
-const isDevMode = env.toLowerCase() === 'development';
-const entitiesUrl = resolve(import.meta.dirname, 'schemas/entities/*.ts');
+const env = process.env.NODE_ENV ?? 'development'
+const isDevMode = env.toLowerCase() === 'development'
+const entitiesUrl = resolve(import.meta.dirname, 'schemas/entities/*.ts')
 
 /** Database connection options.
  *
@@ -21,7 +21,7 @@ export const postgresConfig = {
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
-};
+}
 
 export const dataSource = new DataSource({
   type: 'postgres',
@@ -29,4 +29,4 @@ export const dataSource = new DataSource({
   entities: [entitiesUrl],
   // Dev mode only: do not use in production.
   ...(isDevMode && { synchronize: true, logging: true }),
-});
+})

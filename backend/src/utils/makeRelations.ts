@@ -1,6 +1,6 @@
-import { GraphQLResolveInfo, Kind, SelectionSetNode } from 'graphql';
-import { BaseEntity } from 'typeorm';
-import { RelationMetadata } from 'typeorm/metadata/RelationMetadata';
+import { GraphQLResolveInfo, Kind, SelectionSetNode } from 'graphql'
+import { BaseEntity } from 'typeorm'
+import { RelationMetadata } from 'typeorm/metadata/RelationMetadata'
 
 /**
  * Check whether a key exists in the graphql request and has a selection set (i.e. is a subquery).
@@ -12,15 +12,15 @@ export function hasRelation(
   info: GraphQLResolveInfo,
   relationName: string,
 ): boolean {
-  const selections = info.fieldNodes[0]?.selectionSet?.selections;
+  const selections = info.fieldNodes[0]?.selectionSet?.selections
   if (selections) {
     const entry = selections.find(
       (selection) =>
         selection.kind === Kind.FIELD && selection.name.value === relationName,
-    );
-    return entry?.kind === Kind.FIELD && !!entry.selectionSet;
+    )
+    return entry?.kind === Kind.FIELD && !!entry.selectionSet
   }
-  return false;
+  return false
 }
 
 /**
@@ -45,11 +45,11 @@ function parseSelectionSet(
         entry.kind === Kind.FIELD &&
         entry.selectionSet?.kind === Kind.SELECTION_SET
       ) {
-        levelPossibleRelations[entry.name.value] = {};
+        levelPossibleRelations[entry.name.value] = {}
         parseSelectionSet(
           entry.selectionSet,
           levelPossibleRelations[entry.name.value] as Record<string, unknown>,
-        );
+        )
       }
     }
   }
@@ -67,19 +67,19 @@ function checkRelation(
   relations: Record<string, unknown>,
 ) {
   if (Object.keys(possibleRelations).length > 0) {
-    const entityRelationsMap: Record<string, unknown> = {};
+    const entityRelationsMap: Record<string, unknown> = {}
     for (const relation of entityRelations) {
       entityRelationsMap[relation.propertyName] =
-        relation.inverseEntityMetadata.relations;
+        relation.inverseEntityMetadata.relations
     }
     for (const possibleRelation in possibleRelations) {
       if (entityRelationsMap[possibleRelation]) {
-        relations[possibleRelation] = {};
+        relations[possibleRelation] = {}
         checkRelation(
           possibleRelations[possibleRelation] as Record<string, unknown>,
           entityRelationsMap[possibleRelation] as RelationMetadata[],
           relations[possibleRelation] as Record<string, unknown>,
-        );
+        )
       }
     }
   }
@@ -107,18 +107,18 @@ export function makeRelations(
   entity: typeof BaseEntity,
 ) {
   // We want to extract all possible relations from the graphql request based on the requested field, and whether the field has (or not) subselection (see this answer: https://stackoverflow.com/questions/50548188/graphql-how-to-do-a-join-request-instead-of-many-sequential-request).
-  const possibleRelations = {};
-  const baseSelectionSet = info.fieldNodes[0]?.selectionSet;
+  const possibleRelations = {}
+  const baseSelectionSet = info.fieldNodes[0]?.selectionSet
   if (!baseSelectionSet) {
-    return {};
+    return {}
   }
-  parseSelectionSet(baseSelectionSet, possibleRelations);
+  parseSelectionSet(baseSelectionSet, possibleRelations)
 
   // But since graphql request may have subselections for something else than SQL relations, we should parse all possible relations and check if it's a real SQL relation based on the TypeORM entity (See this answer: https://stackoverflow.com/questions/62757637/get-list-of-relations-for-an-entity-in-typeorm).
-  const repository = entity.getRepository();
-  const entityRelations = repository.metadata.relations;
-  const relations: Record<string, unknown> = {};
-  checkRelation(possibleRelations, entityRelations, relations);
+  const repository = entity.getRepository()
+  const entityRelations = repository.metadata.relations
+  const relations: Record<string, unknown> = {}
+  checkRelation(possibleRelations, entityRelations, relations)
 
-  return relations;
+  return relations
 }

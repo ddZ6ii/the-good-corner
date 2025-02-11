@@ -1,5 +1,5 @@
-import { IsNotEmpty, Length } from 'class-validator';
-import { ArgsType, Field, ID, InputType } from 'type-graphql';
+import { IsNotEmpty, Length } from 'class-validator'
+import { ArgsType, Field, ID, InputType } from 'type-graphql'
 
 /* -------------------------------------------------------------------------- */
 /* "WRITE" CLASSES (query and mutation arguments)                             */
@@ -16,14 +16,14 @@ import { ArgsType, Field, ID, InputType } from 'type-graphql';
 export class GetCategoriesArgs {
   @Field(() => String, { nullable: true })
   @IsNotEmpty()
-  name?: string;
+  name?: string
 }
 
 @ArgsType()
 export class GetCategoryArgs {
   @Field(() => ID)
   @IsNotEmpty()
-  id!: number;
+  id!: number
 }
 
 @InputType({ description: 'New category data' })
@@ -32,7 +32,7 @@ export class AddCategoryInput {
   @Length(3, 50, {
     message: 'Category name must be between 3 and 50 characters long.',
   })
-  name!: string;
+  name!: string
 }
 
 // !TODO: validation not working when passing "name": null in the data object...
@@ -42,5 +42,5 @@ export class UpdateCategoryInput {
   @Length(3, 50, {
     message: 'Category name must be between 3 and 50 characters long.',
   }) // Validation: if provided, it must be a string with a certain length.
-  name?: string;
+  name?: string
 }
