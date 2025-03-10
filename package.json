@@ -7,8 +7,7 @@
   "scripts": {
     "dev": "concurrently \"yarn run dev:back\" \"yarn run dev:front\"",
     "dev:back": "cd backend && yarn run dev",
-    "dev:front": "cd frontend && yarn run dev",
-    "migrate": "cd backend && yarn run migrate"
+    "dev:front": "cd frontend && yarn run dev"
   },
   "devDependencies": {
     "concurrently": "^9.0.1"

@@ -9,7 +9,10 @@
     "format": "prettier --write .",
     "lint": "eslint --fix .",
     "format:lint": "yarn run format && yarn run lint",
-    "migrate": "tsx src/migrate.ts"
+    "migrate:db-user": "./init-db-user.sh",
+    "migrate:db": "./init-db.sh",
+    "reset:docker": "docker system prune --volumes -af",
+    "reset:db": "docker volume rm tgc_pgdata"
   },
   "devDependencies": {
     "@types/cookies": "^0.9.0",
